@@ -1,0 +1,11 @@
+# build artifacts
+.build/
+/tmp/
+sol
+*.o
+*.gch
+core.*
+
+# Python
+__pycache__/
+*.pyc

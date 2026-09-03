@@ -14,6 +14,7 @@ from pedagogy_overrides import PEDAGOGY_OVERRIDES as INITIAL_PEDAGOGY_OVERRIDES
 from pedagogy_week1 import PEDAGOGY_WEEK1
 from pedagogy_week1_day4 import PEDAGOGY_WEEK1_DAY4
 from pedagogy_week1_day5 import PEDAGOGY_WEEK1_DAY5
+from pedagogy_week1_day6 import PEDAGOGY_WEEK1_DAY6
 from chinese_titles import validate_title_coverage
 
 
@@ -24,6 +25,7 @@ _PEDAGOGY_MODULES = (
     PEDAGOGY_WEEK1,
     PEDAGOGY_WEEK1_DAY4,
     PEDAGOGY_WEEK1_DAY5,
+    PEDAGOGY_WEEK1_DAY6,
 )
 
 PEDAGOGY_OVERRIDES = {}

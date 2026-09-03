@@ -147,6 +147,21 @@ Do not merely paraphrase each source line. Comments should explain:
 
 For non-trivial problems, prefer a small ASCII diagram in the header when it materially reduces abstraction.
 
+## Generated repository source of truth
+
+`problems/**/solution.cpp` is generated learning output, not the only source of truth. Do not make a pedagogy or implementation change only in a generated `solution.cpp`, because `python3 tools/gen_all.py` may overwrite it.
+
+The generation layers are:
+
+1. `tools/refined_week1.py` ... `tools/refined_week4.py`: baseline reviewed explanations and implementations for all problems;
+2. `tools/pedagogy_overrides.py`: only the problems that have received an individual high-touch learning rewrite;
+3. `tools/refined_data.py`: merges both layers and renders either the enhanced or legacy explanation;
+4. `tools/gen_all.py`: emits `problems/**/solution.cpp`.
+
+For an individually optimized problem, update the canonical learning data first, then keep the generated `solution.cpp` synchronized. A future `gen_all.py` run must preserve the improved explanation and, where applicable, the improved primary implementation.
+
+Do **not** bulk-convert untouched problems merely to satisfy a format. The repository is intentionally migrated problem by problem: an untouched problem keeps its reviewed legacy explanation until it has actually been read and optimized.
+
 ## Solution selection
 
 Before rewriting a problem explanation:
@@ -166,7 +181,8 @@ After modifying a problem:
 2. preserve or update the local test adapter consistently;
 3. run/reason through all existing `cases/*.in` and expected outputs when execution is available;
 4. add edge cases when an explanation exposes a previously uncovered boundary;
-5. keep claimed time/space complexity consistent with the actual primary implementation.
+5. keep claimed time/space complexity consistent with the actual primary implementation;
+6. ensure `python3 tools/gen_all.py` would not erase the learning rewrite.
 
 ## Repository-wide optimization workflow
 
@@ -178,7 +194,8 @@ For each problem:
 2. identify the key abstraction barrier that makes the current explanation hard to understand;
 3. rewrite using **图像直觉 -> 一句话核心 -> 公式/不变量 -> 执行步骤 -> 正确性直觉 -> 易错点 -> 迁移**;
 4. change implementation only when doing so materially improves clarity/correctness or matches the intended primary solution;
-5. keep each change focused and traceable.
+5. update the canonical generation layer before or together with the generated file;
+6. keep each change focused and traceable.
 
 ## Writing style
 

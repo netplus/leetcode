@@ -54,6 +54,15 @@
 //
 //   missing == 0 <=> 当前窗口覆盖 t。
 //
+//   为什么收入/移出都“无条件” ++/-- need，而不先判定字符是否属于 t？
+//   - need 的三态已经把“归属”信息编码进数值：t 中字符 need 初始 ≥1，非 t 字符初始 =0。
+//     非 t 字符进来 -> need 从 0 变 -1（富余），出去 -> 从 -1 变 0，全程 need>0 为假，missing 不动。
+//     于是“是否在 t 中”这个外部判定被 need>0 单一判据完整替代，无需额外维护 inT[] 表。
+//   - 收入端 --need 与移出端 ++need 严格对称，need 总和守恒，进出多少加减多少，一眼可验正确性。
+//     若改成“非 t 字符跳过”，则两端都要套 if 且条件必须一致，多一张表、多一层分支、多一个出错面，
+//     且 inT 判据相对 need>0 是冗余的（区分能力更弱：它分不清“t 中但已满足”与“t 中仍欠缺”）。
+//   记忆：别问“字符在不在 t”，只问“need>0 吗”——后者才是 missing 动不动的充要条件。
+//
 // 4. 执行步骤
 //   1. 统计 t 的频次到 need，missing 初始化为 |t|
 //   2. right 向右收入字符；若它能偿还欠账则 missing--，随后 need--
@@ -96,8 +105,8 @@ public:
         int left = 0, bestStart = 0, bestLength = INT_MAX;
         for (int right = 0; right < static_cast<int>(s.size()); ++right) {
             unsigned char rc = static_cast<unsigned char>(s[right]);
-            if (need[rc] > 0) --missing;
-            --need[rc];
+            if (need[rc] > 0) --missing;  // 只有“还欠的”算偿还；非 t 字符 need=0 不触发
+            --need[rc];                   // 无条件 --：非 t 字符 0->-1 富余，不影响 missing
 
             while (missing == 0) {
                 if (right - left + 1 < bestLength) {
@@ -105,8 +114,8 @@ public:
                     bestLength = right - left + 1;
                 }
                 unsigned char lc = static_cast<unsigned char>(s[left++]);
-                ++need[lc];
-                if (need[lc] > 0) ++missing;  // 刚移除了一个必需字符
+                ++need[lc];                   // 无条件 ++：与收入端 -- 对称，need 总和守恒
+                if (need[lc] > 0) ++missing;  // 刚移除了一个必需字符（非 t 字符最多到 0，不会触发）
             }
         }
         return bestLength == INT_MAX ? "" : s.substr(bestStart, bestLength);

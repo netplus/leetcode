@@ -147,6 +147,31 @@ Do not merely paraphrase each source line. Comments should explain:
 
 For non-trivial problems, prefer a small ASCII diagram in the header when it materially reduces abstraction.
 
+## Official statement fidelity
+
+Problem statement facts and pedagogy are separate concerns. Do not invent, simplify away, or casually rewrite facts about the legal input domain or API contract merely to make an explanation shorter.
+
+The learner-facing statement source is:
+
+1. `tools/chinese_problem_info.json`: refreshable LeetCode CN statement/constraint cache;
+2. `tools/statement_overrides.py`: persistent reviewed fixes where the Chinese cache is less explicit than the official English statement or contains extraction defects;
+3. `tools/statement_metadata.py`: the effective statement metadata consumed by `gen_all.py`.
+
+`tools/official/lc<N>.txt` is the English official snapshot used for cross-language semantic review. When Chinese and English official wording differ in precision, preserve the stricter meaning when it affects the legal input set, return contract, or an algorithmic precondition. For example, distinguish “小写英文字母” from an ambiguous unrestricted “小写字母” when the official English statement says `lowercase English letters`.
+
+A learner-facing problem statement must explicitly preserve official facts that affect:
+
+- length/value ranges and character sets;
+- sortedness, uniqueness, positivity/non-negativity, connectivity, reachability, or similar structural assumptions;
+- whether answers are unique or arbitrary ordering is allowed;
+- whether elements/nodes/words may be reused or input may be modified;
+- return-value semantics and special no-solution behavior;
+- any other guarantee required for the chosen algorithm to be valid.
+
+Do not edit only `problems/**/solution.cpp` to fix a statement. Put persistent corrections in the statement metadata layer and keep generated output synchronized. Refreshing `chinese_problem_info.json` must not erase a reviewed correction.
+
+After statement changes, `python3 tools/check_statement_fidelity.py` must pass for all 106 generated problems; it is part of `make verify-meta`. Use `tools/compare_official.py` for side-by-side review of the **effective learner-facing metadata** against the cached official English statement.
+
 ## Generated repository source of truth
 
 `problems/**/solution.cpp` is generated learning output, not the only source of truth. Do not make a pedagogy or implementation change only in a generated `solution.cpp`, because `python3 tools/gen_all.py` may overwrite it.
@@ -156,7 +181,8 @@ The generation layers are:
 1. `tools/refined_week1.py` ... `tools/refined_week4.py`: baseline reviewed explanations and implementations for all problems;
 2. `tools/pedagogy_overrides.py` plus modular `tools/pedagogy_week*.py`: only problems that have received an individual high-touch learning rewrite;
 3. `tools/refined_data.py`: merges all baseline and pedagogy layers, then renders either the enhanced or legacy explanation;
-4. `tools/gen_all.py`: emits `problems/**/solution.cpp`.
+4. `tools/statement_metadata.py`: supplies the effective official learner-facing statement metadata;
+5. `tools/gen_all.py`: emits `problems/**/solution.cpp`.
 
 Keep pedagogy override modules small enough to review comfortably. New high-touch entries may be split by week or learning batch; `refined_data.py` must explicitly merge them and reject duplicate problem IDs.
 
@@ -184,7 +210,8 @@ After modifying a problem:
 3. run/reason through all existing `cases/*.in` and expected outputs when execution is available;
 4. add edge cases when an explanation exposes a previously uncovered boundary;
 5. keep claimed time/space complexity consistent with the actual primary implementation;
-6. ensure `python3 tools/gen_all.py` would not erase the learning rewrite.
+6. ensure `python3 tools/gen_all.py` would not erase the learning rewrite;
+7. ensure statement facts still match `statement_metadata.py` and the official review baseline.
 
 ## Repository-wide optimization workflow
 

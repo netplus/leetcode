@@ -1,18 +1,33 @@
 """Reviewed analysis and implementation registry for all practice problems.
 
-The week modules deliberately keep each problem's explanation next to its code.
-`gen_all.py` consumes this registry, so regenerating the workspace cannot turn
-completed solutions back into empty stubs.
+The week modules deliberately keep each problem's baseline explanation next to
+its code.  `pedagogy_overrides.py` adds high-touch learning rewrites one problem
+at a time.  `gen_all.py` consumes the merged registry, so regenerating the
+workspace preserves both reviewed implementations and the improved pedagogy.
 """
 
 from refined_week1 import REFINEMENTS as WEEK1
 from refined_week2 import REFINEMENTS as WEEK2
 from refined_week3 import REFINEMENTS as WEEK3
 from refined_week4 import REFINEMENTS as WEEK4
+from pedagogy_overrides import PEDAGOGY_OVERRIDES
 from chinese_titles import validate_title_coverage
 
 
 REFINEMENTS = {**WEEK1, **WEEK2, **WEEK3, **WEEK4}
+
+# Apply only explicitly reviewed learning rewrites.  Recompute key_points so
+# legacy consumers remain consistent when an override changes model/steps/proof.
+for num, patch in PEDAGOGY_OVERRIDES.items():
+    if num not in REFINEMENTS:
+        raise RuntimeError(f"pedagogy override references unknown lc{num}")
+    merged = {**REFINEMENTS[num], **patch}
+    merged["key_points"] = [
+        merged["model"],
+        "；".join(f"{i}. {step}" for i, step in enumerate(merged["steps"], 1)) + "。",
+        merged["proof"],
+    ]
+    REFINEMENTS[num] = merged
 
 
 def get_refinement(num: int) -> dict:
@@ -20,8 +35,55 @@ def get_refinement(num: int) -> dict:
     return REFINEMENTS[num]
 
 
+def _append_text_block(lines: list[str], title: str, text: str) -> None:
+    """Append a learner-facing multiline block as C++ comments."""
+    lines.append(f"// {title}")
+    for line in text.strip("\n").splitlines():
+        lines.append(f"//   {line}" if line else "//")
+
+
+def _render_visual_analysis(item: dict) -> str:
+    """Render the AGENTS.md visual -> formula -> steps learning structure."""
+    lines = [
+        "// ----------------------------------------------------------------------------",
+        f"// 解法精讲｜{item['pattern']}",
+        "//",
+    ]
+
+    _append_text_block(lines, "1. 图像直觉", item["visual"])
+    lines.append("//")
+    _append_text_block(lines, "2. 一句话核心", item["core"])
+    lines.append("//")
+    _append_text_block(lines, "3. 公式 / 不变量", item["formula"])
+
+    lines.extend(["//", "// 4. 执行步骤"])
+    for i, step in enumerate(item["steps"], 1):
+        lines.append(f"//   {i}. {step}")
+    if item.get("memory"):
+        lines.append(f"//   记忆：{item['memory']}")
+
+    lines.append("//")
+    _append_text_block(lines, "5. 为什么不会漏 / 不会重", item["proof"])
+    lines.append("//")
+    _append_text_block(lines, "6. 边界与易错点", item["pitfalls"])
+    lines.append("//")
+    _append_text_block(lines, "7. 举一反三", item["transfer"])
+
+    if item.get("advanced"):
+        lines.append("//")
+        _append_text_block(lines, "进阶优化", item["advanced"])
+
+    lines.append("// ----------------------------------------------------------------------------")
+    return "\n".join(lines)
+
+
 def render_analysis(item: dict) -> str:
-    """Render a uniform Chinese explanation block into a C++ header comment."""
+    """Render one explanation, preserving legacy format until individually reviewed."""
+    if all(item.get(field) for field in ("visual", "core", "formula")):
+        return _render_visual_analysis(item)
+
+    # Untouched problems keep their existing reviewed material.  They migrate
+    # to the richer structure only after an individual pedagogy pass.
     labels = ("思路起点", "执行逻辑", "为什么这样做")
     key_points = [
         f"//   {i}. {label}：{point}"

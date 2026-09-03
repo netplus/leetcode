@@ -12,19 +12,24 @@ from refined_week3 import REFINEMENTS as WEEK3
 from refined_week4 import REFINEMENTS as WEEK4
 from pedagogy_overrides import PEDAGOGY_OVERRIDES as INITIAL_PEDAGOGY_OVERRIDES
 from pedagogy_week1 import PEDAGOGY_WEEK1
+from pedagogy_week1_day4 import PEDAGOGY_WEEK1_DAY4
 from chinese_titles import validate_title_coverage
 
 
 REFINEMENTS = {**WEEK1, **WEEK2, **WEEK3, **WEEK4}
 
-_overlap = set(INITIAL_PEDAGOGY_OVERRIDES) & set(PEDAGOGY_WEEK1)
-if _overlap:
-    raise RuntimeError(f"duplicate pedagogy overrides: {sorted(_overlap)}")
+_PEDAGOGY_MODULES = (
+    INITIAL_PEDAGOGY_OVERRIDES,
+    PEDAGOGY_WEEK1,
+    PEDAGOGY_WEEK1_DAY4,
+)
 
-PEDAGOGY_OVERRIDES = {
-    **INITIAL_PEDAGOGY_OVERRIDES,
-    **PEDAGOGY_WEEK1,
-}
+PEDAGOGY_OVERRIDES = {}
+for module in _PEDAGOGY_MODULES:
+    overlap = set(PEDAGOGY_OVERRIDES) & set(module)
+    if overlap:
+        raise RuntimeError(f"duplicate pedagogy overrides: {sorted(overlap)}")
+    PEDAGOGY_OVERRIDES.update(module)
 
 # Apply only explicitly reviewed learning rewrites. Recompute key_points so
 # legacy consumers remain consistent when an override changes model/steps/proof.

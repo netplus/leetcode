@@ -1,90 +1,95 @@
 #!/usr/bin/env python3
-"""Compare gen_data.py desc/constraints against cached official statements.
+"""Compare effective learner-facing statements against cached official text.
 
-For every problem, extract the local `desc` and `constraints` blocks from
-gen_data.py and the official statement/constraints from tools/official/lc<N>.txt,
-then emit a compact per-problem view for semantic review.
+For every problem, render the actual metadata used by gen_all.py (official
+Chinese cache + persistent reviewed overrides) and compare it side-by-side with
+tools/official/lc<N>.txt.
 
-This does NOT auto-judge; it prepares side-by-side material. Judgement of
-"meaning-changing" vs "cosmetic" is done by the reviewer.
+This does NOT auto-judge semantic equivalence; it prepares auditable material for
+review.  Unlike the older version, it no longer compares the legacy English
+summary fields in gen_data.py, so the reviewed source is the same source that
+produces solution.cpp.
 
 Usage: python3 tools/compare_official.py [lcN ...]
 """
-import os
+from pathlib import Path
 import re
 import sys
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-OFFICIAL = os.path.join(HERE, "official")
+HERE = Path(__file__).resolve().parent
+OFFICIAL = HERE / "official"
+sys.path.insert(0, str(HERE))
+
+import gen_data  # noqa: E402
+from statement_metadata import get_statement_metadata  # noqa: E402
 
 
-def parse_gen_data():
-    """Yield (num, slug, desc, constraints) from gen_data.py."""
-    src = open(os.path.join(HERE, "gen_data.py"), encoding="utf-8").read()
-    # Each problem block starts with P(num=... and desc/constraints are triple-quoted.
-    for m in re.finditer(
-        r'P\(num=(\d+)[^)]*?name="([^"]+)"[^)]*?'
-        r'desc="""(.*?)""",\s*'
-        r'constraints="""(.*?)""",',
-        src, re.S,
-    ):
-        num, slug, desc, cons = m.groups()
-        yield int(num), slug, desc.strip(), cons.strip()
+def problems():
+    items = []
+    gen_data.build(lambda **item: items.append(item))
+    return items
 
 
 def strip_comment(block: str) -> str:
-    """Remove leading '// ' from each line of a gen_data comment block."""
+    """Remove generated C++ comment prefixes from rendered metadata."""
     lines = []
-    for ln in block.splitlines():
-        ln = re.sub(r"^\s*//\s?", "", ln)
-        lines.append(ln.rstrip())
+    for line in block.splitlines():
+        line = re.sub(r"^\s*//\s*(?:-\s*)?", "", line)
+        lines.append(line.rstrip())
     return "\n".join(lines).strip()
 
 
-def official_parts(path: str):
-    """Split official text into (statement, constraints) by the Constraints: header."""
-    txt = open(path, encoding="utf-8").read()
-    # drop first two header lines (LC-id title / slug)
-    body = txt.split("\n\n", 1)[1] if "\n\n" in txt else txt
-    m = re.split(r"\n\s*Constraints?\s*:?\s*\n", body, flags=re.I)
-    if len(m) == 2:
-        stmt, cons = m
+def official_parts(path: Path):
+    """Split official text into (statement, constraints) by Constraints:."""
+    text = path.read_text(encoding="utf-8")
+    body = text.split("\n\n", 1)[1] if "\n\n" in text else text
+    parts = re.split(r"\n\s*Constraints?\s*:?\s*\n", body, flags=re.I)
+    if len(parts) == 2:
+        statement, constraints = parts
     else:
-        stmt, cons = body, ""
-    # statement: cut off examples section for the core-description comparison
-    core = re.split(r"\n\s*Example\s*1\s*:", stmt, flags=re.I)[0].strip()
-    cons = re.split(r"\n\s*Follow[- ]?up", cons, flags=re.I)[0].strip()
-    return core, cons, stmt.strip()
+        statement, constraints = body, ""
+    core = re.split(r"\n\s*Example\s*1\s*:", statement, flags=re.I)[0].strip()
+    constraints = re.split(
+        r"\n\s*(?:Follow[- ]?up|Note:)\b", constraints, flags=re.I
+    )[0].strip()
+    return core, constraints
 
 
-def norm_nums(s: str):
-    """Extract comparable numeric/exponent tokens from a constraints string."""
-    s = s.replace("10^", "1e").replace("^", "")
-    return re.findall(r"-?\d+(?:\.\d+)?(?:e\d+)?|2\^\d+|31|32", s)
+def norm_nums(text: str):
+    """Extract comparable numeric/exponent tokens for quick discrepancy scans."""
+    text = text.replace("10^", "1e").replace("^", "")
+    return re.findall(r"-?\d+(?:\.\d+)?(?:e\d+)?|2\^\d+|31|32", text)
 
 
-def main():
-    only = {int(x[2:]) for x in sys.argv[1:] if x.startswith("lc")}
-    for num, slug, desc, cons in parse_gen_data():
+def main() -> None:
+    only = {int(arg[2:]) for arg in sys.argv[1:] if arg.startswith("lc")}
+    for problem in problems():
+        num = problem["num"]
         if only and num not in only:
             continue
-        path = os.path.join(OFFICIAL, f"lc{num}.txt")
-        if not os.path.exists(path):
-            print(f"### lc{num} {slug}: NO OFFICIAL CACHE\n")
+
+        path = OFFICIAL / f"lc{num}.txt"
+        if not path.exists():
+            print(f"### lc{num} {problem['name']}: NO OFFICIAL CACHE\n")
             continue
-        core, ocons, full_stmt = official_parts(path)
-        print(f"### lc{num} {slug}")
-        print("-- LOCAL desc --")
-        print(strip_comment(desc))
+
+        metadata = get_statement_metadata(problem)
+        local_desc = strip_comment(metadata["description"])
+        local_constraints = strip_comment(metadata["constraints"])
+        official_desc, official_constraints = official_parts(path)
+
+        print(f"### lc{num} {problem['name']}")
+        print("-- EFFECTIVE learner description --")
+        print(local_desc)
         print("-- OFFICIAL core statement --")
-        print(core)
-        print("-- LOCAL constraints --")
-        print(strip_comment(cons))
+        print(official_desc)
+        print("-- EFFECTIVE learner constraints --")
+        print(local_constraints)
         print("-- OFFICIAL constraints --")
-        print(ocons)
-        print("-- constraint-number sets local vs official --")
-        print("L:", norm_nums(strip_comment(cons)))
-        print("O:", norm_nums(ocons))
+        print(official_constraints)
+        print("-- constraint-number tokens learner vs official --")
+        print("L:", norm_nums(local_constraints))
+        print("O:", norm_nums(official_constraints))
         print()
 
 

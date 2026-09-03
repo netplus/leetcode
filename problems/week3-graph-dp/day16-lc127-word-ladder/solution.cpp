@@ -5,12 +5,12 @@
 // 学习进度：第 3 周 / 第 16 天
 // ----------------------------------------------------------------------------
 // 题目描述：
-// 字典 wordList 中从单词 beginWord 到 endWord 的转换序列是一个按下述规格形成的序列 beginWord -> s_1 -> s_2 -> ... ->
-// s_k：每一对相邻的单词只差一个字母。
-// 对于 1 <= i <= k 时，每个 s_i 都在 wordList 中。
+// 字典 wordList 中从单词 beginWord 到 endWord 的转换序列是一个按下述规格形成的序列 beginWord -> s_1 -> s_2 -> ... -> s_k。
+// 每一对相邻的单词只差一个字母。
+// 对于 1 <= i <= k，每个 s_i 都在 wordList 中。
 // 注意，beginWord 不需要在 wordList 中。
-// s_k == endWord 给你两个单词 beginWord 和 endWord 和一个字典 wordList，返回从 beginWord 到 endWord 的最短转换序列中的单词数目。
-// 如果不存在这样的转换序列，返回 0。
+// s_k == endWord。
+// 给你两个单词 beginWord 和 endWord 以及一个字典 wordList，返回从 beginWord 到 endWord 的最短转换序列中的单词数目；如果不存在这样的转换序列，返回 0。
 //
 // 约束与要求：
 //   - 1 <= beginWord.length <= 10
@@ -88,4 +88,3 @@ int main() {
     cout << sol.ladderLength(b, e, wl) << "\n";
     return 0;
 }
-

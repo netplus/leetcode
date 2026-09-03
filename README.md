@@ -13,6 +13,10 @@
 ├── docs/
 │   ├── patterns.md           # algorithm template cheat-sheet (one memoizable snippet per topic)
 │   ├── cpp-tips.md           # C/C++ tips, STL cheat-sheet, common pitfalls
+│   ├── problem-review.md     # 106-problem statement audit ledger
+│   ├── tricks/               # cross-problem idioms & non-obvious tricks (one file per trick)
+│   │   ├── README.md         # index of tricks
+│   │   └── sentinel.md       # sentinel / virtual-boundary idiom (LC-3, LC-560, LC-1248, ...)
 │   └── templates/solution.cpp  # reviewed-solution structure for new problems
 ├── problems/                 # one directory per problem
 │   ├── week1-arrays-strings/

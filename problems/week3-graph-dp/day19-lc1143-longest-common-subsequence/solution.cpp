@@ -1,40 +1,61 @@
 // ============================================================================
-// LC-1143: Longest Common Subsequence
-// Difficulty: Medium
-// Priority: P0
-// Week 3 / Day 19
+// LC-1143：最长公共子序列
+// 难度：中等
+// 优先级：P0（必做）
+// 学习进度：第 3 周 / 第 19 天
 // ----------------------------------------------------------------------------
-// Given two strings text1 and text2, return the length of their longest common
-// subsequence. If no common subsequence, return 0.
+// 题目描述：
+// 给定两个字符串 text1 和 text2，返回这两个字符串的最长公共子序列的长度。
+// 如果不存在公共子序列，返回 0。
+// 一个字符串的子序列是指这样一个新的字符串：它是由原字符串在不改变字符的相对顺序的情况下删除某些字符（也可以不删除任何字符）后组成的新字符串。
+// 例如，"ace" 是 "abcde" 的子序列，但 "aec" 不是 "abcde" 的子序列。
+// 两个字符串的公共子序列是这两个字符串所共同拥有的子序列。
 //
-// Constraints:
+// 约束与要求：
 //   - 1 <= text1.length, text2.length <= 1000
-//   - consist of lowercase English letters
+//   - text1 和 text2 仅由小写英文字符组成。
 //
-// Goal: O(m*n) time, O(min(m,n)) space.
+// 复杂度目标：O(m*n) 时间，O(min(m,n)) 空间。
 //
-// Local I/O format (for test.in):
-//   Line 1: text1
-//   Line 2: text2
-//   Print the LCS length.
-// Expected output for test.in: 3
+// ----------------------------------------------------------------------------
+// 解法精讲｜二维序列 DP + 一维滚动
+// - 核心要点：
+//   1. 思路起点：dp[j] 表示当前 text1 前缀与 text2 前 j 个字符的 LCS；字符相等取左上角+1，否则取上方与左方最大。
+//   2. 执行逻辑：1. dp 初始化为 0；2. 逐个扫描 text1 字符，diagonal 保存更新前 dp[j-1]；3. 相等写 diagonal+1，不等写 max(dp[j],dp[j-1])。
+//   3. 为什么这样做：LCS 最后字符若匹配，可由去掉两字符的最优解加一；若不匹配，至少舍弃其中一侧末字符，两个子问题覆盖全部可能。
+// - 边界与易错点：一维压缩必须先保存旧 dp[j] 再更新 diagonal；dp[j-1] 已是当前行，dp[j] 尚是上一行。
+// - 举一反三：编辑距离、最长公共子串和序列对齐都从两个前缀状态推导，关键是分清左、上、左上含义。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：text1。
+//   第 2 行：text2。
+//   输出：最长公共子序列长度。
+// test.in 的预期输出：3
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     int longestCommonSubsequence(string text1, string text2) {
-        // Your implementation here.
-        return 0;
+        vector<int> dp(text2.size() + 1, 0);
+        for (char a : text1) {
+            int diagonal = 0;
+            for (int j = 1; j <= static_cast<int>(text2.size()); ++j) {
+                int oldAbove = dp[j];
+                if (a == text2[j - 1]) dp[j] = diagonal + 1;
+                else dp[j] = max(dp[j], dp[j - 1]);
+                diagonal = oldAbove;
+            }
+        }
+        return dp.back();
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

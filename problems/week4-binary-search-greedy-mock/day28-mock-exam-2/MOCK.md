@@ -1,4 +1,4 @@
-# Mock Exam 2 — 90 minutes (+ Final Review)
+# 模拟考试 2 — 90 分钟（+最终复习）
 
 **Date:** ____________   **Start:** ______   **End:** ______   **Score:** __/3
 
@@ -7,7 +7,7 @@ Rules: same as Mock 1 — no references, 90 minutes, write solutions as
 
 ---
 
-## Problem A — Rotting Oranges variant (graph / BFS, medium)
+## 题目 A — 腐烂的橘子变体（图 / BFS，中等）
 
 Given an m x n grid with 0 (empty), 1 (fresh), 2 (rotten), every minute any fresh
 orange 4-adjacent to a rotten one becomes rotten. Return the minimum number of
@@ -27,7 +27,7 @@ I/O for your a.in: line 1 = m n; next m lines = n ints each. Print the minutes, 
 
 ---
 
-## Problem B — Koko Eating Bananas variant (binary search on answer, medium)
+## 题目 B — 爱吃香蕉的珂珂变体（答案二分，中等）
 
 Koko can eat k bananas/hour. Each hour she picks one pile and eats min(k, pile)
 bananas (rest of pile stays). Return the minimum integer k such that she eats all
@@ -43,7 +43,7 @@ I/O for your b.in: line 1 = n h; line 2 = n ints. Print the minimum k.
 
 ---
 
-## Problem C — Word Break (DP, medium)
+## 题目 C — 单词拆分（DP，中等）
 
 Given a string s and a dictionary of strings wordDict, return true if s can be
 segmented into a space-separated sequence of one or more dictionary words.

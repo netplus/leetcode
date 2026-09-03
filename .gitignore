@@ -2,6 +2,7 @@
 .build/
 /tmp/
 sol
+solution
 *.o
 *.gch
 core.*

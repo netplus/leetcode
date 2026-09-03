@@ -1,48 +1,65 @@
 // ============================================================================
-// LC-14: Longest Common Prefix
-// Difficulty: Easy
-// Priority: P0
-// Week 1 / Day 5
+// LC-14：最长公共前缀
+// 难度：简单
+// 优先级：P0（必做）
+// 学习进度：第 1 周 / 第 5 天
 // ----------------------------------------------------------------------------
-// Find the longest common prefix string amongst an array of strings. If none,
-// return the empty string.
+// 题目描述：
+// 编写一个函数来查找字符串数组中的最长公共前缀。
+// 如果不存在公共前缀，返回空字符串 ""。
 //
-// Constraints:
+// 约束与要求：
 //   - 1 <= strs.length <= 200
 //   - 0 <= strs[i].length <= 200
-//   - strs[i] consists of lowercase English letters.
+//   - strs[i] 如果非空，则仅由小写英文字母组成
 //
-// Goal: O(S) where S = total characters.
+// 复杂度目标：O(S) 其中 S = 字符总数。
 //
-// Local I/O format (for test.in):
-//   Line 1: n (number of strings)
-//   Next n lines: one string each
-//   Print the longest common prefix.
-// Expected output for test.in: fl
+// ----------------------------------------------------------------------------
+// 解法精讲｜纵向扫描：逐列验证公共前缀
+// - 核心要点：
+//   1. 思路起点：公共前缀的第 i 个字符必须存在于每个字符串且都等于第一个字符串的第 i 个字符。
+//   2. 执行逻辑：1. 用第一个字符串作为候选上界；2. 逐字符与其余字符串同列比较；3. 首次越界或不等时返回此前前缀。
+//   3. 为什么这样做：首次失败位置之后不可能属于公共前缀；失败前所有列都经全部字符串验证，因此返回长度恰好最大。
+// - 边界与易错点：空字符串会在第 0 列立刻失败；不能只比较相邻两串而忽略最短长度；官方保证数组非空。
+// - 举一反三：多个对象的共同前缀/共同路径可逐段收缩候选；排序后也可只比较字典序首尾两个字符串。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：n (字符串数量)。
+//   接下来 n 行：每行一个字符串。
+//   输出：最长公共前缀。
+// test.in 的预期输出：fl
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     string longestCommonPrefix(vector<string>& strs) {
-        // Your implementation here.
-        return "";
+        const string& first = strs[0];
+        for (int i = 0; i < static_cast<int>(first.size()); ++i) {
+            for (int j = 1; j < static_cast<int>(strs.size()); ++j) {
+                if (i == static_cast<int>(strs[j].size()) || strs[j][i] != first[i]) {
+                    return first.substr(0, i);
+                }
+            }
+        }
+        return first;
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
     Solution sol;
     int n; if (!(cin >> n)) return 0;
     vector<string> strs(n);
-    for (int i = 0; i < n; ++i) cin >> strs[i];
+    string discard; getline(cin, discard);
+    for (int i = 0; i < n; ++i) getline(cin, strs[i]);
     cout << sol.longestCommonPrefix(strs) << "\n";
     return 0;
 }

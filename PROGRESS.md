@@ -30,7 +30,7 @@
 
 > Log only ❌ and ⏱ problems. Review this page before the exam.
 
-| Date | W-Day | LC# | Title | Status | Stuck point | Pattern | 2nd pass |
+| Date | W-Day | LC# | 中文标题 | Status | Stuck point | Pattern | 2nd pass |
 |------|-------|-----|-------|--------|-------------|---------|----------|
 | | | | | | | | |
 

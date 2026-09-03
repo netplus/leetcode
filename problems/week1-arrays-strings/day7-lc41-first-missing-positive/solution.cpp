@@ -1,40 +1,57 @@
 // ============================================================================
-// LC-41: First Missing Positive
-// Difficulty: Hard
-// Priority: P0
-// Week 1 / Day 7
+// LC-41：缺失的第一个正数
+// 难度：困难
+// 优先级：P0（必做）
+// 学习进度：第 1 周 / 第 7 天
 // ----------------------------------------------------------------------------
-// Given an unsorted integer array nums, return the smallest positive integer
-// not present in nums. O(n) time, O(1) auxiliary space.
+// 题目描述：
+// 给你一个未排序的整数数组 nums，请你找出其中没有出现的最小的正整数。
+// 请你实现时间复杂度为 O(n) 并且只使用常数级别额外空间的解决方案。
 //
-// Constraints:
-//   - 1 <= nums.length <= 1e5
+// 约束与要求：
+//   - 1 <= nums.length <= 10^5
 //   - -2^31 <= nums[i] <= 2^31 - 1
 //
-// Goal: O(n) time, O(1) space.
+// 复杂度目标：O(n) 时间，O(1) 空间。
 //
-// Local I/O format (for test.in):
-//   Line 1: n
-//   Line 2: n space-separated integers
-//   Print the smallest missing positive integer.
-// Expected output for test.in: 3
+// ----------------------------------------------------------------------------
+// 解法精讲｜原地哈希：把值 x 放到下标 x-1
+// - 核心要点：
+//   1. 思路起点：长度为 n 的数组若包含 1..n，则答案是 n+1；否则最小缺失正数一定在 1..n，可用数组位置充当哈希桶。
+//   2. 执行逻辑：1. 遍历每个位置并循环交换合法但未归位的值；2. 交换条件同时限制范围并防重复死循环；3. 再次扫描首个 nums[i]!=i+1 的位置。
+//   3. 为什么这样做：交换循环结束后，每个出现过的 x∈[1,n] 都被放到 x-1；因此从左到右首次不匹配的位置正是最小缺失正数。
+// - 边界与易错点：重复值时必须检查目标位置是否已有同值；0、负数和大于 n 的值忽略；不能另开集合，否则不满足 O(1) 辅助空间。
+// - 举一反三：数组值域与下标可一一映射时，可原地做桶定位，例如找重复数、缺失数和首次缺席编号。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：n。
+//   第 2 行：n 个以空格分隔的整数。
+//   输出：缺失的最小正整数。
+// test.in 的预期输出：3
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     int firstMissingPositive(vector<int>& nums) {
-        // Your implementation here.
-        return 1;
+        const int n = static_cast<int>(nums.size());
+        for (int i = 0; i < n; ++i) {
+            while (nums[i] >= 1 && nums[i] <= n && nums[nums[i] - 1] != nums[i]) {
+                swap(nums[i], nums[nums[i] - 1]);
+            }
+        }
+        for (int i = 0; i < n; ++i) {
+            if (nums[i] != i + 1) return i + 1;
+        }
+        return n + 1;
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

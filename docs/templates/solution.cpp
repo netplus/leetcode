@@ -1,42 +1,44 @@
 // ============================================================================
-// LC-{N}: {Title}
-// Difficulty: {Easy | Medium | Hard}
-// Priority: {P0 | P1}
-// Week {W} / Day {D}
+// LC-{N}：{中文标题}
+// 难度：{简单 | 中等 | 困难}
+// 优先级：{P0（必做） | P1（进阶）}
+// 学习进度：第 {W} 周 / 第 {D} 天
 // ----------------------------------------------------------------------------
-// {Problem description in English.}
+// 题目描述：
+// {用中文准确说明输入、要完成的任务和返回结果。}
 //
-// Example 1:
-//   Input:  ...
-//   Output: ...
-//   Explanation: ...
-//
-// Example 2 (optional):
-//   ...
-//
-// Constraints:
+// 约束与要求：
 //   - ...
 //
-// Goal: O(?) time, O(?) space.
+// 复杂度目标：时间 O(?)，空间 O(?)。
 //
-// Local I/O format (for test.in):
-//   {Describe how main() reads stdin and what it prints to stdout.}
-// Expected output for test.in: {expected stdout}
+// ----------------------------------------------------------------------------
+// 解法精讲｜{核心模式}
+// - 核心要点：
+//   1. 思路起点：{为什么要把原题转成这个状态、图、区间或搜索空间。}
+//   2. 执行逻辑：{状态怎样推进，关键操作按什么顺序发生。}
+//   3. 为什么这样做：{用直观因果解释为何不会漏解或误判，不必写形式化证明。}
+// - 边界与易错点：{空输入、上下界、重复值、溢出、下标与副作用。}
+// - 举一反三：{指出同一模式能迁移到哪些变体，以及条件变化后如何调整。}
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   {说明 main() 如何读取输入以及如何输出结果。}
+// test.in 的预期输出：{预期标准输出}
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     /* return type */ /* methodName */(/* params */) {
-        // Your implementation here.
-        return {};   // default; replace with the correct result
+        // 注释应解释关键状态、更新顺序和“为什么”，避免逐字翻译语句。
+        return {};
     }
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

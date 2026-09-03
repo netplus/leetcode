@@ -1,40 +1,60 @@
 // ============================================================================
-// LC-20: Valid Parentheses
-// Difficulty: Easy
-// Priority: P0
-// Week 2 / Day 12
+// LC-20：有效的括号
+// 难度：简单
+// 优先级：P0（必做）
+// 学习进度：第 2 周 / 第 12 天
 // ----------------------------------------------------------------------------
-// Given a string s containing just the characters '(', ')', '{', '}', '[' and
-// ']', determine if the input string is valid (brackets correctly matched and
-// closed in the correct order).
+// 题目描述：
+// 给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串 s，判断字符串是否有效。
+// 有效字符串需满足：左括号必须用相同类型的右括号闭合。
+// 左括号必须以正确的顺序闭合。
+// 每个右括号都有一个对应的相同类型的左括号。
 //
-// Constraints:
-//   - 1 <= s.length <= 1e4
-//   - s consists of parentheses-type characters only
+// 约束与要求：
+//   - 1 <= s.length <= 10^4
+//   - s 仅由括号 '()[]{}' 组成
 //
-// Goal: O(n) time, O(n) space.
+// 复杂度目标：O(n) 时间，O(n) 空间。
 //
-// Local I/O format (for test.in):
-//   Line 1: the string s
-//   Print 1 if valid, else 0.
-// Expected output for test.in: 1
+// ----------------------------------------------------------------------------
+// 解法精讲｜栈匹配嵌套括号
+// - 核心要点：
+//   1. 思路起点：左括号开启一个尚未完成的结构，右括号必须关闭最近开启且同类型的结构，正符合栈的后进先出。
+//   2. 执行逻辑：1. 左括号压栈；2. 右括号检查栈非空且栈顶类型匹配后弹出；3. 扫描完要求栈为空。
+//   3. 为什么这样做：每个右括号只可能与最近未闭合左括号配对；局部匹配并弹栈维持剩余前缀的待闭合序列，最终为空即全部合法。
+// - 边界与易错点：只有类型相同还不够，顺序也必须正确；遇右括号时先判空；扫描结束有残余左括号同样非法。
+// - 举一反三：编译器语法检查、标签嵌套、路径回退和表达式求值都利用栈保存未完成上下文。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：字符串 s。
+//   输出：有效时输出 1，否则输出 0。
+// test.in 的预期输出：1
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     bool isValid(string s) {
-        // Your implementation here.
-        return false;
+        stack<char> openings;
+        for (char c : s) {
+            if (c == '(' || c == '[' || c == '{') {
+                openings.push(c);
+                continue;
+            }
+            if (openings.empty()) return false;
+            const char expected = (c == ')') ? '(' : (c == ']') ? '[' : '{';
+            if (openings.top() != expected) return false;
+            openings.pop();
+        }
+        return openings.empty();
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

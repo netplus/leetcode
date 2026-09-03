@@ -1,39 +1,55 @@
 // ============================================================================
-// LC-62: Unique Paths
-// Difficulty: Medium
-// Priority: P0
-// Week 3 / Day 19
+// LC-62：不同路径
+// 难度：中等
+// 优先级：P0（必做）
+// 学习进度：第 3 周 / 第 19 天
 // ----------------------------------------------------------------------------
-// A robot at the top-left corner of an m x n grid moves only right or down.
-// Return the number of possible unique paths to the bottom-right corner.
+// 题目描述：
+// 一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为 “Start”）。
+// 机器人每次只能向下或者向右移动一步。
+// 机器人试图达到网格的右下角（在下图中标记为 “Finish”）。
+// 问总共有多少条不同的路径？
 //
-// Constraints:
+// 约束与要求：
 //   - 1 <= m, n <= 100
-//   - answer fits in a 32-bit int (test inputs guaranteed)
+//   - 题目数据保证答案小于等于 2 * 10^9
 //
-// Goal: O(m*n) time, O(n) space.
+// 复杂度目标：O(m*n) 时间，O(n) 空间。
 //
-// Local I/O format (for test.in):
-//   Line 1: m n
-//   Print the number of unique paths.
-// Expected output for test.in: 28
+// ----------------------------------------------------------------------------
+// 解法精讲｜网格路径 DP：二维依赖压缩为一维
+// - 核心要点：
+//   1. 思路起点：到达格子 (r,c) 只能从上方或左方；一维 dp[c] 在更新前表示上方路径数，dp[c-1] 表示本行左方路径数。
+//   2. 执行逻辑：1. 第一行所有 dp 初始化为 1；2. 逐行从 c=1 更新 dp[c]+=dp[c-1]；3. 最后一列即终点方案数。
+//   3. 为什么这样做：更新顺序从左到右确保两个转移来源分别仍是旧上方与新左方；按行归纳后 dp 精确表示当前行各格路径数。
+// - 边界与易错点：边界第一行/列只有一种走法；一维压缩时遍历方向由依赖决定；官方保证答案不超过 2e9。
+// - 举一反三：网格 DP 的空间压缩要画出依赖箭头；若依赖右下方，遍历方向需相应反转。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：m n。
+//   输出：不同路径数量。
+// test.in 的预期输出：28
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     int uniquePaths(int m, int n) {
-        // Your implementation here.
-        return 0;
+        vector<int> dp(n, 1);
+        for (int row = 1; row < m; ++row) {
+            for (int col = 1; col < n; ++col) {
+                dp[col] += dp[col - 1];
+            }
+        }
+        return dp[n - 1];
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

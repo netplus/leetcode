@@ -19,8 +19,16 @@ CFLAGS   := -std=c11 -O2 -Wall -Wextra
 SRCS := $(shell find problems -name 'solution.cpp' -o -name 'solution.c' 2>/dev/null)
 BINS := $(patsubst %.cpp,%,$(patsubst %.c,%,$(SRCS)))
 
-.PHONY: all clean list help pch
+.PHONY: all clean list help pch verify-meta verify
 all: $(BINS)
+
+verify-meta:
+	@python3 tools/gen_review_report.py --check
+	@python3 tools/sync_plan_titles.py --check
+	@python3 tools/check_learning_metadata.py
+
+verify: verify-meta all
+	@$(MAKE) --no-print-directory judge-all
 
 pch:
 	@mkdir -p .build
@@ -59,6 +67,7 @@ help:
 	@echo "  make judge-w1        judge all of Week 1   (w1..w4)"
 	@echo "  make judge-d1        judge Day 1 across weeks (d1..d28)"
 	@echo "  make status          which problems are implemented vs still stub"
+	@echo "  make verify          metadata audit + compile + all multi-case judges"
 	@echo "  make clean           clean"
 
 # ---------------------------------------------------------------------------

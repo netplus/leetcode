@@ -1,40 +1,55 @@
 // ============================================================================
-// LC-55: Jump Game
-// Difficulty: Medium
-// Priority: P0
-// Week 4 / Day 24
+// LC-55：跳跃游戏
+// 难度：中等
+// 优先级：P0（必做）
+// 学习进度：第 4 周 / 第 24 天
 // ----------------------------------------------------------------------------
-// You are at index 0 of nums; nums[i] is the maximum jump length from i. Return
-// true if you can reach the last index.
+// 题目描述：
+// 给你一个非负整数数组 nums，你最初位于数组的第一个下标。
+// 数组中的每个元素代表你在该位置可以跳跃的最大长度。
+// 判断你是否能够到达最后一个下标，如果可以，返回 true；否则，返回 false。
 //
-// Constraints:
-//   - 1 <= nums.length <= 1e4
-//   - 0 <= nums[i] <= 1e5
+// 约束与要求：
+//   - 1 <= nums.length <= 10^4
+//   - 0 <= nums[i] <= 10^5
 //
-// Goal: O(n) time, O(1) space (greedy).
+// 复杂度目标：O(n) 时间，O(1) 空间（贪心）。
 //
-// Local I/O format (for test.in):
-//   Line 1: n
-//   Line 2: n space-separated integers
-//   Print 1 if reachable, else 0.
-// Expected output for test.in: 1
+// ----------------------------------------------------------------------------
+// 解法精讲｜贪心维护最远可达位置
+// - 核心要点：
+//   1. 思路起点：扫描到位置 i 时，只要 i 不超过当前 farthest，它就是可达的，并可把最远范围扩展到 i+nums[i]。
+//   2. 执行逻辑：1. farthest 从 0 开始；2. 若 i>farthest 立即失败；3. 更新 farthest=max(farthest,i+nums[i])，覆盖末尾即可成功。
+//   3. 为什么这样做：不变量是 [0,farthest] 中每个位置可由某条路径到达；从任一可达 i 跳跃会扩充这一连续可达前缀，遇到间隙则任何更后位置都不可达。
+// - 边界与易错点：无需关心具体路径；i+nums[i] 可用 long long 计算以适应更大约束；长度 1 直接可达。
+// - 举一反三：区间覆盖型跳跃问题常把许多具体方案压缩成“当前层能到的最远边界”。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：n。
+//   第 2 行：n 个以空格分隔的整数。
+//   输出：能到达最后一个下标时输出 1，否则输出 0。
+// test.in 的预期输出：1
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     bool canJump(vector<int>& nums) {
-        // Your implementation here.
-        return false;
+        long long farthest = 0;
+        for (int i = 0; i < static_cast<int>(nums.size()); ++i) {
+            if (i > farthest) return false;
+            farthest = max(farthest, static_cast<long long>(i) + nums[i]);
+            if (farthest >= static_cast<int>(nums.size()) - 1) return true;
+        }
+        return true;
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

@@ -1,26 +1,39 @@
 // ============================================================================
-// LC-236: Lowest Common Ancestor of a Binary Tree
-// Difficulty: Medium
-// Priority: P0
-// Week 2 / Day 11
+// LC-236：二叉树的最近公共祖先
+// 难度：中等
+// 优先级：P0（必做）
+// 学习进度：第 2 周 / 第 11 天
 // ----------------------------------------------------------------------------
-// Given a binary tree, find the lowest common ancestor (LCA) of two given
-// nodes p and q. The LCA is the lowest node that has both p and q as descendants.
+// 题目描述：
+// 给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。
+// 百度百科中最近公共祖先的定义为：“对于有根树 T 的两个节点 p、q，最近公共祖先表示为一个节点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。
+// ”
 //
-// Constraints:
-//   - number of nodes in [2, 1e5]
-//   - -1e9 <= Node.val <= 1e9
-//   - all Node.val are unique
-//   - p != q and both exist in the tree
+// 约束与要求：
+//   - 树中节点数目在范围 [2, 10^5] 内。
+//   - -10^9 <= Node.val <= 10^9
+//   - 所有 Node.val 互不相同。
+//   - p != q
+//   - p 和 q 均存在于给定的二叉树中。
 //
-// Goal: O(n) time.
+// 复杂度目标：O(n) 时间。
 //
-// Local I/O format (for test.in):
-//   Line 1: n
-//   Line 2: n level-order values (-1 = null)
-//   Line 3: p q (values of the two nodes)
-//   Print the LCA node value.
-// Expected output for test.in: 3
+// ----------------------------------------------------------------------------
+// 解法精讲｜后序 DFS：让命中信息向上汇聚
+// - 核心要点：
+//   1. 思路起点：递归返回值表示当前子树是否找到 p/q，以及能代表该命中的节点；若左右两侧都非空，当前根就是最近公共祖先。
+//   2. 执行逻辑：1. 空节点或当前命中 p/q 时直接返回；2. 递归查询左右子树；3. 两边都命中返回 root，否则返回非空一边。
+//   3. 为什么这样做：若 p/q 分居左右，当前节点是最低的汇合点；若同在一侧，该侧递归已返回其最近公共祖先；若当前就是其中一个，它作为祖先直接上报。
+// - 边界与易错点：比较节点地址而非值；题目保证 p、q 都存在且不同；函数返回的是节点指针。
+// - 举一反三：“子树返回证据，首次汇合处作决策”也用于目录公共祖先、组织树权限汇聚和树上目标集合覆盖。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：n。
+//   第 2 行：n 个层序节点值（-1 表示空节点）。
+//   第 3 行：p、q（两个节点的值）。
+//   输出：最近公共祖先节点的值。
+// test.in 的预期输出：3
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
@@ -34,7 +47,7 @@ struct TreeNode {
     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
 };
 
-static TreeNode* buildTreeLO(const vector<long long>& a) {
+[[maybe_unused]] static TreeNode* buildTreeLO(const vector<long long>& a) {
     if (a.empty() || a[0] == -1) return nullptr;
     TreeNode* root = new TreeNode((int)a[0]);
     queue<TreeNode*> q; q.push(root);
@@ -48,7 +61,7 @@ static TreeNode* buildTreeLO(const vector<long long>& a) {
     }
     return root;
 }
-static void printTree(TreeNode* root) {
+[[maybe_unused]] static void printTree(TreeNode* root) {
     // Level-order with -1 for null; trailing nulls trimmed.
     if (!root) { cout << "\n"; return; }
     queue<TreeNode*> q; q.push(root);
@@ -69,18 +82,19 @@ static TreeNode* findNode(TreeNode* root, int val) {
     return findNode(root->right, val);
 }
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
-        // Your implementation here.
-        return nullptr;
+        if (!root || root == p || root == q) return root;
+        TreeNode* left = lowestCommonAncestor(root->left, p, q);
+        TreeNode* right = lowestCommonAncestor(root->right, p, q);
+        if (left && right) return root;
+        return left ? left : right;
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

@@ -26,7 +26,7 @@ public:
 
 ### 1.2 Local main style (read stdin, call, print)
 
-See [docs/templates/solution.cpp](templates/solution.cpp) — copy this stub per problem, fill `Solution` only; `main()` is pre-written.
+See [docs/templates/solution.cpp](templates/solution.cpp) for the reviewed file structure. New problems should add statement metadata plus a refinement entry; the generator supplies the local `main()` adapter and rejects incomplete review coverage.
 
 ## 2. Custom Data Structures
 

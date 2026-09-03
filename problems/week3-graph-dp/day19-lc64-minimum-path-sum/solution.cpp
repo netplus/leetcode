@@ -1,42 +1,59 @@
 // ============================================================================
-// LC-64: Minimum Path Sum
-// Difficulty: Medium
-// Priority: P0
-// Week 3 / Day 19
+// LC-64：最小路径和
+// 难度：中等
+// 优先级：P0（必做）
+// 学习进度：第 3 周 / 第 19 天
 // ----------------------------------------------------------------------------
-// Given an m x n grid of non-negative numbers, find a path from top-left to
-// bottom-right which minimizes the sum of numbers along the path (move only right
-// or down). Return the minimum sum.
+// 题目描述：
+// 给定一个包含非负整数的 m x n 网格 grid，请找出一条从左上角到右下角的路径，使得路径上的数字总和为最小。
+// 说明：每次只能向下或者向右移动一步。
 //
-// Constraints:
-//   - m == grid.length, n == grid[i].length
+// 约束与要求：
+//   - m == grid.length
+//   - n == grid[i].length
 //   - 1 <= m, n <= 200
 //   - 0 <= grid[i][j] <= 200
 //
-// Goal: O(m*n) time, O(n) space.
+// 复杂度目标：O(m*n) 时间，O(n) 空间。
 //
-// Local I/O format (for test.in):
-//   Line 1: m n
-//   Next m lines: n space-separated integers per row
-//   Print the minimum path sum.
-// Expected output for test.in: 7
+// ----------------------------------------------------------------------------
+// 解法精讲｜网格最短路径 DP：滚动一行
+// - 核心要点：
+//   1. 思路起点：dp[c] 表示到当前行第 c 列的最小路径和；更新时从上方旧 dp[c] 与左方新 dp[c-1] 中取较小者再加当前格。
+//   2. 执行逻辑：1. dp[0]=0，其余设为无穷作为虚拟边界；2. 逐行从左到右更新；3. 返回最后一列。
+//   3. 为什么这样做：每条到当前格的路径最后一步必来自上或左；两来源的最优子结构成立，取小并加固定格值即当前最优。
+// - 边界与易错点：左上角需要能从虚拟 dp[0] 正确进入，本实现每行对 col=0 单独处理；遍历方向不能反。
+// - 举一反三：二维最值路径、编辑距离和 LCS 都可以在明确旧行/新行依赖后压缩空间。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：m n。
+//   接下来 m 行：n 个以空格分隔的整数。
+//   输出：最小路径和。
+// test.in 的预期输出：7
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     int minPathSum(vector<vector<int>>& grid) {
-        // Your implementation here.
-        return 0;
+        const int cols = static_cast<int>(grid[0].size());
+        vector<int> dp(cols, INT_MAX);
+        dp[0] = 0;
+        for (const auto& row : grid) {
+            for (int col = 0; col < cols; ++col) {
+                if (col == 0) dp[col] = dp[col] + row[col];
+                else dp[col] = min(dp[col], dp[col - 1]) + row[col];
+            }
+        }
+        return dp[cols - 1];
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

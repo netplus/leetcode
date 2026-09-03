@@ -1,4 +1,4 @@
-# Mock Exam 1 — 90 minutes
+# 模拟考试 1 — 90 分钟
 
 **Date:** ____________   **Start:** ______   **End:** ______   **Score:** __/3
 
@@ -11,7 +11,7 @@ problems. Run with `g++ -std=c++17 -O2 exam1_a.cpp -o a && ./a < a.in`.
 
 ---
 
-## Problem A — 3Sum Closest (array / two-pointer, medium)
+## 题目 A — 最接近的三数之和（数组 / 双指针，中等）
 
 Given an integer array nums of length n and an integer target, find three
 integers in nums whose sum is closest to target. Return the sum. Assume each
@@ -27,7 +27,7 @@ I/O for your a.in: line 1 = n target; line 2 = n ints. Print the closest sum.
 
 ---
 
-## Problem B — Copy List with Random Pointer (linked list, hand-written, medium)
+## 题目 B — 复制带随机指针的链表（链表 / 手写数据结构，中等）
 
 A linked list of length n is given such that each node contains an additional
 random pointer, which could point to any node in the list, or null. Construct a
@@ -48,7 +48,7 @@ index, or -1).
 
 ---
 
-## Problem C — House Robber III (tree DP, medium)
+## 题目 C — 打家劫舍 III（树形 DP，中等）
 
 The thief has found himself a new place for his thievery. There is only one
 entrance to the area, called "root". Besides the root, each house has one and

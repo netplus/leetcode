@@ -7,7 +7,7 @@ in the same directory and times themselves.
 import os
 
 
-MOCK1 = """# Mock Exam 1 — 90 minutes
+MOCK1 = """# 模拟考试 1 — 90 分钟
 
 **Date:** ____________   **Start:** ______   **End:** ______   **Score:** __/3
 
@@ -20,7 +20,7 @@ problems. Run with `g++ -std=c++17 -O2 exam1_a.cpp -o a && ./a < a.in`.
 
 ---
 
-## Problem A — 3Sum Closest (array / two-pointer, medium)
+## 题目 A — 最接近的三数之和（数组 / 双指针，中等）
 
 Given an integer array nums of length n and an integer target, find three
 integers in nums whose sum is closest to target. Return the sum. Assume each
@@ -36,7 +36,7 @@ I/O for your a.in: line 1 = n target; line 2 = n ints. Print the closest sum.
 
 ---
 
-## Problem B — Copy List with Random Pointer (linked list, hand-written, medium)
+## 题目 B — 复制带随机指针的链表（链表 / 手写数据结构，中等）
 
 A linked list of length n is given such that each node contains an additional
 random pointer, which could point to any node in the list, or null. Construct a
@@ -57,7 +57,7 @@ index, or -1).
 
 ---
 
-## Problem C — House Robber III (tree DP, medium)
+## 题目 C — 打家劫舍 III（树形 DP，中等）
 
 The thief has found himself a new place for his thievery. There is only one
 entrance to the area, called "root". Besides the root, each house has one and
@@ -87,7 +87,7 @@ the maximum amount.
 - [ ] Log wrong answers to `notes/` and update `PROGRESS.md` mock-exam row.
 """
 
-MOCK2 = """# Mock Exam 2 — 90 minutes (+ Final Review)
+MOCK2 = """# 模拟考试 2 — 90 分钟（+最终复习）
 
 **Date:** ____________   **Start:** ______   **End:** ______   **Score:** __/3
 
@@ -96,7 +96,7 @@ Rules: same as Mock 1 — no references, 90 minutes, write solutions as
 
 ---
 
-## Problem A — Rotting Oranges variant (graph / BFS, medium)
+## 题目 A — 腐烂的橘子变体（图 / BFS，中等）
 
 Given an m x n grid with 0 (empty), 1 (fresh), 2 (rotten), every minute any fresh
 orange 4-adjacent to a rotten one becomes rotten. Return the minimum number of
@@ -116,7 +116,7 @@ I/O for your a.in: line 1 = m n; next m lines = n ints each. Print the minutes, 
 
 ---
 
-## Problem B — Koko Eating Bananas variant (binary search on answer, medium)
+## 题目 B — 爱吃香蕉的珂珂变体（答案二分，中等）
 
 Koko can eat k bananas/hour. Each hour she picks one pile and eats min(k, pile)
 bananas (rest of pile stays). Return the minimum integer k such that she eats all
@@ -132,7 +132,7 @@ I/O for your b.in: line 1 = n h; line 2 = n ints. Print the minimum k.
 
 ---
 
-## Problem C — Word Break (DP, medium)
+## 题目 C — 单词拆分（DP，中等）
 
 Given a string s and a dictionary of strings wordDict, return true if s can be
 segmented into a space-separated sequence of one or more dictionary words.

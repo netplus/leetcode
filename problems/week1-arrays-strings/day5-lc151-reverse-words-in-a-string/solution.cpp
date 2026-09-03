@@ -1,40 +1,65 @@
 // ============================================================================
-// LC-151: Reverse Words in a String
-// Difficulty: Medium
-// Priority: P1
-// Week 1 / Day 5
+// LC-151：反转字符串中的单词
+// 难度：中等
+// 优先级：P1（进阶）
+// 学习进度：第 1 周 / 第 5 天
 // ----------------------------------------------------------------------------
-// Given an input string s, reverse the order of the words. A word is a
-// sequence of non-space characters. Return a string of the words in reverse
-// order separated by a single space, with no leading/trailing spaces.
+// 题目描述：
+// 给你一个字符串 s，请你反转字符串中单词的顺序。
+// 单词是由非空格字符组成的字符串。
+// s 中使用至少一个空格将字符串中的单词分隔开。
+// 返回单词顺序颠倒且单词之间用单个空格连接的结果字符串。
+// 注意：输入字符串 s 中可能会存在前导空格、尾随空格或者单词间的多个空格。
+// 返回的结果字符串中，单词间应当仅用单个空格分隔，且不包含任何额外的空格。
 //
-// Constraints:
-//   - 1 <= s.length <= 1e4
-//   - s contains printable ASCII letters, digits, spaces.
+// 约束与要求：
+//   - 1 <= s.length <= 10^4
+//   - s 包含英文大小写字母、数字和空格 ' '
+//   - s 中至少存在一个单词
 //
-// Goal: O(n) time, O(1) extra (in-place).
+// 复杂度目标：O(n) 时间，O(1) 额外空间（原地）。
 //
-// Local I/O format (for test.in):
-//   Line 1: the whole string s (may have leading/trailing/multiple spaces)
-//   Print the reversed, single-space-joined words.
-// Expected output for test.in: blue is sky the
+// ----------------------------------------------------------------------------
+// 解法精讲｜整体反转 + 原地压缩 + 单词复原
+// - 核心要点：
+//   1. 思路起点：整体反转可把单词顺序颠倒，但也会反转单词内部；随后边扫描边压缩空格，并逐个反转单词恢复其字符顺序。
+//   2. 执行逻辑：1. 反转整个字符串；2. read/write 双指针原地跳过多余空格并复制单词；3. 每复制完一个单词就反转该段，最后截断字符串。
+//   3. 为什么这样做：整体反转后词序已正确；压缩阶段仅删除冗余空格，段内再反转恢复每个原单词，因此结果恰是逆序单词且仅用单空格分隔。
+// - 边界与易错点：本地输入必须整行读取；write 始终不超过 read，覆盖不会破坏未读字符；全空格输入会截断为空串。
+// - 举一反三：“整体变换后局部修复”也用于数组块旋转、按单词翻转和无需额外缓冲区的重排。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：完整字符串 s（可含前导、尾随或连续空格）。
+//   输出：反转单词顺序后、以单个空格连接的字符串。
+// test.in 的预期输出：blue is sky the
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     string reverseWords(string s) {
-        // Your implementation here.
-        return "";
-    }
+        reverse(s.begin(), s.end());
+        int read = 0, write = 0;
+        const int n = static_cast<int>(s.size());
+        while (read < n) {
+            while (read < n && s[read] == ' ') ++read;
+            if (read == n) break;
+            if (write > 0) s[write++] = ' ';
 
+            const int wordStart = write;
+            while (read < n && s[read] != ' ') s[write++] = s[read++];
+            reverse(s.begin() + wordStart, s.begin() + write);
+        }
+        s.resize(write);
+        return s;
+    }
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

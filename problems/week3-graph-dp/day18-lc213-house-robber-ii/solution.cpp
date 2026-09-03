@@ -1,40 +1,62 @@
 // ============================================================================
-// LC-213: House Robber II
-// Difficulty: Medium
-// Priority: P0
-// Week 3 / Day 18
+// LC-213：打家劫舍 II
+// 难度：中等
+// 优先级：P0（必做）
+// 学习进度：第 3 周 / 第 18 天
 // ----------------------------------------------------------------------------
-// Same as House Robber but the houses are arranged in a circle (first and last
-// are adjacent). Return the maximum amount you can rob without alerting police.
+// 题目描述：
+// 你是一个专业的小偷，计划偷窃沿街的房屋，每间房内都藏有一定的现金。
+// 这个地方所有的房屋都围成一圈，这意味着第一个房屋和最后一个房屋是紧挨着的。
+// 同时，相邻的房屋装有相互连通的防盗系统，如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警。
+// 给定一个代表每个房屋存放金额的非负整数数组，计算你在不触动警报装置的情况下，今晚能够偷窃到的最高金额。
 //
-// Constraints:
+// 约束与要求：
 //   - 1 <= nums.length <= 100
 //   - 0 <= nums[i] <= 1000
 //
-// Goal: O(n) time, O(1) space.
+// 复杂度目标：O(n) 时间，O(1) 空间。
 //
-// Local I/O format (for test.in):
-//   Line 1: n
-//   Line 2: n space-separated integers
-//   Print the maximum amount.
-// Expected output for test.in: 3
+// ----------------------------------------------------------------------------
+// 解法精讲｜环形 DP：拆成两个互斥线性区间
+// - 核心要点：
+//   1. 思路起点：首尾相邻，任何合法方案不可能同时选二者；完整最优必属于“不选尾”或“不选首”两类之一。
+//   2. 执行逻辑：1. 单元素直接返回；2. 分别求区间 [0,n-2] 与 [1,n-1] 的线性打家劫舍；3. 返回两者最大值。
+//   3. 为什么这样做：两种区间覆盖所有合法方案：若选首则一定不选尾，属于第一类；若不选首则属于第二类。每类内部由线性 DP 精确求优。
+// - 边界与易错点：n=1 时两个区间会无效，必须特判；区间端点采用闭区间并保持一致。
+// - 举一反三：环形约束常通过枚举首元素少量状态来断环，例如环形染色、环上相邻选择和状态机 DP。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：n。
+//   第 2 行：n 个以空格分隔的整数。
+//   输出：可获得的最大金额。
+// test.in 的预期输出：3
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
-public:
-    // TODO: implement
-    int rob(vector<int>& nums) {
-        // Your implementation here.
-        return 0;
+    static int robRange(const vector<int>& nums, int left, int right) {
+        int previous2 = 0, previous1 = 0;
+        for (int i = left; i <= right; ++i) {
+            int current = max(previous1, previous2 + nums[i]);
+            previous2 = previous1;
+            previous1 = current;
+        }
+        return previous1;
     }
 
+public:
+    int rob(vector<int>& nums) {
+        if (nums.size() == 1) return nums[0];
+        return max(robRange(nums, 0, static_cast<int>(nums.size()) - 2),
+                   robRange(nums, 1, static_cast<int>(nums.size()) - 1));
+    }
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

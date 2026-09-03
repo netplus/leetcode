@@ -1,40 +1,54 @@
 // ============================================================================
-// LC-283: Move Zeroes
-// Difficulty: Easy
-// Priority: P1
-// Week 1 / Day 2
+// LC-283：移动零
+// 难度：简单
+// 优先级：P1（进阶）
+// 学习进度：第 1 周 / 第 2 天
 // ----------------------------------------------------------------------------
-// Given an integer array nums, move all 0s to the end while maintaining the
-// relative order of the non-zero elements. Do this in-place.
+// 题目描述：
+// 给定一个数组 nums，编写一个函数将所有 0 移动到数组的末尾，同时保持非零元素的相对顺序。
+// 请注意，必须在不复制数组的情况下原地对数组进行操作。
 //
-// Constraints:
-//   - 1 <= nums.length <= 1e4
+// 约束与要求：
+//   - 1 <= nums.length <= 10^4
 //   - -2^31 <= nums[i] <= 2^31 - 1
 //
-// Goal: O(n) time, O(1) space.
+// 复杂度目标：O(n) 时间，O(1) 空间。
 //
-// Local I/O format (for test.in):
-//   Line 1: n
-//   Line 2: n space-separated integers
-//   Print the array after moving zeroes (space-separated).
-// Expected output for test.in: 1 3 12 0 0
+// ----------------------------------------------------------------------------
+// 解法精讲｜快慢指针：稳定压缩
+// - 核心要点：
+//   1. 思路起点：write 指向下一个非零元素应写入的位置，read 扫描全部元素；交换能把非零项稳定地压到前缀。
+//   2. 执行逻辑：1. write 从 0 开始；2. read 遇非零就与 write 交换并递增 write；3. 扫描结束后零自然位于后缀。
+//   3. 为什么这样做：第 read 次迭代后，[0,write) 恰为原数组已扫描部分的全部非零元素且相对顺序不变；交换出去的只能是零或元素自身。
+// - 边界与易错点：必须原地操作且保持非零相对顺序；write==read 时可跳过交换，但直接 swap 同样正确。
+// - 举一反三：稳定删除指定值、数组去重、按条件压缩都可抽象成 read 负责筛选、write 负责落位。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：n。
+//   第 2 行：n 个以空格分隔的整数。
+//   输出：移动零之后的数组，元素以空格分隔。
+// test.in 的预期输出：1 3 12 0 0
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     void moveZeroes(vector<int>& nums) {
-        // Your implementation here.
-        return ;
+        int write = 0;
+        for (int read = 0; read < static_cast<int>(nums.size()); ++read) {
+            if (nums[read] != 0) {
+                swap(nums[write], nums[read]);
+                ++write;
+            }
+        }
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

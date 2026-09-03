@@ -1,42 +1,61 @@
 // ============================================================================
-// LC-153: Find Minimum in Rotated Sorted Array
-// Difficulty: Medium
-// Priority: P1
-// Week 4 / Day 22
+// LC-153：寻找旋转排序数组中的最小值
+// 难度：中等
+// 优先级：P1（进阶）
+// 学习进度：第 4 周 / 第 22 天
 // ----------------------------------------------------------------------------
-// Given a rotated sorted array of distinct values, return the minimum element.
-// O(log n) runtime.
+// 题目描述：
+// 已知一个长度为 n 的数组，预先按照升序排列，经由 1 到 n 次旋转后，得到输入数组。
+// 例如，原数组 nums = [0,1,2,4,5,6,7] 在变化后可能得到：若旋转 4 次，则可以得到 [4,5,6,7,0,1,2] 若旋转 7 次，则可以得到 [0,1,2,4,5,6,7]
+// 注意，数组 [a[0], a[1], a[2], ..., a[n-1]] 旋转一次的结果为数组 [a[n-1], a[0], a[1], a[2], ..., a[n-2]]。
+// 给你一个元素值互不相同的数组 nums，它原来是一个升序排列的数组，并按上述情形进行了多次旋转。
+// 请你找出并返回数组中的最小元素。
+// 你必须设计一个时间复杂度为 O(log n) 的算法解决此问题。
 //
-// Constraints:
+// 约束与要求：
 //   - n == nums.length
 //   - 1 <= n <= 5000
 //   - -5000 <= nums[i] <= 5000
-//   - all values unique
+//   - nums 中的所有整数互不相同
+//   - nums 原来是一个升序排序的数组，并进行了 1 至 n 次旋转
 //
-// Goal: O(log n) time.
+// 复杂度目标：O(log n) 时间。
 //
-// Local I/O format (for test.in):
-//   Line 1: n
-//   Line 2: n space-separated integers
-//   Print the minimum.
-// Expected output for test.in: 1
+// ----------------------------------------------------------------------------
+// 解法精讲｜旋转数组最小值二分：与右端比较
+// - 核心要点：
+//   1. 思路起点：在闭区间 [left,right] 内，若 nums[mid]>nums[right]，最小值必在 mid 右侧；否则 mid 可能就是最小值，应保留。
+//   2. 执行逻辑：1. left/right 包住全部候选；2. 比较 middle 与 right；3. 大于则 left=middle+1，否则 right=middle；相遇即答案。
+//   3. 为什么这样做：右端属于旋转后段；mid 大于右端说明 mid 尚在前段，断点在右侧；否则 mid 已在后段且其左侧仍可能含最小值。
+// - 边界与易错点：更新 right=middle 而不是 middle-1，因为 middle 可能是答案；题目元素互异；循环用 left<right。
+// - 举一反三：旋转边界、峰值和第一个坏版本都可视为在真假两段之间寻找转折点。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：n。
+//   第 2 行：n 个以空格分隔的整数。
+//   输出：最小值。
+// test.in 的预期输出：1
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     int findMin(vector<int>& nums) {
-        // Your implementation here.
-        return 0;
+        int left = 0, right = static_cast<int>(nums.size()) - 1;
+        while (left < right) {
+            int middle = left + (right - left) / 2;
+            if (nums[middle] > nums[right]) left = middle + 1;
+            else right = middle;
+        }
+        return nums[left];
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

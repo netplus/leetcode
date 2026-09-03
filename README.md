@@ -1,6 +1,6 @@
-# LeetCode Mid–Senior Leveling Exam Practice Workspace (C/C++ · 4-Week Sprint)
+# LeetCode Mid–Senior Leveling Exam Practice Workspace (C++ · 4-Week Sprint)
 
-> Goal: close algorithm gaps in 4 weeks for a company-internal leveling exam. Starting from 0 problems. Progress is organized by topic × day; every problem compiles and runs locally for verification.
+> Goal: close algorithm gaps in 4 weeks for a company-internal leveling exam. Progress is organized by topic × day; all 106 problems include reviewed statements, detailed Chinese analysis, commented reference implementations, and local multi-case verification.
 
 ## Directory Layout
 
@@ -12,7 +12,7 @@
 ├── docs/
 │   ├── patterns.md           # algorithm template cheat-sheet (one memoizable snippet per topic)
 │   ├── cpp-tips.md           # C/C++ tips, STL cheat-sheet, common pitfalls
-│   └── templates/solution.cpp  # the canonical stub every problem starts from
+│   └── templates/solution.cpp  # reviewed-solution structure for new problems
 ├── problems/                 # one directory per problem
 │   ├── week1-arrays-strings/
 │   ├── week2-list-tree-bsp/
@@ -26,17 +26,18 @@
 
 1. **Read (5 min):** understand input/output, edge cases, constraints. If no idea, check the hint in `PLAN.md`.
 2. **Sketch (10 min):** write 3 sentences of approach + complexity in the file header comment. If still stuck, read the matching section in `docs/patterns.md`.
-3. **Implement (25 min):** fill in the `Solution` method only — `main()` is already complete. C++ with STL; hand-write linked-list / tree / union-find structs.
+3. **Implement (25 min):** first write your own `Solution`, then compare it with the reviewed implementation in `solution.cpp`. C++17 with STL; linked-list / tree / union-find structures are included locally.
 4. **Verify (5 min):** `make lc<N>` (or `make w1d1`) compiles and runs, feeding `test.in`. Compare against the "Expected output" in the file header.
 5. **Review (5 min):** for problems you got stuck on or ran over time, write a note in `notes/` — what you got stuck on, what the pattern is.
 
 > Total ~50 min per problem. Finish all P0 first, then P1.
 
-## How This Workspace Is Graded
+## Reviewed Solution Contract
 
-- Each `solution.cpp` ships **empty** — you implement the `Solution` method only.
-- `main()` is pre-written to read `test.in` and call your method, so once implemented, `make lc<N>` produces the expected output.
-- I (Claude) judge a submission by: compiling it (`g++ -std=c++17 -Wall -Wextra`), running it against `test.in`, and checking the output matches the "Expected output for test.in" line in the header — plus reviewing correctness, complexity, and edge cases.
+- Every `solution.cpp` contains a complete LeetCode-compatible `Solution` class plus a local `main()` adapter.
+- Each header presents the title, statement, constraints, complexity goal, local I/O contract, and expected output in Chinese, then explains the core logic through its starting viewpoint, execution flow, and intuitive reason, followed by pitfalls and transfer to related patterns. English source metadata remains internal to the generator for cross-checking only.
+- `tools/refined_week1.py` through `tools/refined_week4.py` are the canonical implementation sources. `python3 tools/gen_all.py` regenerates reviewed solutions; it no longer emits empty stubs.
+- [docs/problem-review.md](docs/problem-review.md) is the 106-problem statement audit ledger. Local validation compiles with `g++ -std=c++17 -O2 -Wall -Wextra` and runs every `cases/*.in` fixture.
 
 ## Priority & Numbering
 
@@ -48,7 +49,7 @@
 
 - Directory: `problems/weekN-topic/dayN-lcNUM-short-name/`
 - Files: `solution.cpp` (or `solution.c`) + `test.in`
-- Every file header follows the template in [docs/templates/solution.cpp](docs/templates/solution.cpp) — problem description, constraints, I/O format, expected output all in English.
+- Every file follows [docs/templates/solution.cpp](docs/templates/solution.cpp): all learner-facing statement metadata, analysis, and key comments are in Chinese; API names and complexity notation retain their standard spellings.
 - For linked-list / tree problems, the `ListNode` / `TreeNode` struct is defined above `Solution`, and `main()` builds the structure from stdin (level-order for trees, with `-1` for null).
 
 ## Local Commands
@@ -64,8 +65,9 @@ make clean          # remove build artifacts
 
 > After adding or removing problems, regenerate the convenience targets:
 > `python3 tools/gen_targets.py` (the Makefile `include`s `tools/_targets.mk`).
-> To regenerate all stubs from scratch: `python3 tools/gen_all.py` (re-emits every
-> `solution.cpp` and `test.in`, plus the two mock packages).
+> To regenerate all reviewed solutions: `python3 tools/gen_all.py` (re-emits every
+> `solution.cpp` and `test.in`, plus the two mock packages; coverage validation
+> fails if any problem lacks review data).
 
 ## Multi-case judging
 
@@ -105,13 +107,14 @@ see [tools/CASES_SPEC.md](tools/CASES_SPEC.md).
 make judge-all      # judge every problem; roll-up summary ("N / 106 pass")
 make judge-w1       # judge all of Week 1   (w1, w2, w3, w4)
 make judge-d1       # judge Day 1 across weeks (d1 .. d28)
-make status         # which problems are implemented vs still empty stub
+make status         # which problems have reviewed implementations vs fallback stubs
 make pch            # build a shared precompiled header (.build/) — speeds up builds
+make verify         # audit ledger + compile + all multi-case judges
 make clean
 ```
 
-`make status` reads each `solution.cpp` and marks `[DONE]` (real code present) vs
-`[stub]` (still the empty template). The batch judges compile + run all cases per
+`make status` reads each `solution.cpp` and marks `[DONE]` (reviewed code present) vs
+`[stub]` (an explicit not-yet-reviewed fallback). The batch judges compile + run all cases per
 problem and print a summary; exit code 0 only if every problem fully passes.
 
 > **Tip:** run `make pch` once after a fresh checkout. It precompiles

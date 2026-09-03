@@ -1,40 +1,55 @@
 // ============================================================================
-// LC-53: Maximum Subarray
-// Difficulty: Medium
-// Priority: P0
-// Week 1 / Day 1
+// LC-53：最大子数组和
+// 难度：中等
+// 优先级：P0（必做）
+// 学习进度：第 1 周 / 第 1 天
 // ----------------------------------------------------------------------------
-// Given an integer array nums, find the subarray with the largest sum, and
-// return its sum.
+// 题目描述：
+// 给你一个整数数组 nums，请你找出一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。
+// 子数组是数组中的一个连续部分。
 //
-// Constraints:
-//   - 1 <= nums.length <= 1e5
-//   - -1e4 <= nums[i] <= 1e4
+// 约束与要求：
+//   - 1 <= nums.length <= 10^5
+//   - -10^4 <= nums[i] <= 10^4
 //
-// Goal: O(n) time, O(1) space (Kadane).
+// 复杂度目标：O(n) 时间，O(1) 空间（Kadane）。
 //
-// Local I/O format (for test.in):
-//   Line 1: n
-//   Line 2: n space-separated integers
-//   Print the maximum subarray sum.
-// Expected output for test.in: 6
+// ----------------------------------------------------------------------------
+// 解法精讲｜Kadane 动态规划：保留最优后缀
+// - 核心要点：
+//   1. 思路起点：令 current 表示“必须以当前位置结尾”的最大子数组和；它只能选择单独从当前数开始，或接在前一个最优后缀之后。
+//   2. 执行逻辑：1. 用首元素初始化 current 与 best；2. 更新 current=max(nums[i], current+nums[i])；3. 用 current 更新全局 best。
+//   3. 为什么这样做：所有以 i 结尾的连续子数组，要么只含 nums[i]，要么由某个以 i-1 结尾的子数组延伸；保留其中最大者并对所有终点取最大即为答案。
+// - 边界与易错点：不能把初值设为 0，否则全负数组会错误地选择空子数组；题目要求非空连续子数组。
+// - 举一反三：该“必须以 i 结尾”的状态定义可迁移到最大乘积子数组、最长递增连续段以及带一次操作的子数组 DP。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：n。
+//   第 2 行：n 个以空格分隔的整数。
+//   输出：最大子数组和。
+// test.in 的预期输出：6
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     int maxSubArray(vector<int>& nums) {
-        // Your implementation here.
-        return 0;
+        int current = nums[0];
+        int best = nums[0];
+        for (int i = 1; i < static_cast<int>(nums.size()); ++i) {
+            // 旧后缀为负时会拖累当前元素，此时从当前位置重新开始。
+            current = max(nums[i], current + nums[i]);
+            best = max(best, current);
+        }
+        return best;
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

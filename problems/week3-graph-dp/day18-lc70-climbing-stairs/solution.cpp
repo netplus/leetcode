@@ -1,38 +1,55 @@
 // ============================================================================
-// LC-70: Climbing Stairs
-// Difficulty: Easy
-// Priority: P0
-// Week 3 / Day 18
+// LC-70：爬楼梯
+// 难度：简单
+// 优先级：P0（必做）
+// 学习进度：第 3 周 / 第 18 天
 // ----------------------------------------------------------------------------
-// You are climbing a staircase taking 1 or 2 steps at a time. Return the number
-// of distinct ways to reach the top (step n).
+// 题目描述：
+// 假设你正在爬楼梯。
+// 需要 n 阶你才能到达楼顶。
+// 每次你可以爬 1 或 2 个台阶。
+// 你有多少种不同的方法可以爬到楼顶呢？
 //
-// Constraints:
+// 约束与要求：
 //   - 1 <= n <= 45
 //
-// Goal: O(n) time, O(1) space.
+// 复杂度目标：O(n) 时间，O(1) 空间。
 //
-// Local I/O format (for test.in):
-//   Line 1: n
-//   Print the number of ways.
-// Expected output for test.in: 3
+// ----------------------------------------------------------------------------
+// 解法精讲｜线性 DP：斐波那契状态压缩
+// - 核心要点：
+//   1. 思路起点：到第 i 阶的最后一步只能来自 i-1 或 i-2，因此 ways[i]=ways[i-1]+ways[i-2]。
+//   2. 执行逻辑：1. 设置 ways(1)=1、ways(2)=2；2. 用两个变量滚动到 n；3. 每步计算 next 后整体前移。
+//   3. 为什么这样做：两种最后一步互斥且覆盖全部走法；若较小台阶计数正确，相加就得到当前台阶全部方案，归纳成立。
+// - 边界与易错点：n=1 需直接返回；状态含义是“到达第 i 阶”而非剩余步数；官方 n 范围使 int 足够。
+// - 举一反三：只依赖固定前几项的 DP 都可用滚动变量压缩，如铺砖、解码和线性递推序列。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：n。
+//   输出：方案数。
+// test.in 的预期输出：3
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     int climbStairs(int n) {
-        // Your implementation here.
-        return 0;
+        if (n <= 2) return n;
+        int previous2 = 1, previous1 = 2;
+        for (int step = 3; step <= n; ++step) {
+            int current = previous1 + previous2;
+            previous2 = previous1;
+            previous1 = current;
+        }
+        return previous1;
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

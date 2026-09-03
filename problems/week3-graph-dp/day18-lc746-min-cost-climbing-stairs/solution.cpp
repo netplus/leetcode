@@ -1,41 +1,56 @@
 // ============================================================================
-// LC-746: Min Cost Climbing Stairs
-// Difficulty: Easy
-// Priority: P1
-// Week 3 / Day 18
+// LC-746：使用最小花费爬楼梯
+// 难度：简单
+// 优先级：P1（进阶）
+// 学习进度：第 3 周 / 第 18 天
 // ----------------------------------------------------------------------------
-// Given an array cost where cost[i] is the cost of step i, you can start at
-// index 0 or 1, and each step you can climb 1 or 2 steps. Return the minimum cost
-// to reach the top (past the last index).
+// 题目描述：
+// 给你一个整数数组 cost，其中 cost[i] 是从楼梯第 i 个台阶向上爬需要支付的费用。
+// 一旦你支付此费用，即可选择向上爬一个或者两个台阶。
+// 你可以选择从下标为 0 或下标为 1 的台阶开始爬楼梯。
+// 请你计算并返回达到楼梯顶部的最低花费。
 //
-// Constraints:
+// 约束与要求：
 //   - 2 <= cost.length <= 1000
 //   - 0 <= cost[i] <= 999
 //
-// Goal: O(n) time, O(1) space.
+// 复杂度目标：O(n) 时间，O(1) 空间。
 //
-// Local I/O format (for test.in):
-//   Line 1: n
-//   Line 2: n space-separated integers
-//   Print the minimum cost.
-// Expected output for test.in: 15
+// ----------------------------------------------------------------------------
+// 解法精讲｜线性 DP：到达台阶的最低成本
+// - 核心要点：
+//   1. 思路起点：付费发生在离开当前台阶；到达下一位置时，可从前一阶或前两阶跳来，取累计成本更小的一条。
+//   2. 执行逻辑：1. previous2/previous1 表示到达前两个位置的最低成本；2. 对 i=2..n 计算 min(previous1+cost[i-1],previous2+cost[i-2])；3. dp[n] 即越过楼顶的成本。
+//   3. 为什么这样做：到达 i 的最后一跳只可能从 i-1 或 i-2，且相应必须支付出发台阶费用；两类覆盖全部路径并可取各自最优。
+// - 边界与易错点：可从 0 或 1 开始，所以初始到达成本都为 0；目标位置是 n 而不是 n-1。
+// - 举一反三：“把动作成本放在边上”能帮助澄清路径 DP 的状态与转移，适用于最小跳跃代价和网格路径。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：n。
+//   第 2 行：n 个以空格分隔的整数。
+//   输出：最小花费。
+// test.in 的预期输出：15
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     int minCostClimbingStairs(vector<int>& cost) {
-        // Your implementation here.
-        return 0;
+        int previous2 = 0, previous1 = 0;
+        for (int i = 2; i <= static_cast<int>(cost.size()); ++i) {
+            int current = min(previous1 + cost[i - 1], previous2 + cost[i - 2]);
+            previous2 = previous1;
+            previous1 = current;
+        }
+        return previous1;
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

@@ -1,40 +1,60 @@
 // ============================================================================
-// LC-128: Longest Consecutive Sequence
-// Difficulty: Medium
-// Priority: P0
-// Week 1 / Day 7
+// LC-128：最长连续序列
+// 难度：中等
+// 优先级：P0（必做）
+// 学习进度：第 1 周 / 第 7 天
 // ----------------------------------------------------------------------------
-// Given an unsorted array of integers nums, return the length of the longest
-// consecutive elements sequence. O(n) time.
+// 题目描述：
+// 给定一个未排序的整数数组 nums，找出数字连续的最长序列（不要求序列元素在原数组中连续）的长度。
+// 请你设计并实现时间复杂度为 O(n) 的算法解决此问题。
 //
-// Constraints:
-//   - 0 <= nums.length <= 1e5
-//   - -1e9 <= nums[i] <= 1e9
+// 约束与要求：
+//   - 0 <= nums.length <= 10^5
+//   - -10^9 <= nums[i] <= 10^9
 //
-// Goal: O(n) time, O(n) space.
+// 复杂度目标：O(n) 时间，O(n) 空间。
 //
-// Local I/O format (for test.in):
-//   Line 1: n
-//   Line 2: n space-separated integers
-//   Print the longest consecutive sequence length.
-// Expected output for test.in: 4
+// ----------------------------------------------------------------------------
+// 解法精讲｜哈希集合 + 只从序列起点扩展
+// - 核心要点：
+//   1. 思路起点：把所有值放入集合；只有 x-1 不存在时，x 才是某条连续序列的起点，从它向上计数。
+//   2. 执行逻辑：1. 建立去重集合；2. 跳过存在前驱的值；3. 从每个起点连续查询 x+1 并更新最大长度。
+//   3. 为什么这样做：每条连续序列只从最小值启动一次，且其中每个数只在这次扩展中被访问，因此总工作量是 O(n) 而非表面的双层 O(n^2)。
+// - 边界与易错点：重复值由 set 消除；空数组答案为 0；若值域允许 INT 边界，递增前要避免溢出。
+// - 举一反三：哈希集合中“只从无前驱节点启动”也用于链式编号、连续日期段和隐式图连通分量扫描。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：n。
+//   第 2 行：n 个以空格分隔的整数。
+//   输出：最长连续序列的长度。
+// test.in 的预期输出：4
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     int longestConsecutive(vector<int>& nums) {
-        // Your implementation here.
-        return 0;
+        unordered_set<int> values(nums.begin(), nums.end());
+        int best = 0;
+        for (int x : values) {
+            if (x != INT_MIN && values.count(x - 1)) continue;
+            int length = 1;
+            int current = x;
+            while (current != INT_MAX && values.count(current + 1)) {
+                ++current;
+                ++length;
+            }
+            best = max(best, length);
+        }
+        return best;
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

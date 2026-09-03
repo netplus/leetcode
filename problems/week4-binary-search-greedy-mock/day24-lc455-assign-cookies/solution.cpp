@@ -1,43 +1,60 @@
 // ============================================================================
-// LC-455: Assign Cookies
-// Difficulty: Easy
-// Priority: P0
-// Week 4 / Day 24
+// LC-455：分发饼干
+// 难度：简单
+// 优先级：P0（必做）
+// 学习进度：第 4 周 / 第 24 天
 // ----------------------------------------------------------------------------
-// Assume you are an awesome parent giving cookies to children. Each child i has a
-// greed factor g[i]; each cookie j has size s[j]. A child is content if s[j] >= g[i].
-// Maximize the number of content children (one cookie per child).
+// 题目描述：
+// 假设你是一位很棒的家长，想要给你的孩子们一些小饼干。
+// 但是，每个孩子最多只能给一块饼干。
+// 对每个孩子 i，都有一个胃口值 g[i] _，这是能让孩子们满足胃口的饼干的最小尺寸；并且每块饼干 j，都有一个尺寸 s[j] _。
+// 如果 s[j] >= g[i]，我们可以将这个饼干 j 分配给孩子 i，这个孩子会得到满足。
+// 你的目标是满足尽可能多的孩子，并输出这个最大数值。
 //
-// Constraints:
-//   - 1 <= g.length <= 3e4
-//   - 0 <= s.length <= 3e4
+// 约束与要求：
+//   - 1 <= g.length <= 3 * 10^4
+//   - 0 <= s.length <= 3 * 10^4
 //   - 1 <= g[i], s[j] <= 2^31 - 1
 //
-// Goal: O(g log g + s log s) time.
+// 复杂度目标：O(g log g + s log s) 时间。
 //
-// Local I/O format (for test.in):
-//   Line 1: ng ns
-//   Line 2: ng space-separated integers (g)
-//   Line 3: ns space-separated integers (s)
-//   Print the number of content children.
-// Expected output for test.in: 1
+// ----------------------------------------------------------------------------
+// 解法精讲｜排序 + 双指针贪心匹配
+// - 核心要点：
+//   1. 思路起点：按需求和饼干尺寸升序；每块饼干若能满足当前最容易满足的孩子就分配，否则只能跳过该饼干。
+//   2. 执行逻辑：1. 排序 g 与 s；2. child/cookie 从最小端开始；3. 饼干足够则两者都前进，否则只前进 cookie。
+//   3. 为什么这样做：最小饼干若连当前最小需求都不满足，则不能满足任何剩余孩子；若能满足，把它给当前孩子不会挤占更大饼干，交换论证不劣。
+// - 边界与易错点：每个孩子最多一块、每块饼干最多给一人；排序会修改输入；任一数组为空自然返回 0。
+// - 举一反三：有序资源匹配中优先满足最小需求，是区间调度、船救人等贪心交换论证的常见形态。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：ng ns。
+//   第 2 行：ng 个以空格分隔的整数 (g)。
+//   第 3 行：ns 个以空格分隔的整数 (s)。
+//   输出：可以满足的孩子数量。
+// test.in 的预期输出：1
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     int findContentChildren(vector<int>& g, vector<int>& s) {
-        // Your implementation here.
-        return 0;
+        sort(g.begin(), g.end());
+        sort(s.begin(), s.end());
+        int child = 0, cookie = 0;
+        while (child < static_cast<int>(g.size()) && cookie < static_cast<int>(s.size())) {
+            if (s[cookie] >= g[child]) ++child;
+            ++cookie;
+        }
+        return child;
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

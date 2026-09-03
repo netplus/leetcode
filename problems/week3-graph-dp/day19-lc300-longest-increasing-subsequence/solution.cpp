@@ -1,40 +1,55 @@
 // ============================================================================
-// LC-300: Longest Increasing Subsequence
-// Difficulty: Medium
-// Priority: P0
-// Week 3 / Day 19
+// LC-300：最长递增子序列
+// 难度：中等
+// 优先级：P0（必做）
+// 学习进度：第 3 周 / 第 19 天
 // ----------------------------------------------------------------------------
-// Given an integer array nums, return the length of the longest strictly
-// increasing subsequence.
+// 题目描述：
+// 给你一个整数数组 nums，找到其中最长严格递增子序列的长度。
+// 子序列是由数组派生而来的序列，删除（或不删除）数组中的元素而不改变其余元素的顺序。
+// 例如，[3,6,2,7] 是数组 [0,3,1,6,2,2,7] 的子序列。
 //
-// Constraints:
+// 约束与要求：
 //   - 1 <= nums.length <= 2500
-//   - -1e4 <= nums[i] <= 1e4
+//   - -10^4 <= nums[i] <= 10^4
 //
-// Goal: O(n log n) time, O(n) space.
+// 复杂度目标：O(n log n) 时间，O(n) 空间。
 //
-// Local I/O format (for test.in):
-//   Line 1: n
-//   Line 2: n space-separated integers
-//   Print the LIS length.
-// Expected output for test.in: 4
+// ----------------------------------------------------------------------------
+// 解法精讲｜耐心排序 tails + 二分
+// - 核心要点：
+//   1. 思路起点：tails[len-1] 保存长度为 len 的递增子序列所能拥有的最小结尾；结尾越小，未来越容易继续延长。
+//   2. 执行逻辑：1. 遍历每个 x；2. lower_bound 找第一个 >=x 的结尾并替换；3. 若不存在则追加，tails 长度即答案。
+//   3. 为什么这样做：替换不会改变已存在的子序列长度，只会让该长度结尾更优；追加说明 x 大于所有结尾，能把最长序列延长一位。
+// - 边界与易错点：严格递增必须用 lower_bound；tails 本身不一定是一条真实 LIS，只保证长度与最优结尾；若需还原序列要记录前驱。
+// - 举一反三：“为每个长度保留最优结尾”是状态支配压缩，可推广到俄罗斯套娃、最长链和二维偏序。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：n。
+//   第 2 行：n 个以空格分隔的整数。
+//   输出：最长递增子序列长度。
+// test.in 的预期输出：4
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     int lengthOfLIS(vector<int>& nums) {
-        // Your implementation here.
-        return 0;
+        vector<int> tails;
+        for (int value : nums) {
+            auto position = lower_bound(tails.begin(), tails.end(), value);
+            if (position == tails.end()) tails.push_back(value);
+            else *position = value;
+        }
+        return static_cast<int>(tails.size());
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

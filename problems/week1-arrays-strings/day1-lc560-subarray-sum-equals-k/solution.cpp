@@ -1,41 +1,61 @@
 // ============================================================================
-// LC-560: Subarray Sum Equals K
-// Difficulty: Medium
-// Priority: P0
-// Week 1 / Day 1
+// LC-560：和为 K 的子数组
+// 难度：中等
+// 优先级：P0（必做）
+// 学习进度：第 1 周 / 第 1 天
 // ----------------------------------------------------------------------------
-// Given an array of integers nums and an integer k, return the total number of
-// continuous subarrays whose sum equals k.
+// 题目描述：
+// 给你一个整数数组 nums 和一个整数 k，请你统计并返回该数组中和为 k 的子数组的个数。
+// 子数组是数组中元素的连续非空序列。
 //
-// Constraints:
-//   - 1 <= nums.length <= 2e4
+// 约束与要求：
+//   - 1 <= nums.length <= 2 * 10^4
 //   - -1000 <= nums[i] <= 1000
-//   - -1e7 <= k <= 1e7
+//   - -10^7 <= k <= 10^7
 //
-// Goal: O(n) time, O(n) space.
+// 复杂度目标：O(n) 时间，O(n) 空间。
 //
-// Local I/O format (for test.in):
-//   Line 1: n k
-//   Line 2: n space-separated integers
-//   Print the count of subarrays summing to k.
-// Expected output for test.in: 2
+// ----------------------------------------------------------------------------
+// 解法精讲｜前缀和 + 频次哈希表
+// - 核心要点：
+//   1. 思路起点：若当前位置前缀和为 prefix，需要寻找此前出现过多少个 prefix-k；每个这样的前缀都对应一个和为 k 的连续子数组。
+//   2. 执行逻辑：1. 先记录空前缀 0 出现一次；2. 累加当前前缀和并把 prefix-k 的频次加入答案；3. 最后再增加 prefix 的频次。
+//   3. 为什么这样做：区间 [j,i] 的和等于 pre[i+1]-pre[j]；所以 pre[j]=pre[i+1]-k 与目标子数组一一对应，频次累加既不漏也不重。
+// - 边界与易错点：必须保存频次而非仅判断存在；初始化 count[0]=1 才能统计从下标 0 开始的区间；含负数时普通滑动窗口不成立。
+// - 举一反三：凡是“连续区间 + 指定和/模数/奇偶性”，都可尝试把区间条件改写成两个前缀状态之差。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：n k。
+//   第 2 行：n 个以空格分隔的整数。
+//   输出：和等于 k 的连续子数组数量。
+// test.in 的预期输出：2
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     int subarraySum(vector<int>& nums, int k) {
-        // Your implementation here.
-        return 0;
-    }
+        unordered_map<long long, int> frequency;
+        frequency.reserve(nums.size() * 2 + 1);
+        frequency[0] = 1;  // 空前缀：让从 0 开始的合法子数组也能被统计
 
+        long long prefix = 0;
+        int answer = 0;
+        for (int value : nums) {
+            prefix += value;
+            auto it = frequency.find(prefix - k);
+            if (it != frequency.end()) answer += it->second;
+            ++frequency[prefix];
+        }
+        return answer;
+    }
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

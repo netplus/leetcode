@@ -1,42 +1,60 @@
 // ============================================================================
-// LC-11: Container With Most Water
-// Difficulty: Medium
-// Priority: P0
-// Week 1 / Day 2
+// LC-11：盛最多水的容器
+// 难度：中等
+// 优先级：P0（必做）
+// 学习进度：第 1 周 / 第 2 天
 // ----------------------------------------------------------------------------
-// You are given an array of non-negative integers height where each represents
-// a vertical line. Find two lines that with the x-axis form a container holding
-// the most water. Return the maximum area.
+// 题目描述：
+// 给定一个长度为 n 的整数数组 height。
+// 有 n 条垂线，第 i 条线的两个端点是 (i, 0) 和 (i, height[i])。
+// 找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。
+// 返回容器可以储存的最大水量。
+// 说明：你不能倾斜容器。
 //
-// Constraints:
+// 约束与要求：
 //   - n == height.length
-//   - 2 <= n <= 1e5
-//   - 0 <= height[i] <= 1e4
+//   - 2 <= n <= 10^5
+//   - 0 <= height[i] <= 10^4
 //
-// Goal: O(n) time, O(1) space.
+// 复杂度目标：O(n) 时间，O(1) 空间。
 //
-// Local I/O format (for test.in):
-//   Line 1: n
-//   Line 2: n space-separated integers
-//   Print the maximum area.
-// Expected output for test.in: 49
+// ----------------------------------------------------------------------------
+// 解法精讲｜相向双指针：移动短板
+// - 核心要点：
+//   1. 思路起点：容器面积由宽度乘以两端较短高度决定；宽度每步必减，只有移动短板才可能提高有效高度。
+//   2. 执行逻辑：1. 左右指针置于两端；2. 计算当前面积并更新最大值；3. 移动高度较小的一端；相等时移动任一端。
+//   3. 为什么这样做：若左边更短，保留左边并移动右边只会让宽度变小且高度上限仍不超过左边，因此不可能更优；排除左端是安全的，右端同理。
+// - 边界与易错点：面积计算要先转 long long；不要凭较高板移动；两板间宽度是 right-left。
+// - 举一反三：当目标由两个端点中的瓶颈决定时，可寻找类似的支配关系，例如接雨水双指针和有序配对。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：n。
+//   第 2 行：n 个以空格分隔的整数。
+//   输出：最大面积。
+// test.in 的预期输出：49
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     int maxArea(vector<int>& height) {
-        // Your implementation here.
-        return 0;
+        int left = 0, right = static_cast<int>(height.size()) - 1;
+        long long best = 0;
+        while (left < right) {
+            const int limitingHeight = min(height[left], height[right]);
+            best = max(best, 1LL * limitingHeight * (right - left));
+            if (height[left] <= height[right]) ++left;  // 只有短板变化才可能改善
+            else --right;
+        }
+        return static_cast<int>(best);
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

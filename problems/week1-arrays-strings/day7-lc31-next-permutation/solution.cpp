@@ -1,40 +1,63 @@
 // ============================================================================
-// LC-31: Next Permutation
-// Difficulty: Medium
-// Priority: P1
-// Week 1 / Day 7
+// LC-31：下一个排列
+// 难度：中等
+// 优先级：P1（进阶）
+// 学习进度：第 1 周 / 第 7 天
 // ----------------------------------------------------------------------------
-// Rearrange nums into the next lexicographically greater permutation in-place.
-// If no greater permutation exists, rearrange into the lowest possible order.
+// 题目描述：
+// 整数数组的一个排列就是将其所有成员以序列或线性顺序排列。
+// 例如，arr = [1,2,3]，以下这些都可以视作 arr 的排列：[1,2,3]、[1,3,2]、[3,1,2]、[2,3,1]。
+// 整数数组的下一个排列是指其整数的下一个字典序更大的排列。
+// 更正式地，如果数组的所有排列根据其字典顺序从小到大排列在一个容器中，那么数组的下一个排列就是在这个有序容器中排在它后面的那个排列。
+// 如果不存在下一个更大的排列，那么这个数组必须重排为字典序最小的排列（即，其元素按升序排列）。
+// 例如，arr = [1,2,3] 的下一个排列是 [1,3,2]。
+// 类似地，arr = [2,3,1] 的下一个排列是 [3,1,2]。
+// 而 arr = [3,2,1] 的下一个排列是 [1,2,3]，因为 [3,2,1] 不存在一个字典序更大的排列。
+// 给你一个整数数组 nums，找出 nums 的下一个排列。
+// 必须原地修改，只允许使用额外常数空间。
 //
-// Constraints:
+// 约束与要求：
 //   - 1 <= nums.length <= 100
 //   - 0 <= nums[i] <= 100
 //
-// Goal: O(n) time, O(1) space.
+// 复杂度目标：O(n) 时间，O(1) 空间。
 //
-// Local I/O format (for test.in):
-//   Line 1: n
-//   Line 2: n space-separated integers
-//   Print the next permutation (space-separated).
-// Expected output for test.in: 1 3 2
+// ----------------------------------------------------------------------------
+// 解法精讲｜字典序下一排列：最小幅度增大
+// - 核心要点：
+//   1. 思路起点：从右侧找最长非递增后缀；其前一位 pivot 是最右侧还能增大的位置。用后缀中最小的较大值替换，再把后缀变为最小升序。
+//   2. 执行逻辑：1. 从右向左找 nums[i]<nums[i+1]；2. 若存在 pivot，从右找首个大于它的值并交换；3. 反转 pivot 之后的非递增后缀。
+//   3. 为什么这样做：选择最右 pivot 保证更高位不变；右侧首个较大值是可用的最小增量；反转后缀使剩余部分最小，所以得到紧邻的下一字典序。
+// - 边界与易错点：完全非递增时不存在更大排列，整段反转成最小序；比较必须严格以正确处理重复值；要求原地常量空间。
+// - 举一反三：排列前驱、下一个更大数字和组合枚举都可从“确定最右可变位，再让后缀极值化”推导。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：n。
+//   第 2 行：n 个以空格分隔的整数。
+//   输出：下一个排列，元素以空格分隔。
+// test.in 的预期输出：1 3 2
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     void nextPermutation(vector<int>& nums) {
-        // Your implementation here.
-        return ;
+        int pivot = static_cast<int>(nums.size()) - 2;
+        while (pivot >= 0 && nums[pivot] >= nums[pivot + 1]) --pivot;
+        if (pivot >= 0) {
+            int successor = static_cast<int>(nums.size()) - 1;
+            while (nums[successor] <= nums[pivot]) --successor;
+            swap(nums[pivot], nums[successor]);
+        }
+        reverse(nums.begin() + pivot + 1, nums.end());
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

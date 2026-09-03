@@ -1,43 +1,67 @@
 // ============================================================================
-// LC-684: Redundant Connection
-// Difficulty: Medium
-// Priority: P0
-// Week 3 / Day 17
+// LC-684：冗余连接
+// 难度：中等
+// 优先级：P0（必做）
+// 学习进度：第 3 周 / 第 17 天
 // ----------------------------------------------------------------------------
-// A tree of n nodes labeled 1..n has n-1 edges; one extra edge is added creating
-// a cycle. Return the edge that can be removed so the result is a valid tree. If
-// multiple answers, return the last one in the input.
+// 题目描述：
+// 树可以看成是一个连通且无环的无向图。
+// 给定一个图，该图从一棵 n 个节点 (节点值 1～n ) 的树中添加一条边后获得。
+// 添加的边的两个不同顶点编号在 1 到 n 中间，且这条附加的边不属于树中已存在的边。
+// 图的信息记录于长度为 n 的二维数组 edges，edges[i] = [a_i, b_i] 表示图中在 ai 和 bi 之间存在一条边。
+// 请找出一条可以删去的边，删除后可使得剩余部分是一个有着 n 个节点的树。
+// 如果有多个答案，则返回数组 edges 中最后出现的那个。
 //
-// Constraints:
-//   - number of nodes n in [3, 1000]
-//   - edges.length == n
+// 约束与要求：
+//   - n == edges.length
+//   - 3 <= n <= 1000
 //   - edges[i].length == 2
-//   - 1 <= ai < bi <= ai, all pairs unique
+//   - 1 <= ai < bi <= edges.length
+//   - ai != bi
+//   - edges 中无重复元素
+//   - 给定的图是连通的
 //
-// Goal: O(n * alpha(n)) union-find.
+// 复杂度目标：O(n * alpha(n)) 并查集。
 //
-// Local I/O format (for test.in):
-//   Line 1: m (number of edges == n)
-//   Next m lines: u v
-//   Print the redundant edge "u v".
-// Expected output for test.in: 1 4
+// ----------------------------------------------------------------------------
+// 解法精讲｜并查集检测无向图首条成环边
+// - 核心要点：
+//   1. 思路起点：树加入一条额外边后恰有一个环；按输入顺序加边，若某边两端已在同一集合，它就是使路径闭合的冗余边。
+//   2. 执行逻辑：1. 初始化每个节点为独立集合；2. 依次 find 两端；3. 根相同则返回当前边，否则合并。
+//   3. 为什么这样做：在当前边之前，并查集准确表示已有边的连通性；同根说明已有路径连接两端，再加当前边必成环，异根则不会成环。
+// - 边界与易错点：节点编号是 1..n；题目要求返回输入中最后可删的合法边，而单额外边场景下按序检测到的成环边正满足。
+// - 举一反三：在线加边判环、网络布线和 Kruskal 跳过成环边都使用同一 DSU 判定。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：m (边数，等于 n)。
+//   接下来 m 行：u v。
+//   输出：冗余边 "u v"。
+// test.in 的预期输出：1 4
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     vector<int> findRedundantConnection(vector<vector<int>>& edges) {
-        // Your implementation here.
+        vector<int> parent(edges.size() + 1);
+        iota(parent.begin(), parent.end(), 0);
+        function<int(int)> find = [&](int x) {
+            return parent[x] == x ? x : parent[x] = find(parent[x]);
+        };
+        for (const auto& edge : edges) {
+            int a = find(edge[0]), b = find(edge[1]);
+            if (a == b) return edge;
+            parent[a] = b;
+        }
         return {};
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

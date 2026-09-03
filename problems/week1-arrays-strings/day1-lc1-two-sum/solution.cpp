@@ -1,56 +1,62 @@
 // ============================================================================
-// LC-1: Two Sum
-// Difficulty: Easy
-// Priority: P0
-// Week 1 / Day 1
+// LC-1：两数之和
+// 难度：简单
+// 优先级：P0（必做）
+// 学习进度：第 1 周 / 第 1 天
 // ----------------------------------------------------------------------------
-// Given an array of integers nums and an integer target, return indices of the
-// two numbers such that they add up to target.
-// Each input has exactly one solution, and you may not use the same element twice.
-// You can return the answer in any order.
+// 题目描述：
+// 给定一个整数数组 nums 和一个整数目标值 target，请你在该数组中找出和为目标值 target 的那两个整数，并返回它们的数组下标。
+// 你可以假设每种输入只会对应一个答案，并且你不能使用两次相同的元素。
+// 你可以按任意顺序返回答案。
 //
-// Constraints:
-//   - 2 <= nums.length <= 1e4
-//   - -1e9 <= nums[i] <= 1e9
-//   - exactly one valid answer exists
+// 约束与要求：
+//   - 2 <= nums.length <= 10^4
+//   - -10^9 <= nums[i] <= 10^9
+//   - -10^9 <= target <= 10^9
+//   - 只会存在一个有效答案
 //
-// Goal: O(n) time, O(n) space.
+// 复杂度目标：O(n) 时间，O(n) 空间。
 //
-// Local I/O format (for test.in):
-//   Line 1: n target
-//   Line 2: n space-separated integers
-//   Print the two indices (space-separated, ascending).
-// Expected output for test.in: 0 1
+// ----------------------------------------------------------------------------
+// 解法精讲｜哈希表：边扫描边查补数
+// - 核心要点：
+//   1. 思路起点：暴力枚举两下标是 O(n^2)；把已访问元素映射为“值 -> 下标”，当前数只需查询 target - nums[i]。
+//   2. 执行逻辑：1. 初始化空哈希表；2. 从左到右先查补数，命中就返回两个下标；3. 未命中再记录当前值。
+//   3. 为什么这样做：查询发生在插入当前元素之前，因此同一元素不会被复用；唯一解保证某次扫描到较晚下标时一定能找到较早下标。
+// - 边界与易错点：不能用 set，因为答案需要下标；重复值应用覆盖或保留任一下标均可；先插入再查询会在 target=2*x 时误用自己。
+// - 举一反三：“在线扫描 + 查询历史状态”也用于前缀和计数、Two Sum 数据流和补数配对问题。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：n target。
+//   第 2 行：n 个以空格分隔的整数。
+//   输出：两个下标，以空格分隔并升序排列。
+// test.in 的预期输出：0 1
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
-#include <unordered_map>
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     vector<int> twoSum(vector<int>& nums, int target) {
-        // Your implementation here.
+        unordered_map<int, int> indexOf;
+        indexOf.reserve(nums.size() * 2);
 
-        std::unordered_map<int,int> h;
-
-        for( int i=0;i<nums.size();++i)
-        {
-            int t = target - nums[i];
-            if(h.count(t))
-            {
-                return {h[t],i};
+        for (int i = 0; i < static_cast<int>(nums.size()); ++i) {
+            const int complement = target - nums[i];
+            auto it = indexOf.find(complement);  // 只在已经看过的元素中查找
+            if (it != indexOf.end()) {
+                return {it->second, i};
             }
-            h.insert(std::make_pair(nums[i],i));
+            indexOf[nums[i]] = i;                // 查询后插入，避免复用 nums[i]
         }
-        return {};
+        return {};  // 题目保证有唯一解；保留兜底使本地接口更健壮
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

@@ -78,7 +78,7 @@ def main():
         if os.path.exists(sol):
             with open(sol, encoding="utf-8", errors="replace") as f:
                 for line in f:
-                    mt = re.match(r'//\s*LC-\d+:\s*(.*)$', line)
+                    mt = re.match(r'//\s*LC-\d+[：:]\s*(.*)$', line)
                     if mt:
                         title = mt.group(1).strip()
                         break

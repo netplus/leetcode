@@ -1,0 +1,21 @@
+106 problems in gen_data.py
+  ok lc53 maximum-subarray
+  FAIL lc543 diameter-of-binary-tree: Expecting value: line 1 column 1 (char 0)
+  ok lc547 number-of-provinces
+  ok lc560 subarray-sum-equals-k
+  ok lc621 task-scheduler
+  ok lc684 redundant-connection
+  ok lc685 redundant-connection-ii
+  ok lc695 max-area-of-island
+  ok lc704 binary-search
+  ok lc739 daily-temperatures
+  ok lc746 min-cost-climbing-stairs
+  ok lc875 koko-eating-bananas
+  ok lc990 satisfiability-of-equality-equations
+  ok lc994 rotting-oranges
+  ok lc1011 capacity-to-ship-packages-within-d-days
+  ok lc1109 corporate-flight-bookings
+  ok lc1143 longest-common-subsequence
+  ok lc1248 count-number-of-nice-subarrays
+done: ok=17 skip=88 fail=1
+  RETRY-NEEDED lc543 diameter-of-binary-tree: Expecting value: line 1 column 1 (char 0)

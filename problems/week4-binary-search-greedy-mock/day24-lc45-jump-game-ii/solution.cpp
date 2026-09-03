@@ -1,41 +1,60 @@
 // ============================================================================
-// LC-45: Jump Game II
-// Difficulty: Medium
-// Priority: P0
-// Week 4 / Day 24
+// LC-45：跳跃游戏 II
+// 难度：中等
+// 优先级：P0（必做）
+// 学习进度：第 4 周 / 第 24 天
 // ----------------------------------------------------------------------------
-// Like Jump Game, but return the minimum number of jumps to reach the last index.
-// It is guaranteed reachable.
+// 题目描述：
+// 给定一个长度为 n 的 0 索引整数数组 nums。
+// 初始位置在下标 0。
+// 每个元素 nums[i] 表示从索引 i 向后跳转的最大长度。
+// 换句话说，如果你在索引 i 处，你可以跳转到任意 (i + j) 处：0 <= j <= nums[i] 且 i + j < n 返回到达 n - 1 的最小跳跃次数。
+// 测试用例保证可以到达 n - 1。
 //
-// Constraints:
-//   - 1 <= nums.length <= 1e4
+// 约束与要求：
+//   - 1 <= nums.length <= 10^4
 //   - 0 <= nums[i] <= 1000
-//   - reachable to last index
+//   - 题目保证可以到达 n - 1
 //
-// Goal: O(n) time, O(1) space (greedy).
+// 复杂度目标：O(n) 时间，O(1) 空间（贪心）。
 //
-// Local I/O format (for test.in):
-//   Line 1: n
-//   Line 2: n space-separated integers
-//   Print the minimum number of jumps.
-// Expected output for test.in: 2
+// ----------------------------------------------------------------------------
+// 解法精讲｜贪心分层：把一次跳跃看作 BFS 一层
+// - 核心要点：
+//   1. 思路起点：currentEnd 是当前跳数能覆盖的最远边界，farthest 是扫描这一层所有位置后下一跳能达到的最远点。
+//   2. 执行逻辑：1. 只扫描到 n-2；2. 持续更新 farthest；3. 到达 currentEnd 时必须增加一次跳跃，并把边界推进到 farthest。
+//   3. 为什么这样做：在增加下一跳前已枚举当前层所有可达起点，因此 farthest 是使用再一跳可达的最大范围；按层推进首次覆盖终点使用的跳数最少。
+// - 边界与易错点：题目保证终点可达；长度 1 答案为 0；循环不处理终点可避免到终点后多计一次。
+// - 举一反三：这种边界推进就是不显式存队列的区间 BFS，可用于最少覆盖段数和最少加油次数。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：n。
+//   第 2 行：n 个以空格分隔的整数。
+//   输出：最少跳跃次数。
+// test.in 的预期输出：2
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     int jump(vector<int>& nums) {
-        // Your implementation here.
-        return 0;
+        int jumps = 0, currentEnd = 0, farthest = 0;
+        for (int i = 0; i + 1 < static_cast<int>(nums.size()); ++i) {
+            farthest = max(farthest, i + nums[i]);
+            if (i == currentEnd) {
+                ++jumps;
+                currentEnd = farthest;
+            }
+        }
+        return jumps;
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

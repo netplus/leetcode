@@ -1,41 +1,53 @@
 // ============================================================================
-// LC-252: Meeting Rooms
-// Difficulty: Easy
-// Priority: P1
-// Week 1 / Day 6
+// LC-252：会议室
+// 难度：简单
+// 优先级：P1（进阶）
+// 学习进度：第 1 周 / 第 6 天
 // ----------------------------------------------------------------------------
-// Given an array of meeting time intervals where intervals[i] = [start, end],
-// determine if a person could attend all meetings (no overlaps).
+// 题目描述：
+// 给定一组会议时间区间 intervals，判断一个人能否参加全部会议。
+// 本地适配器把会议表示为半开区间 [start, end)；两个区间有时间重叠时，无法同时参加。
 //
-// Constraints:
-//   - 0 <= intervals.length <= 1e4
+// 约束与要求：
+//   - 0 <= intervals.length <= 10^4
 //   - intervals[i].length == 2
-//   - 0 <= start < end <= 1e6
+//   - 0 <= start < end <= 10^6
 //
-// Goal: O(m log m) time.
+// 复杂度目标：O(m log m) 时间。
 //
-// Local I/O format (for test.in):
-//   Line 1: m (number of intervals)
-//   Next m lines: start end
-//   Print 1 if can attend all (no overlap), else 0.
-// Expected output for test.in: 0
+// ----------------------------------------------------------------------------
+// 解法精讲｜按开始时间排序检测相邻冲突
+// - 核心要点：
+//   1. 思路起点：会议按开始时间排序后，若存在重叠，则当前会议必会与此前结束最晚的覆盖发生冲突；对互不重叠序列只需比较相邻项。
+//   2. 执行逻辑：1. 按起点排序；2. 从第二个会议起比较 start 与前一 end；3. start<end 时返回 false，否则全部通过。
+//   3. 为什么这样做：若每个相邻会议都满足 previous.end<=current.start，传递地所有更早会议也已结束；反之相邻检测立即发现冲突。
+// - 边界与易错点：会议通常按半开区间理解，前一场结束等于后一场开始不冲突；空或单个输入返回 true。
+// - 举一反三：排序后检查相邻关系也用于重复区间、最小时间差和区间是否互斥；求所需会议室数则改用堆或扫描线。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：m (区间数量)。
+//   接下来 m 行：start end。
+//   输出：能参加全部会议（无重叠）时输出 1，否则输出 0。
+// test.in 的预期输出：0
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     bool canAttendMeetings(vector<vector<int>>& intervals) {
-        // Your implementation here.
-        return false;
+        sort(intervals.begin(), intervals.end());
+        for (int i = 1; i < static_cast<int>(intervals.size()); ++i) {
+            if (intervals[i][0] < intervals[i - 1][1]) return false;
+        }
+        return true;
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

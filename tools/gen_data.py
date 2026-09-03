@@ -121,6 +121,7 @@ def _week1(P):
 // You can return the answer in any order.""",
       constraints="""//   - 2 <= nums.length <= 1e4
 //   - -1e9 <= nums[i] <= 1e9
+//   - -1e9 <= target <= 1e9
 //   - exactly one valid answer exists""",
       iofmt="""//   Line 1: n target
 //   Line 2: n space-separated integers
@@ -133,7 +134,7 @@ def _week1(P):
 
     P(num=560, week=1, day=1, name="subarray-sum-equals-k", title="Subarray Sum Equals K", diff="Medium", prio="P0",
       desc="""// Given an array of integers nums and an integer k, return the total number of
-// continuous subarrays whose sum equals k.""",
+// non-empty contiguous subarrays whose sum equals k.""",
       constraints="""//   - 1 <= nums.length <= 2e4
 //   - -1000 <= nums[i] <= 1000
 //   - -1e7 <= k <= 1e7""",
@@ -154,7 +155,7 @@ def _week1(P):
       iofmt="""//   Line 1: n k
 //   Line 2: n space-separated integers
 //   Print the number of nice subarrays.""",
-      expected="2", goal="O(n) time, O(n) space.",
+      expected="2", goal="O(n) time, O(1) extra space.",
       sig="int numberOfSubarrays(vector<int>& nums, int k)", retdefault="0",
       main=M_read_int_target_print_int("sol.numberOfSubarrays(a, k)"),
       testin="5 3\n1 1 2 1 1\n")
@@ -176,8 +177,10 @@ def _week1(P):
     P(num=167, week=1, day=2, name="two-sum-ii-input-array-is-sorted", title="Two Sum II - Input Array Is Sorted", diff="Medium", prio="P0",
       desc="""// Given a 1-indexed array of integers numbers that is already sorted in
 // non-decreasing order, find two numbers that add up to a specific target.
-// Return the indices (1-indexed), index1 < index2. Exactly one solution.""",
+// Return the indices (1-indexed), index1 < index2. Exactly one solution exists;
+// do not reuse one element, and use only constant extra space.""",
       constraints="""//   - 2 <= numbers.length <= 3e4
+//   - -1000 <= numbers[i], target <= 1000
 //   - numbers sorted non-decreasing
 //   - exactly one valid answer exists""",
       iofmt="""//   Line 1: n target
@@ -197,7 +200,7 @@ def _week1(P):
       iofmt="""//   Line 1: n
 //   Line 2: n space-separated integers
 //   Print each triplet "a b c" on its own line; triplets sorted, no duplicates.""",
-      expected="-1 0 1 | -1 -1 2", goal="O(n^2) time.",
+      expected="-1 -1 2 | -1 0 1", goal="O(n^2) time.",
       sig="vector<vector<int>> threeSum(vector<int>& nums)", retdefault="{}",
       main="""int main() {
     ios::sync_with_stdio(false);
@@ -214,9 +217,11 @@ def _week1(P):
       testin="6\n-1 0 1 2 -1 -4\n")
 
     P(num=11, week=1, day=2, name="container-with-most-water", title="Container With Most Water", diff="Medium", prio="P0",
-      desc="""// You are given an array of non-negative integers height where each represents
-// a vertical line. Find two lines that with the x-axis form a container holding
-// the most water. Return the maximum area.""",
+      desc="""// You are given an integer array height of length n. There are n vertical lines
+// drawn such that the two endpoints of the i-th line are (i, 0) and (i, height[i]).
+// Find two lines that together with the x-axis form a container holding the most
+// water. Return the maximum amount of water a container can store.
+// Notice that you may not slant the container.""",
       constraints="""//   - n == height.length
 //   - 2 <= n <= 1e5
 //   - 0 <= height[i] <= 1e4""",
@@ -271,13 +276,22 @@ def _week1(P):
     P(num=3, week=1, day=3, name="longest-substring-without-repeating-characters", title="Longest Substring Without Repeating Characters", diff="Medium", prio="P0",
       desc="""// Given a string s, find the length of the longest substring without
 // repeating characters.""",
-      constraints="""//   - 0 <= s.length <= 5e4
+      constraints="""//   - 0 <= s.length <= 1e5
 //   - s consists of English letters, digits, symbols and spaces.""",
       iofmt="""//   Line 1: the string s
 //   Print the length.""",
       expected="3", goal="O(n) time, O(min(alphabet,n)) space.",
       sig="int lengthOfLongestSubstring(string s)", retdefault="0",
-      main=M_read_string_print_int("sol.lengthOfLongestSubstring(s)"),
+      main="""int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    Solution sol;
+    string s;
+    getline(cin, s);
+    cout << sol.lengthOfLongestSubstring(s) << "\\n";
+    return 0;
+}
+""",
       testin="abcabcbb\n")
 
     P(num=76, week=1, day=3, name="minimum-window-substring", title="Minimum Window Substring", diff="Hard", prio="P0",
@@ -338,7 +352,7 @@ def _week1(P):
 //   Line 3: q (number of queries)
 //   Next q lines: left right
 //   Print each sum on its own line.""",
-      expected="1 -1 -3", goal="O(n) build, O(1) query.",
+      expected="1 | -1 | -3", goal="O(n) build, O(1) query.",
       sig="int sumRange(int left, int right)", retdefault="0",
       extra="""    void build(vector<int>& nums) {
         // TODO: precompute prefix sums into a member variable.
@@ -368,8 +382,9 @@ def _week1(P):
 // (LC class NumMatrix; here modeled as Solution with build() + sumRegion().)""",
       constraints="""//   - m == matrix.length, n == matrix[i].length
 //   - 1 <= m, n <= 200
-//   - -1e5 <= matrix[i][j] <= 1e5
-//   - 0 <= row1 <= row2 < m, 0 <= col1 <= col2 < n""",
+//   - -1e4 <= matrix[i][j] <= 1e4
+//   - 0 <= row1 <= row2 < m, 0 <= col1 <= col2 < n
+//   - at most 1e4 calls will be made to sumRegion""",
       iofmt="""//   Line 1: m n
 //   Next m lines: n space-separated integers
 //   Line: q (number of queries)
@@ -412,7 +427,7 @@ def _week1(P):
       iofmt="""//   Line 1: n (flights) m (bookings)
 //   Next m lines: first last seats
 //   Print n space-separated integers (seats per flight, 1-indexed).""",
-      expected="10 25 33 32 0 0 0 0 0 0", goal="O(n + m) with difference array.",
+      expected="10 55 45 25 25 0 0 0 0 0", goal="O(n + m) with difference array.",
       sig="vector<int> corpFlightBookings(vector<vector<int>>& bookings, int n)", retdefault="{}",
       main="""int main() {
     ios::sync_with_stdio(false);
@@ -471,7 +486,8 @@ def _week1(P):
     Solution sol;
     int n; if (!(cin >> n)) return 0;
     vector<string> strs(n);
-    for (int i = 0; i < n; ++i) cin >> strs[i];
+    string discard; getline(cin, discard);
+    for (int i = 0; i < n; ++i) getline(cin, strs[i]);
     cout << sol.longestCommonPrefix(strs) << "\\n";
     return 0;
 }
@@ -483,7 +499,8 @@ def _week1(P):
 // sequence of non-space characters. Return a string of the words in reverse
 // order separated by a single space, with no leading/trailing spaces.""",
       constraints="""//   - 1 <= s.length <= 1e4
-//   - s contains printable ASCII letters, digits, spaces.""",
+//   - s contains English letters, digits, and spaces
+//   - s contains at least one word""",
       iofmt="""//   Line 1: the whole string s (may have leading/trailing/multiple spaces)
 //   Print the reversed, single-space-joined words.""",
       expected="blue is sky the", goal="O(n) time, O(1) extra (in-place).",
@@ -549,16 +566,18 @@ def _week1(P):
       testin="4\n1 3\n2 6\n8 10\n15 18\n")
 
     P(num=57, week=1, day=6, name="insert-interval", title="Insert Interval", diff="Medium", prio="P1",
-      desc="""// Given a set of non-overlapping sorted intervals and a new interval, insert
-// the new interval, merging as needed. Return the resulting intervals.""",
+      desc="""// Given non-overlapping intervals sorted by start and a new interval, insert it
+// and merge as needed so the result remains sorted and non-overlapping. Closed
+// intervals sharing an endpoint count as overlapping.""",
       constraints="""//   - 0 <= intervals.length <= 1e4
+//   - intervals[i].length == 2, newInterval.length == 2
 //   - intervals sorted ascending by start, non-overlapping
 //   - 0 <= start <= end <= 1e5""",
       iofmt="""//   Line 1: m (number of intervals)
 //   Next m lines: start end
 //   Last line: start end (the new interval)
 //   Print merged intervals one per line (start end).""",
-      expected="1 5 | 6 8", goal="O(n) time.",
+      expected="1 2 | 3 10", goal="O(n) time.",
       sig="vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval)", retdefault="{}",
       main="""int main() {
     ios::sync_with_stdio(false);
@@ -704,19 +723,19 @@ def _week1(P):
 # ===========================================================================
 
 # Shared helper-source block (goes before main) for list problems.
-LIST_HELPERS = """static ListNode* buildList(const vector<int>& a) {
+LIST_HELPERS = """[[maybe_unused]] static ListNode* buildList(const vector<int>& a) {
     ListNode dummy; ListNode* tail = &dummy;
     for (int v : a) { tail->next = new ListNode(v); tail = tail->next; }
     return dummy.next;
 }
-static void printList(ListNode* h) {
+[[maybe_unused]] static void printList(ListNode* h) {
     bool first = true;
     for (ListNode* c = h; c; c = c->next) { if (!first) cout << " "; cout << c->val; first = false; }
     cout << "\\n";
 }
 """
 
-TREE_HELPERS = """static TreeNode* buildTreeLO(const vector<long long>& a) {
+TREE_HELPERS = """[[maybe_unused]] static TreeNode* buildTreeLO(const vector<long long>& a) {
     if (a.empty() || a[0] == -1) return nullptr;
     TreeNode* root = new TreeNode((int)a[0]);
     queue<TreeNode*> q; q.push(root);
@@ -730,7 +749,7 @@ TREE_HELPERS = """static TreeNode* buildTreeLO(const vector<long long>& a) {
     }
     return root;
 }
-static void printTree(TreeNode* root) {
+[[maybe_unused]] static void printTree(TreeNode* root) {
     // Level-order with -1 for null; trailing nulls trimmed.
     if (!root) { cout << "\\n"; return; }
     queue<TreeNode*> q; q.push(root);
@@ -802,7 +821,8 @@ def _week2(P):
       testin="5 2 4\n1 2 3 4 5\n")
 
     P(num=21, week=2, day=8, name="merge-two-sorted-lists", title="Merge Two Sorted Lists", diff="Easy", prio="P0",
-      desc="""// Merge two sorted linked lists and return it as a new sorted list.""",
+      desc="""// Merge two sorted linked lists by splicing their existing nodes together,
+// and return the head of the resulting sorted list.""",
       constraints="""//   - number of nodes in both lists in [0, 50]
 //   - -100 <= Node.val <= 100
 //   - both lists sorted in non-decreasing order""",
@@ -832,9 +852,11 @@ def _week2(P):
 
     P(num=160, week=2, day=8, name="intersection-of-two-linked-lists", title="Intersection of Two Linked Lists", diff="Easy", prio="P1",
       desc="""// Given the heads of two singly linked-lists, return the node at which the two
-// lists intersect. If no intersection, return null.""",
-      constraints="""//   - number of nodes in listA in [0, 3e4]
-//   - number of nodes in listB in [0, 3e4]
+// lists intersect. If no intersection, return null.
+// The full structure contains no cycle, and the linked lists must retain their
+// original structure after the function returns.""",
+      constraints="""//   - number of nodes in listA in [1, 3e4]
+//   - number of nodes in listB in [1, 3e4]
 //   - 1 <= Node.val <= 1e5
 //   - intersectVal is 0 or the value of the intersected node""",
       iofmt="""//   Line 1: na (len listA) nb (len listB) (skipA skipB ignored here)
@@ -876,7 +898,7 @@ def _week2(P):
     return 0;
 }
 """,
-      testin="5 6\n4 1 8 4 5\n5 6 1 8 4 5\n2\n")
+      testin="5 6\n4 1 8 4 5\n5 6 1 8 4 5\n3\n")
 
     # ---- Day 9: Linked List Advanced ----
     P(num=141, week=2, day=9, name="linked-list-cycle", title="Linked List Cycle", diff="Easy", prio="P0",
@@ -912,7 +934,8 @@ def _week2(P):
       testin="4 1\n3 2 0 -4\n")
 
     P(num=142, week=2, day=9, name="linked-list-cycle-ii", title="Linked List Cycle II", diff="Medium", prio="P0",
-      desc="""// Given head, return the node where the cycle begins. If no cycle, return null.""",
+      desc="""// Given head, return the node where the cycle begins. If no cycle, return null.
+// Do not modify the linked list.""",
       constraints="""//   - number of nodes in [0, 1e4]
 //   - -1e5 <= Node.val <= 1e5
 //   - pos is -1 or a valid index""",
@@ -1015,7 +1038,7 @@ def _week2(P):
     return 0;
 }
 """,
-      testin="3\n1 2 3\n")
+      testin="4\n1 -1 2 3\n")
 
     P(num=94, week=2, day=10, name="binary-tree-inorder-traversal", title="Binary Tree Inorder Traversal", diff="Easy", prio="P0",
       desc="""// Given the root of a binary tree, return the inorder traversal of its nodes'
@@ -1040,7 +1063,7 @@ def _week2(P):
     return 0;
 }
 """,
-      testin="3\n1 2 3\n")
+      testin="4\n1 -1 2 3\n")
 
     P(num=145, week=2, day=10, name="binary-tree-postorder-traversal", title="Binary Tree Postorder Traversal", diff="Easy", prio="P0",
       desc="""// Given the root of a binary tree, return the postorder traversal of its
@@ -1065,7 +1088,7 @@ def _week2(P):
     return 0;
 }
 """,
-      testin="3\n1 2 3\n")
+      testin="4\n1 -1 2 3\n")
 
     P(num=102, week=2, day=10, name="binary-tree-level-order-traversal", title="Binary Tree Level Order Traversal", diff="Medium", prio="P0",
       desc="""// Given the root of a binary tree, return the level order traversal of its
@@ -1156,7 +1179,7 @@ def _week2(P):
       iofmt="""//   Line 1: n
 //   Line 2: n space-separated integers (level order, -1 = null)
 //   Print the inverted tree's level order (-1 = null).""",
-      expected="4 2 7 1 3 6 9", goal="O(n) time.",
+      expected="4 7 2 9 6 3 1", goal="O(n) time.",
       sig="TreeNode* invertTree(TreeNode* root)", retdefault="nullptr",
       prestruct=TREENODE + TREE_HELPERS,
       main="""int main() {
@@ -1174,7 +1197,8 @@ def _week2(P):
 
     P(num=236, week=2, day=11, name="lowest-common-ancestor-of-a-binary-tree", title="Lowest Common Ancestor of a Binary Tree", diff="Medium", prio="P0",
       desc="""// Given a binary tree, find the lowest common ancestor (LCA) of two given
-// nodes p and q. The LCA is the lowest node that has both p and q as descendants.""",
+// nodes p and q. The LCA is the lowest node that has both p and q as descendants;
+// a node is allowed to be a descendant of itself.""",
       constraints="""//   - number of nodes in [2, 1e5]
 //   - -1e9 <= Node.val <= 1e9
 //   - all Node.val are unique
@@ -1213,7 +1237,8 @@ def _week2(P):
 
     P(num=236, week=2, day=11, name="lowest-common-ancestor-of-a-binary-tree", title="Lowest Common Ancestor of a Binary Tree", diff="Medium", prio="P0",
       desc="""// Given a binary tree, find the lowest common ancestor (LCA) of two given
-// nodes p and q. The LCA is the lowest node that has both p and q as descendants.""",
+// nodes p and q. The LCA is the lowest node that has both p and q as descendants;
+// a node is allowed to be a descendant of itself.""",
       constraints="""//   - number of nodes in [2, 1e5]
 //   - -1e9 <= Node.val <= 1e9
 //   - all Node.val are unique
@@ -1276,7 +1301,9 @@ def _week2(P):
 
     P(num=98, week=2, day=11, name="validate-binary-search-tree", title="Validate Binary Search Tree", diff="Medium", prio="P1",
       desc="""// Given the root of a binary tree, determine if it is a valid binary search
-// tree (BST).""",
+// tree (BST). A valid BST: a node's left subtree holds only keys strictly less
+// than the node's key, its right subtree only keys strictly greater, and both
+// subtrees must themselves be valid BSTs.""",
       constraints="""//   - number of nodes in [1, 1e4]
 //   - -2^31 <= Node.val <= 2^31 - 1""",
       iofmt="""//   Line 1: n
@@ -1296,7 +1323,7 @@ def _week2(P):
     return 0;
 }
 """,
-      testin="3\n5 1 4\n")
+      testin="7\n5 1 4 -1 -1 3 6\n")
 
     # ---- Day 12: Stacks / Queues / Monotonic Stack ----
     P(num=20, week=2, day=12, name="valid-parentheses", title="Valid Parentheses", diff="Easy", prio="P0",
@@ -1324,7 +1351,7 @@ def _week2(P):
 //     op = 2    -> pop()
 //     op = 3    -> top()  -> print x
 //     op = 4    -> getMin() -> print min""",
-      expected="-2 0 -3", goal="O(1) per operation.",
+      expected="-3 | 0 | -2", goal="O(1) per operation.",
       sig="void push(int val)", retdefault="",
       prestruct="""#include <climits>
 """,
@@ -1444,7 +1471,7 @@ def _week2(P):
       iofmt="""//   Line 1: n
 //   Line 2: n space-separated integers
 //   Print each subset on its own line, space-separated (empty subset = blank line).""",
-      expected="[] | [1] | [2] | [1 2] | [3] | [1 3] | [2 3] | [1 2 3]", goal="O(n * 2^n).",
+      expected="<empty> | 1 | 2 | 1 2 | 3 | 1 3 | 2 3 | 1 2 3", goal="O(n * 2^n).",
       sig="vector<vector<int>> subsets(vector<int>& nums)", retdefault="{}",
       main="""int main() {
     ios::sync_with_stdio(false);
@@ -1469,7 +1496,7 @@ def _week2(P):
       constraints="""//   - 1 <= n <= 8""",
       iofmt="""//   Line 1: n
 //   Print each combination on its own line.""",
-      expected="((())) | (()()) | (())() |()(()) | ()()()", goal="O(4^n / sqrt(n)).",
+      expected="((())) | (()()) | (())() | ()(()) | ()()()", goal="O(4^n / sqrt(n)).",
       sig="vector<string> generateParenthesis(int n)", retdefault="{}",
       main="""int main() {
     ios::sync_with_stdio(false);
@@ -1538,7 +1565,8 @@ def _week2(P):
     P(num=124, week=2, day=14, name="binary-tree-maximum-path-sum", title="Binary Tree Maximum Path Sum", diff="Hard", prio="P1",
       desc="""// A path in a binary tree is a sequence of nodes where each pair of adjacent
 // nodes has an edge connecting them. No node appears more than once. Find the
-// maximum path sum (the path may start and end at any nodes).""",
+// maximum sum of a non-empty path. It may start/end anywhere and need not pass
+// through the root.""",
       constraints="""//   - number of nodes in [1, 3e4]
 //   - -1000 <= Node.val <= 1000""",
       iofmt="""//   Line 1: n
@@ -1583,7 +1611,7 @@ def _week2(P):
     return 0;
 }
 """,
-      testin="4\n1 2 3 -1 5 -1 4\n")
+      testin="7\n1 2 3 -1 5 -1 4\n")
 
 
 def _week3(P):
@@ -1752,8 +1780,8 @@ public:
     P(num=127, week=3, day=16, name="word-ladder", title="Word Ladder", diff="Hard", prio="P0",
       desc="""// Given two words beginWord and endWord and a dictionary wordList, return the
 // number of words in the shortest transformation sequence from beginWord to
-// endWord where each step changes exactly one letter and each intermediate word
-// must be in wordList. Return 0 if no such sequence.""",
+// endWord where each step changes exactly one letter. Every transformed word,
+// including endWord, must be in wordList; beginWord need not be. Return 0 if none.""",
       constraints="""//   - 1 <= beginWord.length <= 10
 //   - endWord.length == beginWord.length
 //   - 1 <= wordList.length <= 5000
@@ -1784,7 +1812,7 @@ public:
       constraints="""//   - m == mat.length, n == mat[i].length
 //   - 1 <= m, n <= 1e4
 //   - 1 <= m*n <= 1e4
-//   - mat[i][j] is 0 or 1""",
+//   - mat[i][j] is 0 or 1, and mat contains at least one 0""",
       iofmt="""//   Line 1: m n
 //   Next m lines: n space-separated integers per row
 //   Print the distance matrix, one row per line space-separated.""",
@@ -1815,7 +1843,7 @@ public:
       iofmt="""//   Line 1: m n
 //   Next m lines: n space-separated integers per row
 //   Print each coordinate "r c" on its own line, sorted.""",
-      expected="0 4 | 1 3 | 1 4 | 2 2 | 3 2 | 4 0 | 4 1", goal="O(m*n) time.",
+      expected="0 4 | 1 3 | 1 4 | 2 2 | 3 0 | 3 1 | 4 0", goal="O(m*n) time.",
       sig="vector<vector<int>> pacificAtlantic(vector<vector<int>>& heights)", retdefault="{}",
       main="""int main() {
     ios::sync_with_stdio(false);
@@ -1911,12 +1939,13 @@ public:
       testin="3\na==b\nb==c\na==c\n")
 
     P(num=685, week=3, day=17, name="redundant-connection-ii", title="Redundant Connection II", diff="Hard", prio="P1",
-      desc="""// A rooted tree of n nodes labeled 1..n has one extra directed edge added.
-// The added edge creates either a cycle or a node with two parents. Return the
+      desc="""// A rooted tree of n nodes labeled 1..n has one new directed edge added.
+// The result may contain a cycle, a node with two parents, or both. Return the
 // edge that can be removed to make a valid rooted tree; if multiple, return the
 // last one in the input.""",
       constraints="""//   - 3 <= n <= 1000
 //   - edges.length == n
+//   - edges[i].length == 2, 1 <= u,v <= n, u != v
 //   - edges[i] = [u, v] meaning u is parent of v""",
       iofmt="""//   Line 1: m (number of edges == n)
 //   Next m lines: u v (u is parent of v)
@@ -2159,10 +2188,12 @@ public:
 
     # ---- Day 21: Week 3 Review ----
     P(num=210, week=3, day=21, name="course-schedule-ii", title="Course Schedule II", diff="Medium", prio="P0",
-      desc="""// Like Course Schedule, but return any valid ordering of courses to take (a
-// topological order). If impossible, return an empty array.""",
+      desc="""// There are numCourses courses labeled 0..numCourses-1. Each pair [a,b]
+// means b must be taken before a. Return any valid ordering that finishes every
+// course, or an empty array if the prerequisite graph contains a cycle.""",
       constraints="""//   - 1 <= numCourses <= 2000
-//   - 0 <= prerequisites.length <= 5000""",
+//   - 0 <= prerequisites.length <= numCourses * (numCourses - 1)
+//   - each pair has two distinct valid course IDs; all pairs are distinct""",
       iofmt="""//   Line 1: numCourses m
 //   Next m lines: a b (b before a)
 //   Print the ordering space-separated, or -1 if impossible.""",
@@ -2189,7 +2220,7 @@ public:
       constraints="""//   - m == board.length, n == board[i].length
 //   - 1 <= m, n <= 6
 //   - 1 <= word.length <= 15
-//   - board and word consist of lowercase English letters""",
+//   - board and word consist of lowercase and uppercase English letters""",
       iofmt="""//   Line 1: m n
 //   Next m lines: each row as a string of n chars
 //   Line: the word
@@ -2212,7 +2243,8 @@ public:
 
     P(num=139, week=3, day=21, name="word-break", title="Word Break", diff="Medium", prio="P0",
       desc="""// Given a string s and a dictionary of strings wordDict, return true if s can be
-// segmented into a space-separated sequence of one or more dictionary words.""",
+// segmented into a space-separated sequence of one or more dictionary words.
+// The same dictionary word may be reused multiple times in the segmentation.""",
       constraints="""//   - 1 <= s.length <= 300
 //   - 1 <= wordDict.length <= 1000
 //   - 1 <= wordDict[i].length <= 20
@@ -2242,7 +2274,7 @@ public:
 // largest product and return the product.""",
       constraints="""//   - 1 <= nums.length <= 2e4
 //   - -10 <= nums[i] <= 10
-//   - product fits in a 32-bit int""",
+//   - the product of every subarray fits in a 32-bit int""",
       iofmt="""//   Line 1: n
 //   Line 2: n space-separated integers
 //   Print the maximum product.""",
@@ -2259,7 +2291,7 @@ def _week4(P):
 // write a function to search target in nums. Return its index, or -1 if not present.
 // O(log n) runtime.""",
       constraints="""//   - 1 <= nums.length <= 1e4
-//   - -9999 <= nums[i], target <= 9999
+//   - -1e4 < nums[i], target < 1e4
 //   - all integers unique, nums sorted ascending""",
       iofmt="""//   Line 1: n target
 //   Line 2: n space-separated integers
@@ -2376,18 +2408,19 @@ def _week4(P):
       testin="4 8\n3 6 7 11\n")
 
     P(num=1011, week=4, day=23, name="capacity-to-ship-packages-within-d-days", title="Capacity To Ship Packages Within D Days", diff="Medium", prio="P0",
-      desc="""// weights[i] must be shipped in order within D days; the ship has a fixed capacity.
-// Return the least capacity that ships all packages within D days.""",
-      constraints="""//   - 1 <= weights.length <= 5e4
+      desc="""// Packages weights[i] must be shipped in the given order within `days` days.
+// Each day's total load may not exceed the fixed ship capacity. Return the least
+// capacity that ships every package within the deadline.""",
+      constraints="""//   - 1 <= days <= weights.length <= 5e4
 //   - 1 <= weights[i] <= 500
-//   - 1 <= D <= weights.length""",
+//   - package order cannot be changed""",
       iofmt="""//   Line 1: n D
 //   Line 2: n space-separated integers
 //   Print the least ship capacity.""",
       expected="15", goal="O(n log S).",
       sig="int shipWithinDays(vector<int>& weights, int days)", retdefault="0",
       main=M_read_int_target_print_int("sol.shipWithinDays(a, k)"),
-      testin="5 2\n1 2 3 4 5 6 7 8 9 10\n")
+      testin="10 5\n1 2 3 4 5 6 7 8 9 10\n")
 
     P(num=4, week=4, day=23, name="median-of-two-sorted-arrays", title="Median of Two Sorted Arrays", diff="Hard", prio="P1",
       desc="""// Given two sorted arrays nums1 and nums2 of sizes m and n, return the median of
@@ -2419,7 +2452,8 @@ def _week4(P):
     P(num=455, week=4, day=24, name="assign-cookies", title="Assign Cookies", diff="Easy", prio="P0",
       desc="""// Assume you are an awesome parent giving cookies to children. Each child i has a
 // greed factor g[i]; each cookie j has size s[j]. A child is content if s[j] >= g[i].
-// Maximize the number of content children (one cookie per child).""",
+// Maximize the number of content children; each child gets at most one cookie
+// and each cookie can be assigned at most once.""",
       constraints="""//   - 1 <= g.length <= 3e4
 //   - 0 <= s.length <= 3e4
 //   - 1 <= g[i], s[j] <= 2^31 - 1""",
@@ -2526,7 +2560,8 @@ def _week4(P):
 // The answer may be returned in any order.""",
       constraints="""//   - 1 <= nums.length <= 1e5
 //   - -1e4 <= nums[i] <= 1e4
-//   - k is in [1, number of unique elements]""",
+//   - k is in [1, number of unique elements]
+//   - the set of k most frequent elements is unique""",
       iofmt="""//   Line 1: n k
 //   Line 2: n space-separated integers
 //   Print the k most frequent elements space-separated (any order).""",
@@ -2556,7 +2591,7 @@ def _week4(P):
 //   Next q lines: op [arg]
 //     op = 1 x  -> addNum(x)
 //     op = 2    -> findMedian() -> print median (as float)""",
-      expected="1.5 2 2.5", goal="O(log n) per addNum (two heaps).",
+      expected="1.5 | 2 | 2.5", goal="O(log n) per addNum (two heaps).",
       sig="void addNum(int num)", retdefault="",
       prestruct="#include <functional>\n",
       extra="""    // Implement these as the MedianFinder operations:
@@ -2583,7 +2618,8 @@ def _week4(P):
       constraints="""//   - k == lists.length
 //   - 0 <= k <= 1e4
 //   - 0 <= lists[i].length <= 500
-//   - -1e4 <= Node.val <= 1e4""",
+//   - -1e4 <= Node.val <= 1e4
+//   - total number of nodes across all lists <= 1e4""",
       iofmt="""//   Line 1: k
 //   Then k blocks: each block is a line with li (length) then a line with li values
 //   Print the merged list values space-separated.""",

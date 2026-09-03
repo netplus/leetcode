@@ -1,40 +1,55 @@
 // ============================================================================
-// LC-198: House Robber
-// Difficulty: Medium
-// Priority: P0
-// Week 3 / Day 18
+// LC-198：打家劫舍
+// 难度：中等
+// 优先级：P0（必做）
+// 学习进度：第 3 周 / 第 18 天
 // ----------------------------------------------------------------------------
-// You are a robber along a street where nums[i] is the money in house i. You
-// cannot rob adjacent houses. Return the maximum amount you can rob.
+// 题目描述：
+// 你是一个专业的小偷，计划偷窃沿街的房屋。
+// 每间房内都藏有一定的现金，影响你偷窃的唯一制约因素就是相邻的房屋装有相互连通的防盗系统，如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警。
+// 给定一个代表每个房屋存放金额的非负整数数组，计算你不触动警报装置的情况下，一夜之内能够偷窃到的最高金额。
 //
-// Constraints:
+// 约束与要求：
 //   - 1 <= nums.length <= 100
 //   - 0 <= nums[i] <= 400
 //
-// Goal: O(n) time, O(1) space.
+// 复杂度目标：O(n) 时间，O(1) 空间。
 //
-// Local I/O format (for test.in):
-//   Line 1: n
-//   Line 2: n space-separated integers
-//   Print the maximum amount.
-// Expected output for test.in: 4
+// ----------------------------------------------------------------------------
+// 解法精讲｜打家劫舍线性 DP：选或不选
+// - 核心要点：
+//   1. 思路起点：处理当前房屋时，最优解要么不偷它并保持前一最优，要么偷它并加上前两间以前的最优。
+//   2. 执行逻辑：1. previous2 表示 dp[i-2]，previous1 表示 dp[i-1]；2. current=max(previous1,previous2+money)；3. 滚动更新两个状态。
+//   3. 为什么这样做：任一合法方案按是否包含当前房屋分成互斥两类；两类最优分别由两个转移项给出，取最大覆盖全部可能。
+// - 边界与易错点：滚动更新顺序不能覆盖旧 previous1；允许一间也不偷时空前缀为 0；金额非负。
+// - 举一反三：路径图上的“不选相邻点”是独立集 DP，删点后可扩展到环、树和带冷却时间的选择问题。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：n。
+//   第 2 行：n 个以空格分隔的整数。
+//   输出：可获得的最大金额。
+// test.in 的预期输出：4
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     int rob(vector<int>& nums) {
-        // Your implementation here.
-        return 0;
+        int previous2 = 0, previous1 = 0;
+        for (int money : nums) {
+            int current = max(previous1, previous2 + money);
+            previous2 = previous1;
+            previous1 = current;
+        }
+        return previous1;
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

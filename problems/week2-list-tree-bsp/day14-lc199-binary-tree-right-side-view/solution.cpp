@@ -1,23 +1,33 @@
 // ============================================================================
-// LC-199: Binary Tree Right Side View
-// Difficulty: Medium
-// Priority: P1
-// Week 2 / Day 14
+// LC-199：二叉树的右视图
+// 难度：中等
+// 优先级：P1（进阶）
+// 学习进度：第 2 周 / 第 14 天
 // ----------------------------------------------------------------------------
-// Given the root of a binary tree, imagine yourself standing on its right side,
-// return the values of the nodes you can see ordered from top to bottom.
+// 题目描述：
+// 给定一个二叉树的根节点 root，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。
 //
-// Constraints:
-//   - number of nodes in [0, 100]
+// 约束与要求：
+//   - 二叉树的节点个数的范围是 [0,100]
 //   - -100 <= Node.val <= 100
 //
-// Goal: O(n) time.
+// 复杂度目标：O(n) 时间。
 //
-// Local I/O format (for test.in):
-//   Line 1: n
-//   Line 2: n level-order values (-1 = null)
-//   Print the right-side-view values space-separated.
-// Expected output for test.in: 1 3 4
+// ----------------------------------------------------------------------------
+// 解法精讲｜层序遍历：每层最后一个节点
+// - 核心要点：
+//   1. 思路起点：从右侧观察时，每层最右节点可见；标准 BFS 按左后右入队，则该层处理的最后一个节点就是答案。
+//   2. 执行逻辑：1. 根入队；2. 固定当前层节点数逐个处理；3. 处理到该层最后一个节点时记录其值。
+//   3. 为什么这样做：BFS 每轮恰好覆盖同一深度的全部节点；按从左到右顺序处理，末节点的横向位置最右，因此逐层记录正确。
+// - 边界与易错点：空树返回空数组；层大小必须在入层时固定；也可用优先访问右子树的 DFS 首次到达每层。
+// - 举一反三：层视图、每层最大值、平均值和锯齿遍历都只是在 BFS 层内采用不同聚合规则。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：n。
+//   第 2 行：n 个层序节点值（-1 表示空节点）。
+//   输出：右视图节点值，以空格分隔。
+// test.in 的预期输出：1 3 4
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
@@ -31,7 +41,7 @@ struct TreeNode {
     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
 };
 
-static TreeNode* buildTreeLO(const vector<long long>& a) {
+[[maybe_unused]] static TreeNode* buildTreeLO(const vector<long long>& a) {
     if (a.empty() || a[0] == -1) return nullptr;
     TreeNode* root = new TreeNode((int)a[0]);
     queue<TreeNode*> q; q.push(root);
@@ -45,7 +55,7 @@ static TreeNode* buildTreeLO(const vector<long long>& a) {
     }
     return root;
 }
-static void printTree(TreeNode* root) {
+[[maybe_unused]] static void printTree(TreeNode* root) {
     // Level-order with -1 for null; trailing nulls trimmed.
     if (!root) { cout << "\n"; return; }
     queue<TreeNode*> q; q.push(root);
@@ -59,18 +69,29 @@ static void printTree(TreeNode* root) {
     for (size_t i = 0; i < out.size(); ++i) cout << out[i] << " \n"[i + 1 == out.size()];
 }
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     vector<int> rightSideView(TreeNode* root) {
-        // Your implementation here.
-        return {};
+        vector<int> answer;
+        if (!root) return answer;
+        queue<TreeNode*> pending;
+        pending.push(root);
+        while (!pending.empty()) {
+            const int width = static_cast<int>(pending.size());
+            for (int i = 0; i < width; ++i) {
+                TreeNode* node = pending.front();
+                pending.pop();
+                if (i == width - 1) answer.push_back(node->val);
+                if (node->left) pending.push(node->left);
+                if (node->right) pending.push(node->right);
+            }
+        }
+        return answer;
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

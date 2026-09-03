@@ -1,40 +1,57 @@
 // ============================================================================
-// LC-179: Largest Number
-// Difficulty: Medium
-// Priority: P1
-// Week 1 / Day 6
+// LC-179：最大数
+// 难度：中等
+// 优先级：P1（进阶）
+// 学习进度：第 1 周 / 第 6 天
 // ----------------------------------------------------------------------------
-// Given a list of non-negative integers nums, arrange them such that they
-// form the largest number and return it as a string.
+// 题目描述：
+// 给定一组非负整数 nums，重新排列每个数的顺序（每个数不可拆分）使之组成一个最大的整数。
+// 注意：输出结果可能非常大，所以你需要返回一个字符串而不是整数。
 //
-// Constraints:
+// 约束与要求：
 //   - 1 <= nums.length <= 100
-//   - 0 <= nums[i] <= 1e9
+//   - 0 <= nums[i] <= 10^9
 //
-// Goal: O(n log n * L).
+// 复杂度目标：O(n log n * L)。
 //
-// Local I/O format (for test.in):
-//   Line 1: n
-//   Line 2: n space-separated integers
-//   Print the largest number string.
-// Expected output for test.in: 210
+// ----------------------------------------------------------------------------
+// 解法精讲｜拼接序的自定义排序
+// - 核心要点：
+//   1. 思路起点：对字符串 a,b，若 a+b>b+a，则 a 放前面能让整个结果更大；用该两两规则排序所有数字。
+//   2. 执行逻辑：1. 把整数转为字符串；2. 按 a+b>b+a 排序；3. 若首项为 0 则统一返回 0，否则顺序拼接。
+//   3. 为什么这样做：比较器直接选择 a、b 两段的更优局部顺序；该关系可证明满足排序所需的一致性，任意相邻逆序交换都会使结果变大。
+// - 边界与易错点：不能按数值或字符串字典序直接排；全零输入不能返回多个 0；结果可能超整数范围，必须使用 string。
+// - 举一反三：当对象拼接后的全局字典序由相邻顺序决定时，可设计 xy 与 yx 的比较器，例如最小拼接数。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：n。
+//   第 2 行：n 个以空格分隔的整数。
+//   输出：可拼接出的最大数字符串。
+// test.in 的预期输出：210
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     string largestNumber(vector<int>& nums) {
-        // Your implementation here.
-        return "";
+        vector<string> parts;
+        parts.reserve(nums.size());
+        for (int value : nums) parts.push_back(to_string(value));
+        sort(parts.begin(), parts.end(), [](const string& a, const string& b) {
+            return a + b > b + a;
+        });
+        if (parts[0] == "0") return "0";
+        string answer;
+        for (const string& part : parts) answer += part;
+        return answer;
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

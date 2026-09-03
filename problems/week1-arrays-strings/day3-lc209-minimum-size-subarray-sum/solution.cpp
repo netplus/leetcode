@@ -1,42 +1,60 @@
 // ============================================================================
-// LC-209: Minimum Size Subarray Sum
-// Difficulty: Medium
-// Priority: P0
-// Week 1 / Day 3
+// LC-209：长度最小的子数组
+// 难度：中等
+// 优先级：P0（必做）
+// 学习进度：第 1 周 / 第 3 天
 // ----------------------------------------------------------------------------
-// Given an array of positive integers nums and a positive integer target,
-// return the minimal length of a contiguous subarray whose sum is >= target.
-// If none, return 0.
+// 题目描述：
+// 给定一个含有 n 个正整数的数组和一个正整数 target。
+// 找出该数组中满足其总和大于等于 target 的长度最小的子数组 [nums_l, nums_l+1, ..., nums_r-1, nums_r]，并返回其长度。
+// 如果不存在符合条件的子数组，返回 0。
 //
-// Constraints:
-//   - 1 <= target <= 1e9
-//   - 1 <= nums.length <= 1e5
-//   - 1 <= nums[i] <= 1e4
+// 约束与要求：
+//   - 1 <= target <= 10^9
+//   - 1 <= nums.length <= 10^5
+//   - 1 <= nums[i] <= 10^4
 //
-// Goal: O(n) time, O(1) space.
+// 复杂度目标：O(n) 时间，O(1) 空间。
 //
-// Local I/O format (for test.in):
-//   Line 1: n target
-//   Line 2: n space-separated integers
-//   Print the minimal length.
-// Expected output for test.in: 2
+// ----------------------------------------------------------------------------
+// 解法精讲｜正数数组上的可变滑动窗口
+// - 核心要点：
+//   1. 思路起点：所有元素为正使窗口和随右端扩张单调不减、随左端收缩单调不增，因此可用双指针一次扫描。
+//   2. 执行逻辑：1. 右指针逐个加入元素；2. 当 sum>=target 时反复记录长度并移动左端；3. 返回最短长度，未命中返回 0。
+//   3. 为什么这样做：对固定 right，收缩循环结束前枚举了所有满足目标的左边界，最后一个合法窗口最短；每个下标至多进出窗口一次。
+// - 边界与易错点：正数条件是关键，含负数时收缩不再单调；答案初值用 n+1 哨兵；和用 long long 更稳健。
+// - 举一反三：滑动窗口适合“连续区间 + 扩张/收缩具有单调性”；含负数的最短和问题要考虑前缀和与单调队列。
+// ----------------------------------------------------------------------------
+//
+// 本地输入输出格式（用于 test.in）：
+//   第 1 行：n target。
+//   第 2 行：n 个以空格分隔的整数。
+//   输出：最短长度。
+// test.in 的预期输出：2
 // ============================================================================
 #include <bits/stdc++.h>
 using namespace std;
 
 
-// ---------- Solution (implement this) ----------
+// ---------- 题解实现 ----------
 class Solution {
 public:
-    // TODO: implement
     int minSubArrayLen(int target, vector<int>& nums) {
-        // Your implementation here.
-        return 0;
+        int left = 0;
+        int best = static_cast<int>(nums.size()) + 1;
+        long long sum = 0;
+        for (int right = 0; right < static_cast<int>(nums.size()); ++right) {
+            sum += nums[right];
+            while (sum >= target) {
+                best = min(best, right - left + 1);
+                sum -= nums[left++];
+            }
+        }
+        return best == static_cast<int>(nums.size()) + 1 ? 0 : best;
     }
-
 };
 
-// ---------- Local test harness ----------
+// ---------- 本地测试适配器 ----------
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

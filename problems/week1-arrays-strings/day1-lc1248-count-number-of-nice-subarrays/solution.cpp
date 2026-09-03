@@ -17,13 +17,51 @@
 // 复杂度目标：O(n) 时间，O(1) 额外空间。
 //
 // ----------------------------------------------------------------------------
-// 解法精讲｜恰好型计数：atMost(k) - atMost(k-1)
-// - 核心要点：
-//   1. 思路起点：把奇数视为 1、偶数视为 0；“恰好 k 个奇数”可由“至多 k 个”减去“至多 k-1 个”得到。
-//   2. 执行逻辑：1. 写滑动窗口函数 atMost(limit)；2. 右端加入一个数并在奇数超限时收缩左端；3. 每个右端贡献 right-left+1，再作两次结果之差。
-//   3. 为什么这样做：固定右端时，窗口恢复合法后，以 right 结尾且奇数数目至多 limit 的起点正是 [left,right]；两集合做差只保留恰好 k 个。
-// - 边界与易错点：atMost(-1) 必须返回 0；答案可能由大量子数组累积，内部使用 long long；偶数不能被误当作窗口边界。
-// - 举一反三：恰好 K 个不同整数、恰好 K 次违规、二进制数组和为 K 都可套用 atMost 差分。
+// 解法精讲｜奇偶映射 + 前缀和 + 频次哈希表（复用 LC-560）
+//
+// 1. 图像直觉
+//   先做一次非常简单的等价转换：
+//
+//   原数组： [2, 2, 1, 2, 1, 2]
+//   奇偶值： [0, 0, 1, 0, 1, 0]
+//
+//   于是问题变成：上面的 0/1 数组中，有多少个连续子数组的和为 k？
+//
+//   |------------- 当前 prefix：累计奇数数 -------------|
+//   |--------- 历史 prefix-k ---------|
+//                                         ^
+//                                 中间恰好多出 k 个奇数
+//
+//   这和 LC-560 的图完全相同，只是 prefix 从“元素累计和”变成了“奇数累计个数”。
+//
+// 2. 一句话核心
+//   先把奇数当 1、偶数当 0，然后把这题直接当成 LC-560：当前 prefix 去历史里找 prefix-k。
+//
+// 3. 公式 / 不变量
+//   区间内奇数个数 = 当前累计奇数数 - 过去累计奇数数
+//   prefix - oldPrefix = k
+//   oldPrefix = prefix - k
+//
+// 4. 执行步骤
+//   1. frequency[0]=1，记录数组开始前的空前缀
+//   2. 扫描 value：奇数让 prefix 加 1，偶数让 prefix 加 0
+//   3. 用 find(prefix-k) 查询历史频次，存在就累加到答案
+//   4. 最后执行 ++frequency[prefix]，把当前累计奇数数加入历史
+//   记忆：奇偶转 0/1 -> 先算现在 -> 查 prefix-k -> 再记录现在。
+//
+// 5. 为什么不会漏 / 不会重
+//   prefix 表示从数组开头到当前位置累计遇到的奇数个数；两个 prefix 的差就是它们之间连续区间的奇数个数。
+//   因此，每一个历史 prefix-k 都唯一对应一个“以当前位置结尾、恰好含 k 个奇数”的子数组；同一前缀值出现多次，就代表多个不同起点。
+//
+// 6. 边界与易错点
+//   必须保存 prefix 的出现频次而不是只判断存在；frequency[0]=1 才能统计从下标 0 开始的答案；查询 prefix-k 用 find()，避免纯查询意外插入；
+//   偶数只是贡献 0，不是窗口边界。当前主解法使用哈希表，因此实际为 O(n) 时间、O(n) 额外空间。
+//
+// 7. 举一反三
+//   这是 LC-560 的直接变形：先把题目属性映射成可累加的 0/1 状态，再统计指定前缀差。类似“连续区间中恰好 K 次满足某条件”的问题，都应先尝试这种转换。
+//
+// 进阶优化
+//   如果必须满足题头的 O(1) 额外空间目标，再学习 atMost(k)-atMost(k-1) 的滑动窗口版本；它是空间优化，不作为第一次理解本题的主线。
 // ----------------------------------------------------------------------------
 //
 // 本地输入输出格式（用于 test.in）：
@@ -38,21 +76,27 @@ using namespace std;
 
 // ---------- 题解实现 ----------
 class Solution {
-    static long long atMost(const vector<int>& nums, int limit) {
-        if (limit < 0) return 0;
-        long long count = 0;
-        int left = 0;
-        for (int right = 0; right < static_cast<int>(nums.size()); ++right) {
-            limit -= nums[right] & 1;
-            while (limit < 0) limit += nums[left++] & 1;
-            count += right - left + 1;  // 这些起点都能形成合法窗口
-        }
-        return count;
-    }
-
 public:
     int numberOfSubarrays(vector<int>& nums, int k) {
-        return static_cast<int>(atMost(nums, k) - atMost(nums, k - 1));
+        unordered_map<int, int> frequency;
+        frequency.reserve(nums.size() * 2 + 1);
+        frequency[0] = 1;  // 空前缀：还没看任何元素时，累计奇数数为 0
+
+        int prefix = 0;
+        int answer = 0;
+        for (int value : nums) {
+            prefix += value & 1;  // 奇数 -> 1，偶数 -> 0
+
+            // 纯查询：历史上有多少次累计奇数数等于 prefix-k？
+            auto it = frequency.find(prefix - k);
+            if (it != frequency.end()) {
+                answer += it->second;
+            }
+
+            // 查询完成后，再把“现在”加入历史，供后续位置使用。
+            ++frequency[prefix];
+        }
+        return answer;
     }
 };
 
@@ -68,4 +112,3 @@ int main() {
     cout << sol.numberOfSubarrays(a, k) << "\n";
     return 0;
 }
-

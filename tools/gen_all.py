@@ -20,7 +20,7 @@ Run:  python3 tools/gen_all.py
 from __future__ import annotations
 import os
 
-from chinese_metadata import get_chinese_metadata
+from statement_metadata import get_statement_metadata
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -113,7 +113,7 @@ public:
 {p.get('extra', '')}
 }};"""
 
-    metadata = get_chinese_metadata(p)
+    metadata = get_statement_metadata(p)
     s = TEMPLATE
     replacements = {
         "__NUM__": str(p["num"]),
@@ -150,7 +150,7 @@ def write_problem(p: dict) -> None:
 
 if __name__ == "__main__":
     import gen_data
-    from chinese_metadata import validate_chinese_metadata
+    from statement_metadata import validate_statement_metadata
     from refined_data import validate_coverage
     PROBLEMS = []
 
@@ -159,7 +159,7 @@ if __name__ == "__main__":
 
     gen_data.build(P)
     validate_coverage(PROBLEMS)
-    validate_chinese_metadata(PROBLEMS)
+    validate_statement_metadata(PROBLEMS)
     for p in PROBLEMS:
         write_problem(p)
     print(f"Generated {len(PROBLEMS)} problems.")

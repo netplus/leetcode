@@ -1,22 +1,32 @@
 """Reviewed analysis and implementation registry for all practice problems.
 
-The week modules deliberately keep each problem's baseline explanation next to
-its code.  `pedagogy_overrides.py` adds high-touch learning rewrites one problem
-at a time.  `gen_all.py` consumes the merged registry, so regenerating the
-workspace preserves both reviewed implementations and the improved pedagogy.
+The week modules keep each problem's baseline reviewed explanation next to its
+code.  High-touch pedagogy modules add visual learning rewrites one problem at a
+time.  `gen_all.py` consumes the merged registry, so regenerating the workspace
+preserves both reviewed implementations and the improved pedagogy.
 """
 
 from refined_week1 import REFINEMENTS as WEEK1
 from refined_week2 import REFINEMENTS as WEEK2
 from refined_week3 import REFINEMENTS as WEEK3
 from refined_week4 import REFINEMENTS as WEEK4
-from pedagogy_overrides import PEDAGOGY_OVERRIDES
+from pedagogy_overrides import PEDAGOGY_OVERRIDES as INITIAL_PEDAGOGY_OVERRIDES
+from pedagogy_week1 import PEDAGOGY_WEEK1
 from chinese_titles import validate_title_coverage
 
 
 REFINEMENTS = {**WEEK1, **WEEK2, **WEEK3, **WEEK4}
 
-# Apply only explicitly reviewed learning rewrites.  Recompute key_points so
+_overlap = set(INITIAL_PEDAGOGY_OVERRIDES) & set(PEDAGOGY_WEEK1)
+if _overlap:
+    raise RuntimeError(f"duplicate pedagogy overrides: {sorted(_overlap)}")
+
+PEDAGOGY_OVERRIDES = {
+    **INITIAL_PEDAGOGY_OVERRIDES,
+    **PEDAGOGY_WEEK1,
+}
+
+# Apply only explicitly reviewed learning rewrites. Recompute key_points so
 # legacy consumers remain consistent when an override changes model/steps/proof.
 for num, patch in PEDAGOGY_OVERRIDES.items():
     if num not in REFINEMENTS:
@@ -82,7 +92,7 @@ def render_analysis(item: dict) -> str:
     if all(item.get(field) for field in ("visual", "core", "formula")):
         return _render_visual_analysis(item)
 
-    # Untouched problems keep their existing reviewed material.  They migrate
+    # Untouched problems keep their existing reviewed material. They migrate
     # to the richer structure only after an individual pedagogy pass.
     labels = ("思路起点", "执行逻辑", "为什么这样做")
     key_points = [

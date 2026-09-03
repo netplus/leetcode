@@ -154,9 +154,11 @@ For non-trivial problems, prefer a small ASCII diagram in the header when it mat
 The generation layers are:
 
 1. `tools/refined_week1.py` ... `tools/refined_week4.py`: baseline reviewed explanations and implementations for all problems;
-2. `tools/pedagogy_overrides.py`: only the problems that have received an individual high-touch learning rewrite;
-3. `tools/refined_data.py`: merges both layers and renders either the enhanced or legacy explanation;
+2. `tools/pedagogy_overrides.py` plus modular `tools/pedagogy_week*.py`: only problems that have received an individual high-touch learning rewrite;
+3. `tools/refined_data.py`: merges all baseline and pedagogy layers, then renders either the enhanced or legacy explanation;
 4. `tools/gen_all.py`: emits `problems/**/solution.cpp`.
+
+Keep pedagogy override modules small enough to review comfortably. New high-touch entries may be split by week or learning batch; `refined_data.py` must explicitly merge them and reject duplicate problem IDs.
 
 For an individually optimized problem, update the canonical learning data first, then keep the generated `solution.cpp` synchronized. A future `gen_all.py` run must preserve the improved explanation and, where applicable, the improved primary implementation.
 

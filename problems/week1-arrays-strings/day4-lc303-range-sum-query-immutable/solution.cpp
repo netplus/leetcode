@@ -9,6 +9,20 @@
 // NumArray 类：NumArray(int[] nums) 使用数组 nums 初始化对象 int sumRange(int left, int right) 返回数组 nums 中索引 left 和
 // right 之间的元素的总和，包含 left 和 right 两点（也就是 nums[left] + nums[left + 1] + ... + nums[right] )
 //
+// 题目示例：
+// 示例 1：
+//   Input
+//   ["NumArray", "sumRange", "sumRange", "sumRange"]
+//   [[[-2, 0, 3, -5, 2, -1]], [0, 2], [2, 5], [0, 5]]
+//   Output
+//   [null, 1, -1, -3]
+//
+//   Explanation
+//   NumArray numArray = new NumArray([-2, 0, 3, -5, 2, -1]);
+//   numArray.sumRange(0, 2); // return (-2) + 0 + 3 = 1
+//   numArray.sumRange(2, 5); // return 3 + (-5) + 2 + (-1) = -1
+//   numArray.sumRange(0, 5); // return (-2) + 0 + 3 + (-5) + 2 + (-1) = -3
+//
 // 约束与要求：
 //   - 1 <= nums.length <= 10^4
 //   - -10^5 <= nums[i] <= 10^5

@@ -12,6 +12,23 @@
 // int top() 获取堆栈顶部的元素。
 // int getMin() 获取堆栈中的最小元素。
 //
+// 题目示例：
+// 示例 1：
+//   Input:
+//   ["MinStack","push","push","push","getMin","pop","top","getMin"]
+//   [[],[-2],[0],[-3],[],[],[],[]]
+//   Output:
+//   [null,null,null,null,-3,null,0,-2]
+//   Explanation:
+//   MinStack minStack = new MinStack();
+//   minStack.push(-2);
+//   minStack.push(0);
+//   minStack.push(-3);
+//   minStack.getMin(); // return -3
+//   minStack.pop();
+//   minStack.top(); // return 0
+//   minStack.getMin(); // return -2
+//
 // 约束与要求：
 //   - -2^31 <= val <= 2^31 - 1
 //   - pop、top 和 getMin 操作总是在非空栈上调用

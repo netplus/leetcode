@@ -27,8 +27,13 @@
 //   dummy -> 1 -> 2 -> 3 -> 4 -> 5 -> null
 //     slow              fast
 //
-//   先让 fast 从 dummy 走 n+1=3 条边；之后两者同步走。
-//   fast 一旦到 null，slow 就恰好停在目标节点 4 的前驱 3：
+//   先让 fast 从 dummy 走 n+1=3 条边：
+//
+//   dummy -> 1 -> 2 -> 3 -> 4 -> 5 -> null
+//     slow              fast
+//           <--- 3 edges --->
+//
+//   之后两者同步走。fast 一旦到 null，slow 就恰好停在目标节点 4 的前驱 3：
 //
 //                     slow -> [4] -> 5 -> null
 //                              ^

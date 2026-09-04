@@ -13,6 +13,22 @@
 // 如果链表中存在环，则返回 true。
 // 否则，返回 false。
 //
+// 题目示例：
+// 示例 1：
+//   Input: head = [3,2,0,-4], pos = 1
+//   Output: true
+//   Explanation: There is a cycle in the linked list, where the tail connects to the 1st node (0-indexed).
+//
+// 示例 2：
+//   Input: head = [1,2], pos = 0
+//   Output: true
+//   Explanation: There is a cycle in the linked list, where the tail connects to the 0th node.
+//
+// 示例 3：
+//   Input: head = [1], pos = -1
+//   Output: false
+//   Explanation: There is no cycle in the linked list.
+//
 // 约束与要求：
 //   - 链表中节点的数目范围是 [0, 10^4]
 //   - -10^5 <= Node.val <= 10^5

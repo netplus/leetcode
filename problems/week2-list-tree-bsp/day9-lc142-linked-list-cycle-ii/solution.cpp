@@ -13,6 +13,22 @@
 // 注意：pos 不作为参数进行传递，仅仅是为了标识链表的实际情况。
 // 不允许修改链表。
 //
+// 题目示例：
+// 示例 1：
+//   Input: head = [3,2,0,-4], pos = 1
+//   Output: tail connects to node index 1
+//   Explanation: There is a cycle in the linked list, where tail connects to the second node.
+//
+// 示例 2：
+//   Input: head = [1,2], pos = 0
+//   Output: tail connects to node index 0
+//   Explanation: There is a cycle in the linked list, where tail connects to the first node.
+//
+// 示例 3：
+//   Input: head = [1], pos = -1
+//   Output: no cycle
+//   Explanation: There is no cycle in the linked list.
+//
 // 约束与要求：
 //   - 链表中节点的数目范围在范围 [0, 10^4] 内
 //   - -10^5 <= Node.val <= 10^5

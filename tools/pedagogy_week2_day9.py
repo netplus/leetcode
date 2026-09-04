@@ -1,0 +1,68 @@
+"""High-touch pedagogy overrides for Week 2 / Day 9."""
+
+PEDAGOGY_WEEK2_DAY9 = {
+    141: {
+        "pattern": "Floyd 快慢指针：用速度差发现周期",
+        "visual": """把有环链表想成“直道 + 环形跑道”：\n\nhead -> a -> b -> c -> d\n                 ^         \\\n                 |          e\n                 +---- g <- f\n\nslow 每轮走 1 步，fast 每轮走 2 步。\n在直道上，两者只是前后移动；一旦 slow 也进入环，就等价于两个人在圆形跑道上追逐。\n\n此时关键不再是“fast 的绝对位置”，而是 fast 相对 slow 每轮多走 1 格：\n\n相对距离：0, 1, 2, 3, ...  (mod 环长)\n\n所以只要存在环，相对距离迟早会再次变成 0，也就是两指针相遇。\n无环则完全不同：fast 只会一路冲到 nullptr。""",
+        "core": "让 fast 比 slow 每轮多走一步；无环时 fast 会掉出链表，有环时这个相对位移会在有限环上必然追成 0。",
+        "formula": """设环长为 L。slow 和 fast 都进入环后，每轮：\n\nrelative = (fast_position - slow_position) mod L\nrelative_next = (relative + 1) mod L\n\n因为 relative 只有 0..L-1 共 L 种状态，连续 +1 mod L 必然到达 0。\n\n循环不变量：\n- slow 每轮前进 1 个 next；\n- fast 每轮前进 2 个 next；\n- 只要 fast 和 fast->next 存在，这两个推进都是合法的。""",
+        "steps": [
+            "slow 和 fast 都从 head 出发。",
+            "只在 fast!=nullptr 且 fast->next!=nullptr 时推进：slow 一步，fast 两步。",
+            "推进后若 slow==fast，说明两个指针在同一个节点相遇，链表必有环。",
+            "若循环因为 fast 或 fast->next 为空而结束，说明存在尾部，链表无环。",
+        ],
+        "memory": "无环看 fast 会不会掉出去；有环看 fast 能不能在跑道上追到 slow。",
+        "proof": """无环链表中 next 最终指向 nullptr，fast 每轮走两步，因此必先到达尾部，绝不可能无限运行。\n有环时，slow 最终也会进入环；从那以后两者都不会离开环。fast 相对 slow 每轮恰好多走 1 个节点，在长度 L 的有限圆环上相对距离按 +1 mod L 演化，所以至多 L 轮就会成为 0。\n相遇比较的是节点地址，因此不会把“值相同的不同节点”误判成环。""",
+        "pitfalls": "循环条件必须按 fast && fast->next 检查后才能执行 fast->next->next；判断相遇要比较节点指针而不是 val。题面中的 pos 只是评测系统构造环的辅助信息，不是 hasCycle 的参数。",
+        "transfer": "LC-142 完全复用这一阶段来证明“环存在”，再利用相遇时累积的路程关系定位入口。更一般地，只要状态是确定性地指向下一个状态，Floyd 都可以用 O(1) 空间检测是否进入周期。",
+    },
+    142: {
+        "pattern": "Floyd 两阶段：从环内相遇点反推出入口",
+        "visual": """先沿用 LC-141 找到环内相遇点 M：\n\nhead -- a步 --> ENTRY -- b步 --> M\n                 ^               |\n                 |               |\n                 +---- c步 <-----+\n\n环长 L = b + c。\n\n第一阶段看起来只告诉我们“有环”，但相遇发生的路程其实已经藏着入口信息。\n相遇后把 slow 放回 head，fast 留在 M，然后两者都改成每次走 1 步：\n\nslow: head  -------- a步 --------> ENTRY\nfast: M ---- c步 + 若干整圈 ------> ENTRY\n\n两段路程恰好等长，所以它们下一次相遇的位置就是 ENTRY。""",
+        "core": "第一次相遇负责制造一个路程等式；把一个指针重置到 head 后，两指针同速前进，就把这个等式直接走成环入口。",
+        "formula": """设：\na = head 到入口距离\nb = 入口到第一次相遇点 M 的距离\nc = M 沿环回到入口的距离\nL = b + c\n\n第一次相遇时 slow 走 a+b，fast 走 2(a+b)。\nfast 比 slow 多走了整数圈 kL：\n\n2(a+b) - (a+b) = kL\na + b = kL\na = kL - b\n  = (k-1)L + c\n\n所以：\nhead 到入口的 a 步 = M 到入口的 c 步 + 若干完整环。""",
+        "steps": [
+            "先执行 LC-141 的快慢指针阶段；若 fast 或 fast->next 为空，直接返回 nullptr。",
+            "第一次 slow==fast 后，把 slow 重置为 head，fast 留在相遇点。",
+            "第二阶段两者都只走一步，不再保持 1:2 速度。",
+            "当 slow==fast 时返回该节点，它就是入环入口。",
+        ],
+        "memory": "第一阶段用速度差找相遇，第二阶段取消速度差：head 和相遇点一起走，入口处会合。",
+        "proof": """第一阶段由 LC-141 保证：有环一定能得到一个环内相遇点，无环一定提前返回 nullptr。\n由 a=(k-1)L+c，从 head 出发走 a 步必到入口；从 M 出发走同样 a 步，则先走 c 到入口，再绕若干整圈，最终仍停在入口。\n因此第二阶段同速前进时，两者最迟在入口相遇；在入口之前 slow 还处于非环前缀，而 fast 始终在环内，不可能提前指向同一节点，所以这个相遇点恰好是第一个入环节点。""",
+        "pitfalls": "最容易混淆的是第二阶段仍让 fast 走两步——那会破坏 a=(k-1)L+c 的同路程对应。不要试图通过修改 next 做标记，题目明确要求不修改链表。空链表、自环、入口就是 head 都由同一逻辑覆盖。",
+        "transfer": "这是 LC-141 的直接升级：先用“相对速度”发现周期，再用“路程同余”定位周期入口。数组中把 nums[i] 看成 next 指针的重复数问题，也可以原样迁移这个模型。",
+    },
+    19: {
+        "pattern": "哑节点 + 固定间距双指针定位倒数位置",
+        "visual": """倒数第 n 个难在：单链表不能从尾巴往前走。\n解决办法不是回头，而是让两个指针保持固定距离。\n\n例如删除倒数第 2 个：\n\ndummy -> 1 -> 2 -> 3 -> 4 -> 5 -> null\n  slow              fast\n\n先让 fast 从 dummy 走 n+1=3 条边：\n\ndummy -> 1 -> 2 -> 3 -> 4 -> 5 -> null\n  slow              fast\n        <--- 3 edges --->\n\n之后两者同步走。fast 一旦到 null，slow 就恰好停在目标节点 4 的前驱 3：\n\n                  slow -> [4] -> 5 -> null\n                           ^\n                         删除\n\n我们真正要找的不是“倒数第 n 个”，而是它的前驱，因为删除动作需要改 predecessor->next。""",
+        "core": "让 fast 始终比 slow 多走 n+1 条边；fast 越过尾部时，slow 就被这段固定距离精确定位到待删节点前驱。",
+        "formula": """使用 dummy 后，把 null 也看成链表尾部之后的一个边界位置。\n\n初始化：fast 比 slow 领先 n+1 条边。\n同步阶段不变量：\ndistance(slow, fast) = n+1 条边。\n\n当 fast == nullptr 时：\nslow->next 恰好是倒数第 n 个节点。\n\n为什么是 n+1 而不是 n？\n因为 slow 要停在目标的“前一个节点”，而不是目标本身。""",
+        "steps": [
+            "建立 dummy->head，让删除原 head 也拥有统一的前驱节点。",
+            "fast 和 slow 都从 dummy 出发，先让 fast 走 n+1 步。",
+            "随后 fast/slow 同步每次走一步，直到 fast==nullptr。",
+            "此时 removed=slow->next，令 slow->next=removed->next，再释放 removed。",
+        ],
+        "memory": "从尾部不好倒着数，就在前面拉开固定尺子；要删目标，就让慢指针对准它的前驱。",
+        "proof": """fast 先领先 n+1 条边，之后两个指针每轮同时走一步，所以间距始终不变。\n当 fast 到达链表末端之后的 nullptr 边界时，从 slow 到 nullptr 仍正好有 n+1 条边：第一条到 slow->next，剩余 n 条覆盖从目标到尾后的距离，因此 slow->next 正是倒数第 n 个节点。\n整个过程中 fast/slow 都只向前，节点不会被重复扫描；删除只跳过一个确定节点，不会漏删或多删。""",
+        "pitfalls": "“领先 n 还是 n+1”不能死记，要先明确 slow 最终要停在目标还是目标前驱。本实现两指针从 dummy 出发并需要前驱，所以是 n+1。dummy 还消除了删除头节点的特殊分支。",
+        "transfer": "它和 LC-141 的快慢指针外形相似，但目的不同：LC-141 利用速度差，LC-19 维护固定距离。以后找倒数第 k 个节点只需让 slow 对准目标本身；找链表中点则把固定距离换成 1:2 速度。",
+    },
+    234: {
+        "pattern": "快慢指针找中点 + 复用 LC-206 反转 + 同向比较",
+        "visual": """数组判断回文可以左右夹逼，但单链表不能从尾部向前走：\n\n1 -> 2 -> 3 -> 2 -> 1\n^                   ^\nleft             想要 right，但拿不到前驱\n\n所以把“从尾往前”改造成“把后半段翻过来后从前往后”：\n\n原链：   1 -> 2 -> 3 -> 2 -> 1\n                    slow\n\n反转 slow 开始的后半段后：\nleft:    1 -> 2 -> 3 ...\nright:   1 -> 2 -> 3\n\n现在两个指针都只需沿 next 向右，就在比较原链的镜像位置。\n这里其实没有新指针技巧：找中点来自 fast/slow，反转完全复用 Day 8 的 LC-206。""",
+        "core": "单链表不能从右往左比较，就把后半段原地反转，把“左右夹逼”转换成两条都向 next 前进的链表比较。",
+        "formula": """第一阶段：fast 每次 2 步、slow 每次 1 步。\nfast 到尾时，slow 位于后半段起点（奇数长度时包含中间节点）。\n\n第二阶段调用 LC-206：\nreversed = reverse(slow)。\n\n比较不变量：\nleft 指向前半段当前镜像位置；\nright 指向反转后半段当前镜像位置；\nright 未结束前必须满足 left->val == right->val。\n\n只需比较 reversed 的长度，因为后半段长度 <= 前半段长度。""",
+        "steps": [
+            "长度 0/1 直接返回 true；否则 fast/slow 从 head 出发，以 2:1 速度找到后半段起点 slow。",
+            "完全复用 LC-206 的 reverse(slow)，得到从原链尾部向中心排列的 reversed。",
+            "left=head、right=reversed，同时向后比较；任一对应值不同就把 equal 记为 false。",
+            "比较结束后再次 reverse(reversed)，把后半段恢复为原方向，再返回 equal。",
+        ],
+        "memory": "拿不到从尾往前的指针，就把后半段翻过来；比较完再翻回去。",
+        "proof": """链表回文等价于第 1 个值=倒数第 1 个值、第 2 个值=倒数第 2 个值……。反转后半段恰好把这些“从尾往前”的节点改成从 reversed 头开始的 next 顺序，因此 left/right 每一轮比较的是一对镜像位置。\n若所有 right 节点都匹配，则所有需要检查的镜像对都相等；奇数长度多出来的中间节点只会和自己对应，不影响结论。最后再次反转恢复原链，使算法不留下隐藏结构副作用。""",
+        "pitfalls": "不要为了方便把值拷进数组，否则会失去 O(1) 额外空间目标。奇数长度时 slow 包含中间节点是合法的；真正容易遗漏的是比较后恢复链表。reverse 的连接顺序继续遵守 LC-206 的“先保后路，再掉头”。",
+        "transfer": "这是一次很重要的模型组合：LC-141/19 提供快慢指针定位能力，LC-206 提供原地反转能力，把两个已学模块拼起来就得到 O(1) 空间回文检查。后面的 LC-143 重排链表还会再次使用“找中点 + 反转后半段”，只是最后一步从比较改成穿插合并。",
+    },
+}

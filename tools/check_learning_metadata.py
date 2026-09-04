@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check Chinese titles and core-logic sections in generated learning files."""
+"""Check generated learner-facing statements and canonical pedagogy blocks."""
 
 from pathlib import Path
 import sys
@@ -9,24 +9,17 @@ ROOT = HERE.parent
 sys.path.insert(0, str(HERE))
 
 import gen_data  # noqa: E402
-from chinese_metadata import get_chinese_metadata  # noqa: E402
 from chinese_titles import get_chinese_title  # noqa: E402
 from gen_all import WEEKS  # noqa: E402
-from refined_data import validate_coverage  # noqa: E402
-
-
-CORE_MARKERS = (
-    "// - 核心要点：",
-    "//   1. 思路起点：",
-    "//   2. 执行逻辑：",
-    "//   3. 为什么这样做：",
-)
+from refined_data import get_refinement, render_analysis, validate_coverage  # noqa: E402
+from statement_metadata import get_statement_metadata, validate_statement_metadata  # noqa: E402
 
 
 def main() -> None:
     problems = []
     gen_data.build(lambda **item: problems.append(item))
     validate_coverage(problems)
+    validate_statement_metadata(problems)
     errors = []
 
     for problem in problems:
@@ -42,7 +35,7 @@ def main() -> None:
             continue
 
         source = solution.read_text(encoding="utf-8")
-        metadata = get_chinese_metadata(problem)
+        metadata = get_statement_metadata(problem)
         expected_title = f"// LC-{num}：{get_chinese_title(num)}"
         if expected_title not in source:
             errors.append(f"LC-{num}: Chinese solution title is missing or stale")
@@ -60,7 +53,8 @@ def main() -> None:
                 errors.append(f"LC-{num}: missing or stale Chinese field {field}")
         for field_name in ("description", "constraints", "iofmt"):
             if metadata[field_name] not in source:
-                errors.append(f"LC-{num}: stale Chinese {field_name}")
+                errors.append(f"LC-{num}: stale learner-facing {field_name}")
+
         forbidden = (
             "// English Title:", "// Difficulty:", "// Priority:",
             "// Week ", "// Constraints:", "// Goal:",
@@ -68,9 +62,12 @@ def main() -> None:
         )
         if any(marker in source for marker in forbidden):
             errors.append(f"LC-{num}: obsolete English metadata remains")
-        for marker in CORE_MARKERS:
-            if marker not in source:
-                errors.append(f"LC-{num}: missing core-logic marker {marker}")
+
+        expected_analysis = render_analysis(get_refinement(num))
+        if expected_analysis not in source:
+            errors.append(
+                f"LC-{num}: generated pedagogy differs from canonical refinement"
+            )
 
         expected_make_title = f"# Problem: LC-{num} {get_chinese_title(num)}"
         if not makefile.exists() or expected_make_title not in makefile.read_text(
@@ -80,7 +77,10 @@ def main() -> None:
 
     if errors:
         raise SystemExit("\n".join(errors))
-    print("learning metadata is current (106 fully Chinese headers and core-logic sections)")
+    print(
+        "learning metadata is current "
+        "(106 effective statements + canonical pedagogy blocks)"
+    )
 
 
 if __name__ == "__main__":

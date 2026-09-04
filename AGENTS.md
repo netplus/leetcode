@@ -16,6 +16,189 @@ For every problem, organize the main explanation in this order:
 
 Do not start a new concept with a dense formula when a simple visual model can explain the same idea first.
 
+## Optimization derivation rule
+
+For any problem whose primary solution is meaningfully more sophisticated than the most direct solution, **do not present the optimized algorithm as the starting point**. The explanation must show how the optimized mechanism grows out of the direct algorithm.
+
+Use this derivation chain by default:
+
+```text
+最自然 / 最朴素的做法
+        ↓
+它为什么正确
+        ↓
+它到底慢在哪里 / 重复做了什么 / 保存了哪些以后永远没用的候选
+        ↓
+找出可复用的信息、可延续的状态、可淘汰的候选或可利用的单调性
+        ↓
+把这些观察压缩成优化机制
+        ↓
+再命名为哈希、前缀和、差分、Kadane、滑动窗口、双指针、单调栈……
+        ↓
+最后落到变量、不变量、更新顺序和具体实现技巧
+```
+
+The learner should be able to answer **“这个优化究竟省掉了哪一部分原始工作？”** before being asked to remember the final formula or template.
+
+### Start from a real direct algorithm
+
+The starting point should be a correct algorithm a learner could naturally write, not a deliberately absurd straw-man implementation.
+
+When useful, show short pseudocode or a concrete execution trace. State its time/space cost and identify the exact repeated operation.
+
+Examples:
+
+- LC-1 Two Sum: two nested loops are repeatedly **searching for one already-determined complement**.
+- LC-1109 Corporate Flight Bookings: each booking repeatedly writes the **same increment to every point in a contiguous interval**.
+- LC-53 Maximum Subarray: interval enumeration keeps many candidates that, once compared at the same endpoint, are **permanently dominated by a better candidate**.
+
+### Classify what the optimization removes
+
+Before introducing the optimized data structure or recurrence, explicitly identify which kind of waste is being removed. Common categories include:
+
+1. **重复查找**：同一个可计算 key 被反复线性搜索。  
+   Typical optimization: build an index / hash map / lookup table.
+
+2. **重复写入或重复计算**：一段范围内执行大量相同操作。  
+   Typical optimization: record boundary events, prefix/difference information, lazy state, preprocessing.
+
+3. **状态可延续**：中间位置没有新事件时，前一位置的有效状态可以直接继承。  
+   Typical optimization: rolling state / accumulated state / sweep-line active state.
+
+4. **候选被支配**：两个候选面对相同未来时，其中一个永远不可能反超另一个。  
+   Typical optimization: dynamic-programming state compression, monotonic structures, greedy elimination.
+
+5. **存在单调性**：一次判断可以证明整批候选都不可能成为答案。  
+   Typical optimization: two pointers, sliding window, binary search, monotonic queue/stack.
+
+6. **重复子问题**：不同搜索路径会重新计算相同状态。  
+   Typical optimization: memoization / dynamic programming.
+
+Do not force every problem into these labels, but when one of them is the real reason the optimization works, say so explicitly.
+
+### Explain the bridge, not just the two endpoints
+
+The most important part of the explanation is the transition from the direct algorithm to the optimized one.
+
+Bad:
+
+```text
+暴力 O(n^2)，所以我们使用哈希表，复杂度 O(n)。
+```
+
+Preferred:
+
+```text
+固定当前 x 后，需要的另一个值已经唯一确定为 target-x。
+暴力算法慢在每次都重新线性寻找这个确定值。
+所以把已经看过的 value 建成 value -> index 的索引，
+把“重新扫描寻找”改成一次直接查询。
+```
+
+Likewise, do not write only:
+
+```text
+区间加法使用差分：diff[L] += x, diff[R+1] -= x。
+```
+
+First explain:
+
+```text
+朴素算法会在 [L,R] 每个位置重复执行 +=x。
+但这份 +x 在整个区间里状态完全相同，
+所以只记录“从 L 开始生效”和“R 后结束”，
+再用 running 把当前有效状态向后延续。
+```
+
+### Make state compression explicit
+
+When an optimization keeps only a small state instead of many candidates, explain **why discarded candidates can never become useful again**.
+
+For LC-53, for example:
+
+```text
+固定同一个终点时，若候选 A 的和已经大于候选 B，
+以后无论再追加什么连续后缀，A 和 B 都会加上完全相同的值。
+因此 B 永远不可能反超 A，可以永久丢弃。
+```
+
+Only after that observation introduce:
+
+```text
+current = 必须以当前位置结尾的最大子数组和
+current = max(nums[i], current + nums[i])
+```
+
+This “same future -> dominated state can be discarded” reasoning is more reusable than memorizing a particular DP recurrence.
+
+### Separate data, change/event, and accumulated state
+
+When an implementation uses accumulation to make a state persist, clearly distinguish the roles of the variables.
+
+For LC-1109-style difference/sweep implementations, use the mental model:
+
+```text
+diff[i]   = 在位置 i，当前状态要改变多少
+running   = 走到当前位置时，仍然有效的所有贡献之和
+answer[i] = 当前 running 对应的真实结果
+```
+
+Then explain the implementation behavior:
+
+```text
++x = 加入一份持续状态
+ 0 = 没有新事件，running 自动继承旧状态
+-x = 移除之前加入的那份状态
+```
+
+The important implementation insight is that `running += diff[i]` does two jobs:
+
+1. applies new change events at `i`;
+2. when `diff[i] == 0`, naturally carries the previous active state forward without repeating the original range update.
+
+A negative difference entry is therefore usually a **state cancellation event**, not necessarily a business-level negative operation on that position.
+
+### Derive implementation tricks after the mechanism
+
+Implementation details should be presented only after the optimization mechanism is understood. For every non-trivial trick, state:
+
+1. **它代表什么状态或边界**；
+2. **为什么需要它**；
+3. **为什么必须按这个顺序更新**；
+4. **如果顺序/边界写错会发生什么**。
+
+Examples:
+
+- LC-1: `find()` is a pure historical query; insert the current value only **after** the query so one index cannot pair with itself.
+- LC-1109: `diff[n]` may be a sentinel boundary representing “after the final real position”, not an actual answer element.
+- LC-53: `current` is the best interval forced to end here; `best` is historical global optimum, so `best` must not be replaced by the latest `current`.
+- Prefix-frequency problems: initialize the empty prefix before scanning when intervals starting at index 0 must be countable.
+
+Do not summarize an implementation trick as a mnemonic until its causal explanation has appeared first.
+
+### Name the reusable optimization pattern last
+
+Whenever possible, let the learner first understand the mechanism in ordinary language and only then attach the standard algorithm name.
+
+Preferred progression:
+
+```text
+大量相同区间写入
+-> 只记录开始/结束变化
+-> running 承接中间状态
+-> 这套结构叫“差分数组 + 前缀恢复”
+```
+
+or:
+
+```text
+同一终点只保留不会被其他候选支配的最优状态
+-> 每一步只需“接上还是重开”
+-> 这就是 Kadane / 一维状态压缩 DP
+```
+
+The algorithm name is useful for retrieval; the mechanism is what makes it reconstructible.
+
 ## Preferred teaching structure
 
 The `解法精讲` section should normally contain the following layers.
@@ -223,12 +406,13 @@ For every problem, complete one independent review cycle before touching the nex
 
 1. read that problem's current canonical explanation, generated `solution.cpp`, implementation, and tests;
 2. reconstruct the most direct / brute-force intuition a learner would naturally start from;
-3. identify exactly what repeated work, unnecessary state, or structural difficulty motivates the optimized algorithm;
+3. identify exactly what repeated work, unnecessary state, dominated candidate, state persistence, or structural difficulty motivates the optimized algorithm;
 4. derive the optimized mechanism from that bottleneck instead of presenting the optimized template as a fact;
-5. map the mechanism to concrete implementation order, naming, sentinels, indices, container semantics, or pointer-update tricks;
-6. summarize reusable implementation techniques only after they have been justified in this concrete problem;
-7. update and validate only this problem's canonical data and generated output;
-8. record the result, then move to the next problem.
+5. explicitly state **what original work the optimization has removed** and why the removed work/candidates can never affect correctness;
+6. map the mechanism to concrete implementation order, naming, sentinels, indices, container semantics, accumulated state, or pointer-update tricks;
+7. summarize reusable implementation techniques only after they have been justified in this concrete problem;
+8. update and validate only this problem's canonical data and generated output;
+9. record the result, then move to the next problem.
 
 Even when two neighboring problems reuse the same pattern, the second problem must still receive its own concrete analysis. Knowledge reuse should appear as an explicit migration/analogy, not as copied boilerplate.
 
@@ -236,10 +420,11 @@ For each problem:
 
 1. read the existing `solution.cpp` and tests;
 2. identify the key abstraction barrier that makes the current explanation hard to understand;
-3. rewrite using **图像直觉 -> 一句话核心 -> 公式/不变量 -> 执行步骤 -> 正确性直觉 -> 易错点 -> 迁移**;
-4. change implementation only when doing so materially improves clarity/correctness or matches the intended primary solution;
-5. update the canonical generation layer before or together with the generated file;
-6. keep each change focused and traceable.
+3. rewrite using **朴素直觉 -> 性能/结构瓶颈 -> 优化机制 -> 图像直觉 -> 一句话核心 -> 公式/不变量 -> 执行步骤 -> 实现技巧 -> 正确性直觉 -> 易错点 -> 迁移** when the problem has a meaningful optimization step;
+4. for naturally direct problems with no meaningful optimization gap, do not fabricate a brute-force story merely to satisfy the sequence;
+5. change implementation only when doing so materially improves clarity/correctness or matches the intended primary solution;
+6. update the canonical generation layer before or together with the generated file;
+7. keep each change focused and traceable.
 
 ## Writing style
 
@@ -248,4 +433,7 @@ For each problem:
 - Prefer short equations tied directly to the diagram.
 - Avoid compressed phrases such as “显然”, “同理”, or “直接可得” when they hide the key reasoning step.
 - Avoid presenting memorized templates without explaining the invariant that makes the template applicable.
-- The target is: after several days, the reader should be able to reconstruct the algorithm from the picture and one-sentence core idea rather than memorize the code.
+- Prefer saying exactly what work/state/candidates were eliminated over merely saying that the optimized algorithm is “more efficient”.
+- When a variable carries state across positions, explain both **how the state changes** and **why it persists when there is no new event**.
+- When candidates are discarded, explain why they face the same future or why monotonicity makes them permanently impossible.
+- The target is: after several days, the reader should be able to reconstruct the algorithm from the direct idea, the bottleneck, and the optimization mechanism rather than memorize the code.

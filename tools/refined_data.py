@@ -23,6 +23,7 @@ from pedagogy_week2_day11 import PEDAGOGY_WEEK2_DAY11
 from pedagogy_week2_day12 import PEDAGOGY_WEEK2_DAY12
 from pedagogy_week2_day13 import PEDAGOGY_WEEK2_DAY13
 from pedagogy_derivations import DERIVATION_OVERRIDES
+from pedagogy_derivations_backfill import DERIVATION_BACKFILL_OVERRIDES
 from chinese_titles import validate_title_coverage
 
 
@@ -64,10 +65,17 @@ for num, patch in PEDAGOGY_OVERRIDES.items():
     REFINEMENTS[num] = merged
 
 # Optimization derivations are intentionally separate from the main pedagogy
-# registry: the same LC number may already have a seven-layer rewrite.  This
-# layer only adds the optional bridge required by AGENTS.md from a real direct
+# registry: the same LC number may already have a seven-layer rewrite. These
+# modules only add the optional bridge required by AGENTS.md from a real direct
 # algorithm to the optimized mechanism.
-for num, derivation in DERIVATION_OVERRIDES.items():
+DERIVATIONS = {}
+for module in (DERIVATION_OVERRIDES, DERIVATION_BACKFILL_OVERRIDES):
+    overlap = set(DERIVATIONS) & set(module)
+    if overlap:
+        raise RuntimeError(f"duplicate derivation overrides: {sorted(overlap)}")
+    DERIVATIONS.update(module)
+
+for num, derivation in DERIVATIONS.items():
     if num not in REFINEMENTS:
         raise RuntimeError(f"derivation override references unknown lc{num}")
     if not derivation.strip():

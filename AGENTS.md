@@ -16,6 +16,78 @@ For every problem, organize the main explanation in this order:
 
 Do not start a new concept with a dense formula when a simple visual model can explain the same idea first.
 
+## Define prerequisite concepts before using them
+
+When a problem depends on a technical term, mathematical ordering, data-structure convention, or domain concept whose exact meaning is necessary for the later derivation, **define that concept before using it to explain the algorithm**.
+
+Use this order by default:
+
+```text
+概念名称
+    ↓
+一句精确定义：它到底比较 / 约束 / 表示什么
+    ↓
+一个最小具体例子
+    ↓
+必要时再给一个容易混淆的反例或边界例子
+    ↓
+确认这个概念如何影响当前题目的目标
+    ↓
+再进入算法直觉、优化推导和实现
+```
+
+Do not assume that a learner already has an operational definition merely because a term is common in algorithm discussions.
+
+Typical concepts that may need this treatment include, but are not limited to:
+
+- lexicographical order / 字典序;
+- stable ordering / 稳定性;
+- closed, open, and half-open intervals / 闭区间、开区间、半开区间;
+- tree height versus depth, path length by nodes versus by edges;
+- prefix / suffix, subsequence / substring / subarray;
+- topological order;
+- connected component, cycle, frontier, state, invariant;
+- strict versus non-strict ordering when duplicates matter.
+
+### Example: lexicographical order before LC-31
+
+Before explaining “next permutation”, first make “lexicographically larger” concrete.
+
+A practical definition for equal-length integer sequences is:
+
+```text
+从左到右比较两个序列；
+找到第一个不同的位置；
+该位置数值更大的序列，字典序更大。
+```
+
+For example:
+
+```text
+[1,2,3] < [1,3,2]
+          ^
+第一个不同位置是第二位：2 < 3
+
+[1,3,2] < [2,1,3]
+ ^
+第一个不同位置是第一位：1 < 2
+```
+
+So one possible ordering begins as:
+
+```text
+[1,2,3]
+[1,3,2]
+[2,1,3]
+[2,3,1]
+[3,1,2]
+[3,2,1]
+```
+
+Only after this definition and example should the explanation ask what the **next** lexicographically larger permutation is and derive pivot / successor / suffix reversal.
+
+The goal is that the learner can answer **“这个术语在这里具体是什么意思？”** before the algorithm uses that term as a premise.
+
 ## Optimization derivation rule
 
 For any problem whose primary solution is meaningfully more sophisticated than the most direct solution, **do not present the optimized algorithm as the starting point**. The explanation must show how the optimized mechanism grows out of the direct algorithm.
@@ -225,7 +297,7 @@ The sentence should answer: **“每一步真正是在问什么 / 维护什么�
 
 Examples:
 
-- prefix sum: “我现在累计到 `prefix`，历史上有多少次累计到 `prefix-k`？”
+- prefix sum: “我现在累计到 `prefix`，历史上有多少次累计到了 `prefix-k`？”
 - sliding window: “右端扩张获得新信息，条件失效时左端只向右移动直到恢复合法。”
 
 ### 3. 公式或不变量

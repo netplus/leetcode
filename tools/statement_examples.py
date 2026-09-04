@@ -1,16 +1,28 @@
 """Offline learner-facing examples parsed from cached official statements.
 
-Examples are statement facts, not pedagogy.  Prefer the cached official English
+Examples are statement facts, not pedagogy.  Prefer cached Chinese official
+examples when available; otherwise fall back to the cached official English
 snapshot so Input / Output / Explanation stay traceable to an official source.
 Premium problems whose snapshot has no body use small reviewed fallbacks, just as
 the Chinese statement cache already does for their descriptions/constraints.
 """
 
 from pathlib import Path
+import json
 import re
 
 
 HERE = Path(__file__).resolve().parent
+
+
+_CHINESE_INFO = json.loads(
+    (HERE / "chinese_problem_info.json").read_text(encoding="utf-8")
+)
+CHINESE_EXAMPLES = {
+    int(num): value.get("examples", [])
+    for num, value in _CHINESE_INFO.items()
+    if value.get("examples")
+}
 
 
 # Premium snapshots currently contain only title/slug metadata.  Keep these
@@ -57,6 +69,8 @@ def _clean_example_block(text: str) -> str:
 
 def get_examples(num: int) -> list[str]:
     """Return official/reviewed example bodies for one LC number."""
+    if num in CHINESE_EXAMPLES:
+        return list(CHINESE_EXAMPLES[num])
     if num in EXAMPLE_OVERRIDES:
         return list(EXAMPLE_OVERRIDES[num])
 

@@ -8,6 +8,17 @@
 // 给定一组会议时间区间 intervals，返回为了安排所有会议至少需要的会议室数量。
 // 本地适配器使用半开区间 [start, end)：一场会议在另一场开始时结束，可以复用同一间会议室。
 //
+// 题目示例：
+// 示例 1：
+//   Input: intervals = [[0,30],[5,10],[15,20]]
+//   Output: 2
+//   Explanation: At most two meetings overlap at the same time, so two rooms are sufficient.
+//
+// 示例 2：
+//   Input: intervals = [[7,10],[2,4]]
+//   Output: 1
+//   Explanation: The meetings do not overlap, so one room is sufficient.
+//
 // 约束与要求：
 //   - 0 <= intervals.length <= 10^4
 //   - intervals[i].length == 2

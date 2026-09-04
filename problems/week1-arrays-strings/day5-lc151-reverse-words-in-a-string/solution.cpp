@@ -12,6 +12,21 @@
 // 注意：输入字符串 s 中可能会存在前导空格、尾随空格或者单词间的多个空格。
 // 返回的结果字符串中，单词间应当仅用单个空格分隔，且不包含任何额外的空格。
 //
+// 题目示例：
+// 示例 1：
+//   Input: s = "the sky is blue"
+//   Output: "blue is sky the"
+//
+// 示例 2：
+//   Input: s = " hello world "
+//   Output: "world hello"
+//   Explanation: Your reversed string should not contain leading or trailing spaces.
+//
+// 示例 3：
+//   Input: s = "a good example"
+//   Output: "example good a"
+//   Explanation: You need to reduce multiple spaces between two words to a single space in the reversed string.
+//
 // 约束与要求：
 //   - 1 <= s.length <= 10^4
 //   - s 包含英文大小写字母、数字和空格 ' '

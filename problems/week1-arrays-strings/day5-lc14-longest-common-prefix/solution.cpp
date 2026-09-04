@@ -8,6 +8,16 @@
 // 编写一个函数来查找字符串数组中的最长公共前缀。
 // 如果不存在公共前缀，返回空字符串 ""。
 //
+// 题目示例：
+// 示例 1：
+//   Input: strs = ["flower","flow","flight"]
+//   Output: "fl"
+//
+// 示例 2：
+//   Input: strs = ["dog","racecar","car"]
+//   Output: ""
+//   Explanation: There is no common prefix among the input strings.
+//
 // 约束与要求：
 //   - 1 <= strs.length <= 200
 //   - 0 <= strs[i].length <= 200

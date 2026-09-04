@@ -7,6 +7,16 @@
 // 题目描述：
 // 给你一个字符串 s，找到 s 中最长的回文子串。
 //
+// 题目示例：
+// 示例 1：
+//   Input: s = "babad"
+//   Output: "bab"
+//   Explanation: "aba" is also a valid answer.
+//
+// 示例 2：
+//   Input: s = "cbbd"
+//   Output: "bb"
+//
 // 约束与要求：
 //   - 1 <= s.length <= 1000
 //   - s 仅由数字和英文字母组成

@@ -8,6 +8,22 @@
 // 给你一个未排序的整数数组 nums，请你找出其中没有出现的最小的正整数。
 // 请你实现时间复杂度为 O(n) 并且只使用常数级别额外空间的解决方案。
 //
+// 题目示例：
+// 示例 1：
+//   Input: nums = [1,2,0]
+//   Output: 3
+//   Explanation: The numbers in the range [1,2] are all in the array.
+//
+// 示例 2：
+//   Input: nums = [3,4,-1,1]
+//   Output: 2
+//   Explanation: 1 is in the array but 2 is missing.
+//
+// 示例 3：
+//   Input: nums = [7,8,9,11,12]
+//   Output: 1
+//   Explanation: The smallest positive integer 1 is missing.
+//
 // 约束与要求：
 //   - 1 <= nums.length <= 10^5
 //   - -2^31 <= nums[i] <= 2^31 - 1

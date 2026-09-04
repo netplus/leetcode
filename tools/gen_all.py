@@ -10,8 +10,8 @@ writes:
   problems/<weekdir>/dayN-lcNUM-short-name/Makefile        (local commands)
 
 solution.cpp header: LC#, Chinese title, difficulty, priority, week/day,
-Chinese description, constraints, complexity goal, local I/O format, and
-expected output.
+Chinese description, official examples, constraints, complexity goal, local I/O
+format, and expected output.
 main() is a local adapter rather than part of the LeetCode submission. The
 generated Solution class is complete and can be judged immediately.
 
@@ -60,6 +60,8 @@ TEMPLATE = """// ===============================================================
 // ----------------------------------------------------------------------------
 // 题目描述：
 __DESC__
+//
+__EXAMPLES__
 //
 // 约束与要求：
 __CONSTRAINTS__
@@ -123,6 +125,7 @@ public:
         "__WEEK__": str(p["week"]),
         "__DAY__": str(p["day"]),
         "__DESC__": metadata["description"],
+        "__EXAMPLES__": metadata["examples"],
         "__CONSTRAINTS__": metadata["constraints"],
         "__GOAL__": metadata["goal"],
         "__ANALYSIS__": analysis,

@@ -217,6 +217,21 @@ After modifying a problem:
 
 When asked to optimize existing cases/problems, work incrementally rather than rewriting everything mechanically.
 
+A repository-wide scan may identify and prioritize many candidates, but **pedagogy optimization itself must be strictly per-problem and serial**. Do not batch-rewrite multiple problems just because they share a pattern or can be changed by the same mechanical transformation.
+
+For every problem, complete one independent review cycle before touching the next problem:
+
+1. read that problem's current canonical explanation, generated `solution.cpp`, implementation, and tests;
+2. reconstruct the most direct / brute-force intuition a learner would naturally start from;
+3. identify exactly what repeated work, unnecessary state, or structural difficulty motivates the optimized algorithm;
+4. derive the optimized mechanism from that bottleneck instead of presenting the optimized template as a fact;
+5. map the mechanism to concrete implementation order, naming, sentinels, indices, container semantics, or pointer-update tricks;
+6. summarize reusable implementation techniques only after they have been justified in this concrete problem;
+7. update and validate only this problem's canonical data and generated output;
+8. record the result, then move to the next problem.
+
+Even when two neighboring problems reuse the same pattern, the second problem must still receive its own concrete analysis. Knowledge reuse should appear as an explicit migration/analogy, not as copied boilerplate.
+
 For each problem:
 
 1. read the existing `solution.cpp` and tests;

@@ -9,6 +9,23 @@
 // 如果没有这样的子串，返回空字符串 ""。
 // 测试用例保证答案唯一。
 //
+// 题目示例：
+// 示例 1：
+//   Input: s = "ADOBECODEBANC", t = "ABC"
+//   Output: "BANC"
+//   Explanation: The minimum window substring "BANC" includes 'A', 'B', and 'C' from string t.
+//
+// 示例 2：
+//   Input: s = "a", t = "a"
+//   Output: "a"
+//   Explanation: The entire string s is the minimum window.
+//
+// 示例 3：
+//   Input: s = "a", t = "aa"
+//   Output: ""
+//   Explanation: Both 'a's from t must be included in the window.
+//   Since the largest window of s only has one 'a', return empty string.
+//
 // 约束与要求：
 //   - m == s.length
 //   - n == t.length

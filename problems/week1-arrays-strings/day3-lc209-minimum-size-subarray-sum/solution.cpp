@@ -9,6 +9,20 @@
 // 找出该数组中满足其总和大于等于 target 的长度最小的子数组 [nums_l, nums_l+1, ..., nums_r-1, nums_r]，并返回其长度。
 // 如果不存在符合条件的子数组，返回 0。
 //
+// 题目示例：
+// 示例 1：
+//   Input: target = 7, nums = [2,3,1,2,4,3]
+//   Output: 2
+//   Explanation: The subarray [4,3] has the minimal length under the problem constraint.
+//
+// 示例 2：
+//   Input: target = 4, nums = [1,4,4]
+//   Output: 1
+//
+// 示例 3：
+//   Input: target = 11, nums = [1,1,1,1,1,1,1,1]
+//   Output: 0
+//
 // 约束与要求：
 //   - 1 <= target <= 10^9
 //   - 1 <= nums.length <= 10^5

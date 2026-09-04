@@ -133,13 +133,18 @@ public:
         deque<int> candidates;
         vector<int> answer;
         for (int i = 0; i < static_cast<int>(nums.size()); ++i) {
+            /*candidates存下标：只要有机会看到的元素（在K window内都放入），
+             front() + k <= i时，说明front()该出 k window了
+            */
             if (!candidates.empty() && candidates.front() <= i - k) {
                 candidates.pop_front();
             }
             while (!candidates.empty() && nums[candidates.back()] <= nums[i]) {
+                /*因candidate可用Index来计算何时出，每个k window内，只有最大的有效，因此，我们每次将比当前看到的小的元素扔掉*/
                 candidates.pop_back();
             }
             candidates.push_back(i);
+            /*必须集满k window时，才拿头，拿头时，不扔头，因为可能还会持续是最大*/
             if (i >= k - 1) answer.push_back(nums[candidates.front()]);
         }
         return answer;

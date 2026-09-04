@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Refresh the offline Chinese statement/constraint cache from LeetCode China.
+"""Refresh the offline Chinese statement/constraint/example cache from LeetCode China.
 
-The normal generator never accesses the network.  This maintenance command
-stores only the statement paragraphs and constraints; examples and editorial
-material are intentionally excluded.
+The normal generator never accesses the network.  This maintenance command stores
+statement paragraphs, official examples, and constraints; editorial material is
+intentionally excluded.
 """
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -40,6 +40,10 @@ PREMIUM = {
             "给定一组会议时间区间 intervals，判断一个人能否参加全部会议。",
             "本地适配器把会议表示为半开区间 [start, end)；两个区间有时间重叠时，无法同时参加。",
         ],
+        "examples": [
+            "输入：intervals = [[0,30],[5,10],[15,20]]\n输出：false\n解释：[0,30] 与 [5,10] 存在时间重叠，因此一个人无法参加全部会议。",
+            "输入：intervals = [[7,10],[2,4]]\n输出：true\n解释：两场会议没有时间重叠。",
+        ],
         "constraints": [
             "0 <= intervals.length <= 10^4",
             "intervals[i].length == 2",
@@ -51,6 +55,10 @@ PREMIUM = {
         "description": [
             "给定一组会议时间区间 intervals，返回为了安排所有会议至少需要的会议室数量。",
             "本地适配器使用半开区间 [start, end)：一场会议在另一场开始时结束，可以复用同一间会议室。",
+        ],
+        "examples": [
+            "输入：intervals = [[0,30],[5,10],[15,20]]\n输出：2\n解释：最多有两场会议同时进行，因此至少需要两间会议室。",
+            "输入：intervals = [[7,10],[2,4]]\n输出：1\n解释：两场会议不重叠，一间会议室即可。",
         ],
         "constraints": [
             "0 <= intervals.length <= 10^4",
@@ -77,7 +85,18 @@ def normalize(text: str) -> str:
     return text
 
 
-def parse_content(content: str) -> tuple[list[str], list[str]]:
+def normalize_example(pre) -> str:
+    """Keep official example line structure while removing HTML formatting noise."""
+    raw = pre.get_text("\n", strip=True).replace("\xa0", " ")
+    lines = []
+    for line in raw.splitlines():
+        line = re.sub(r"[ \t]+", " ", line).strip()
+        if line:
+            lines.append(line)
+    return "\n".join(lines)
+
+
+def parse_content(content: str) -> tuple[list[str], list[str], list[str]]:
     content = re.sub(r"<sup>(.*?)</sup>", r"^\1", content, flags=re.S | re.I)
     content = re.sub(r"<sub>(.*?)</sub>", r"_\1", content, flags=re.S | re.I)
     soup = BeautifulSoup(content, "html.parser")
@@ -97,6 +116,17 @@ def parse_content(content: str) -> tuple[list[str], list[str]]:
         if normalize(sentence)
     ]
 
+    # Official LeetCode examples are normally represented by <pre> blocks.
+    # Keep only blocks that visibly contain both input and output labels, which
+    # excludes unrelated code/editorial snippets if the statement contains any.
+    examples = []
+    for pre in soup.find_all("pre"):
+        example = normalize_example(pre)
+        if re.search(r"(?:输入|Input)\s*[：:]", example) and re.search(
+            r"(?:输出|Output)\s*[：:]", example
+        ):
+            examples.append(example)
+
     constraints = []
     label = soup.find(string=lambda value: value and normalize(value).startswith("提示"))
     if label:
@@ -106,7 +136,7 @@ def parse_content(content: str) -> tuple[list[str], list[str]]:
                 normalize(item.get_text(" ", strip=True))
                 for item in listing.find_all("li")
             ]
-    return description, constraints
+    return description, examples, constraints
 
 
 def fetch_one(problem: dict) -> tuple[int, dict]:
@@ -125,14 +155,17 @@ def fetch_one(problem: dict) -> tuple[int, dict]:
             question = json.loads(result.stdout)["data"]["question"]
             if not question or not question["translatedContent"]:
                 raise ValueError("translated content unavailable")
-            description, constraints = parse_content(question["translatedContent"])
-            if not description or not constraints:
+            description, examples, constraints = parse_content(question["translatedContent"])
+            if not description or not examples or not constraints:
                 raise ValueError(
-                    f"incomplete parse: description={len(description)}, constraints={len(constraints)}"
+                    "incomplete parse: "
+                    f"description={len(description)}, examples={len(examples)}, "
+                    f"constraints={len(constraints)}"
                 )
             return problem["num"], {
                 "title": question["translatedTitle"],
                 "description": description,
+                "examples": examples,
                 "constraints": constraints,
             }
         except Exception as exc:  # noqa: BLE001

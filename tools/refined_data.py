@@ -32,6 +32,7 @@ from pedagogy_week3_day20 import PEDAGOGY_WEEK3_DAY20
 from pedagogy_week3_day21 import PEDAGOGY_WEEK3_DAY21
 from pedagogy_week4_day22 import PEDAGOGY_WEEK4_DAY22
 from pedagogy_week4_day23 import PEDAGOGY_WEEK4_DAY23
+from pedagogy_week4_day24 import PEDAGOGY_WEEK4_DAY24
 from pedagogy_derivations import DERIVATION_OVERRIDES
 from pedagogy_derivations_backfill import DERIVATION_BACKFILL_OVERRIDES
 from pedagogy_prerequisites import PREREQUISITE_OVERRIDES
@@ -63,6 +64,7 @@ _PEDAGOGY_MODULES = (
     PEDAGOGY_WEEK3_DAY21,
     PEDAGOGY_WEEK4_DAY22,
     PEDAGOGY_WEEK4_DAY23,
+    PEDAGOGY_WEEK4_DAY24,
 )
 
 PEDAGOGY_OVERRIDES = {}

@@ -8,6 +8,22 @@
 // 以数组 intervals 表示若干个区间的集合，其中单个区间为 intervals[i] = [start_i, end_i]。
 // 请你合并所有重叠的区间，并返回一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间。
 //
+// 题目示例：
+// 示例 1：
+//   Input: intervals = [[1,3],[2,6],[8,10],[15,18]]
+//   Output: [[1,6],[8,10],[15,18]]
+//   Explanation: Since intervals [1,3] and [2,6] overlap, merge them into [1,6].
+//
+// 示例 2：
+//   Input: intervals = [[1,4],[4,5]]
+//   Output: [[1,5]]
+//   Explanation: Intervals [1,4] and [4,5] are considered overlapping.
+//
+// 示例 3：
+//   Input: intervals = [[4,7],[1,4]]
+//   Output: [[1,7]]
+//   Explanation: Intervals [1,4] and [4,7] are considered overlapping.
+//
 // 约束与要求：
 //   - 1 <= intervals.length <= 10^4
 //   - intervals[i].length == 2

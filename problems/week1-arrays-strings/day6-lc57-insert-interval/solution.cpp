@@ -14,6 +14,16 @@
 // 注意你不需要原地修改 intervals。
 // 你可以创建一个新数组然后返回它。
 //
+// 题目示例：
+// 示例 1：
+//   Input: intervals = [[1,3],[6,9]], newInterval = [2,5]
+//   Output: [[1,5],[6,9]]
+//
+// 示例 2：
+//   Input: intervals = [[1,2],[3,5],[6,7],[8,10],[12,16]], newInterval = [4,8]
+//   Output: [[1,2],[3,10],[12,16]]
+//   Explanation: Because the new interval [4,8] overlaps with [3,5],[6,7],[8,10].
+//
 // 约束与要求：
 //   - 0 <= intervals.length <= 10^4
 //   - intervals[i].length == 2

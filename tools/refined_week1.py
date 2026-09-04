@@ -441,12 +441,17 @@ class Solution {
 public:
     vector<int> productExceptSelf(vector<int>& nums) {
         vector<int> answer(nums.size(), 1);
+        // 实现技巧（滚动暂存）：answer[i] 先暂存"i 之前所有前缀元素的乘积"，
+        // 写完后把 nums[i] 乘进 leftProduct，这份更新后的暂存值就是下一轮
+        // answer[i+1] 需要的前缀乘积——暂存值就地滚动，不需要额外数组。
         int leftProduct = 1;
         for (int i = 0; i < static_cast<int>(nums.size()); ++i) {
             answer[i] = leftProduct;
             leftProduct *= nums[i];
         }
 
+        // 右往左同理：rightProduct 暂存右侧后缀乘积，先乘入 answer[i]，
+        // 再把 nums[i] 纳入，滚动成下一轮的后缀乘积。
         int rightProduct = 1;
         for (int i = static_cast<int>(nums.size()) - 1; i >= 0; --i) {
             answer[i] *= rightProduct;

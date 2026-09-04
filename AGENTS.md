@@ -16,6 +16,53 @@ For every problem, organize the main explanation in this order:
 
 Do not start a new concept with a dense formula when a simple visual model can explain the same idea first.
 
+## Show official examples before algorithm explanation
+
+Every generated learning problem should include statement-level examples before constraints and before `解法精讲`.
+
+Use this learner-facing order:
+
+```text
+题目描述
+    ↓
+题目示例：Input / Output / Explanation
+    ↓
+约束与要求
+    ↓
+前置概念（需要时）
+    ↓
+优化推导（需要时）
+    ↓
+图像直觉 / 公式 / 执行步骤
+```
+
+Examples in this section explain **what the problem asks**, not **why the optimized algorithm works**. Preserve official Input / Output / Explanation content when available instead of inventing replacement examples.
+
+Prefer all official statement examples when they are reasonably sized. At minimum, examples should cover the ordinary contract and any official boundary behavior that materially helps the learner understand the task.
+
+For example, LC-41 should make the return contract concrete before discussing in-place placement:
+
+```text
+Example 1:
+Input: nums = [1,2,0]
+Output: 3
+Explanation: 1 and 2 are present, so 3 is the smallest missing positive.
+
+Example 2:
+Input: nums = [3,4,-1,1]
+Output: 2
+Explanation: 1 is present but 2 is missing.
+
+Example 3:
+Input: nums = [7,8,9,11,12]
+Output: 1
+Explanation: 1 itself is missing.
+```
+
+Do not confuse these statement examples with the smaller custom example used later in `图像直觉`. A pedagogy example may deliberately be chosen to expose one invariant, pointer movement, state transition, or optimization bridge; it does not replace the official examples that define the problem contract.
+
+Examples belong to the **statement metadata layer**, not to per-problem pedagogy overrides. Prefer the cached Chinese official examples when available, fall back to `tools/official/lc<N>.txt`, and use a reviewed fallback only when an official snapshot is unavailable (for example, some premium problems).
+
 ## Define prerequisite concepts before using them
 
 When a problem depends on a technical term, mathematical ordering, data-structure convention, or domain concept whose exact meaning is necessary for the later derivation, **define that concept before using it to explain the algorithm**.

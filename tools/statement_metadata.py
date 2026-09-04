@@ -10,6 +10,7 @@ from chinese_metadata import (
     get_chinese_metadata as get_cached_chinese_metadata,
     validate_chinese_metadata,
 )
+from statement_examples import render_examples, validate_example_coverage
 from statement_overrides import STATEMENT_OVERRIDES
 
 
@@ -25,11 +26,17 @@ def get_statement_metadata(problem: dict) -> dict:
         data["constraints"] = comment_lines(
             patch["constraints"], prefix="//   - "
         )
+
+    # Examples are statement-level learning material.  They are parsed from the
+    # cached official snapshots (or reviewed premium fallbacks), not handwritten
+    # inside generated solution.cpp files.
+    data["examples"] = render_examples(problem["num"])
     return data
 
 
 def validate_statement_metadata(problems: list[dict]) -> None:
     validate_chinese_metadata(problems)
+    validate_example_coverage(problems)
     expected = {problem["num"] for problem in problems}
     unknown = sorted(set(STATEMENT_OVERRIDES) - expected)
     if unknown:
@@ -37,7 +44,10 @@ def validate_statement_metadata(problems: list[dict]) -> None:
 
     for problem in problems:
         data = get_statement_metadata(problem)
-        required = {"title", "difficulty", "priority", "description", "constraints", "goal", "iofmt"}
+        required = {
+            "title", "difficulty", "priority", "description", "examples",
+            "constraints", "goal", "iofmt",
+        }
         missing = sorted(required - set(data))
         if missing:
             raise RuntimeError(f"LC-{problem['num']}: statement metadata missing {missing}")

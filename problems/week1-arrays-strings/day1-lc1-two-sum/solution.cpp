@@ -9,6 +9,20 @@
 // 你可以假设每种输入只会对应一个答案，并且你不能使用两次相同的元素。
 // 你可以按任意顺序返回答案。
 //
+// 题目示例：
+// 示例 1：
+//   Input: nums = [2,7,11,15], target = 9
+//   Output: [0,1]
+//   Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
+//
+// 示例 2：
+//   Input: nums = [3,2,4], target = 6
+//   Output: [1,2]
+//
+// 示例 3：
+//   Input: nums = [3,3], target = 6
+//   Output: [0,1]
+//
 // 约束与要求：
 //   - 2 <= nums.length <= 10^4
 //   - -10^9 <= nums[i] <= 10^9

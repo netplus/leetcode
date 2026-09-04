@@ -19,13 +19,65 @@
 // 复杂度目标：O(log n) 时间（两次二分查找）。
 //
 // ----------------------------------------------------------------------------
-// 解法精讲｜边界二分：两次 lower_bound
-// - 核心要点：
-//   1. 思路起点：把“找任意等于 target”改成找第一个 >=target 的位置；右边界可由第一个 >=target+1（即 >target）的位置减一得到。
-//   2. 执行逻辑：1. 实现半开区间 [left,right) 的 firstAtLeast；2. 求 firstAtLeast(target) 并验证是否命中；3. 求 firstAtLeast(target+1)-1 作为末位置。
-//   3. 为什么这样做：单调谓词 nums[i]>=value 在边界前假、边界后真，二分返回首个真位置；所有 target 恰位于两个边界之间。
-// - 边界与易错点：target+1 可能溢出，接口用 long long value；半开区间循环 left<right；空数组和未命中返回 [-1,-1]。
-// - 举一反三：计数等于 lower_bound(>x)-lower_bound(>=x)；数据库范围查询与有序数组插入点同样是边界二分。
+// 解法精讲｜边界二分：从找一个 target 升级为找单调谓词第一次成立的位置
+//
+// 0. 优化是怎么来的
+//   一个自然正确做法是线性扫描数组，记录第一次和最后一次遇到 target 的位置，时间 O(n)。即使先用普通二分 O(log n) 找到某个 target，再向左右扩展，极端输入全部都是 target 时扩展仍会退化到 O(n)。
+//
+//   浪费在于：我们已经知道数组非递减，却还在边界附近逐个确认重复值。对于固定 value，谓词 P(i)=[nums[i]>=value] 具有单调性：一旦某位置为真，右边所有位置都为真；一旦某位置为假，左边所有位置都为假。
+//
+//   所以问题不再是‘某个位置等不等于 target’，而是‘假区间和真区间的分界点在哪里’。二分每次可以整段排除仍为假的左半或已经为真的右半，直接找到 first true。用 value=target 找到 target 段开始，用 value=target+1 找到第一个严格大于 target 的位置，再减一得到结束位置。
+//
+// 1. 图像直觉
+//   nums = [5,7,7,8,8,10], target=8
+//
+//   对 P(i): nums[i] >= 8：
+//   index: 0 1 2 | 3 4 5
+//   P:     F F F | T T T
+//                 ^ firstAtLeast(8)=3
+//
+//   对 nums[i] >= 9：
+//   index: 0 1 2 3 4 | 5
+//   P:     F F F F F | T
+//                     ^ firstAtLeast(9)=5
+//
+//   所以所有 8 恰好位于 [3, 5-1] = [3,4]。
+//
+//   边界二分不是‘找到 8 后继续找’，而是直接搜索 F/T 的分界线。
+//
+// 2. 一句话核心
+//   把数值比较改写成单调真假谓词，二分寻找第一个满足 nums[i]>=value 的位置；两个分界点夹住全部 target。
+//
+// 3. 公式 / 不变量
+//   firstAtLeast(value)：寻找最小 i，使 nums[i] >= value；若不存在，返回 n。
+//
+//   使用半开区间 [left,right)：
+//   初始 [0,n)
+//   while left < right:
+//       middle = left + (right-left)/2
+//       nums[middle] < value -> middle 仍是假，left = middle+1
+//       nums[middle] >= value -> middle 已是真且可能是第一个真，right = middle
+//   结束时 left==right，即第一个真位置。
+//
+//   first = firstAtLeast(target)
+//   afterLast = firstAtLeast((long long)target + 1)
+//   答案 = [first, afterLast-1]，前提是 first<n 且 nums[first]==target。
+//
+// 4. 执行步骤
+//   1. 先实现唯一的 firstAtLeast(nums,value)，明确它在半开区间 [left,right) 中寻找第一个真位置
+//   2. 求 first=firstAtLeast(target)；若 first==n 或 nums[first]!=target，说明 target 根本不存在，返回 [-1,-1]
+//   3. 求 afterLast=firstAtLeast((long long)target+1)，它是第一个严格大于 target 的位置
+//   4. 返回 [first,afterLast-1]；两个边界搜索都保持 O(log n)
+//   记忆：找重复值边界，不要先命中再扩展；直接二分 F...F | T...T 的分界。
+//
+// 5. 为什么不会漏 / 不会重
+//   firstAtLeast 中，若 nums[middle]<value，则 middle 及其左侧都不可能满足谓词，所以 left=middle+1 安全；否则 middle 已满足谓词，但可能正是最左边那个，故只能令 right=middle 保留它。循环结束时假区间已全部在 left 左侧、真区间从 left 开始。对 target 与 target+1 分别求界后，位于两界之间的值既 >=target 又 <target+1；对整数即恰等于 target，因此不会漏也不会多。
+//
+// 6. 边界与易错点
+//   这里刻意使用半开区间 [left,right)，循环是 left<right，命中谓词时 right=middle 而不是 middle-1，因为 middle 可能就是答案。target 可能是 INT_MAX，所以不能直接用 int 的 target+1；当前实现把 value 提升为 long long。先验证 first 真正命中 target，再计算结果可正确处理空数组和不存在情况。
+//
+// 7. 举一反三
+//   这是比 LC-704 更通用的二分形态：lower_bound、upper_bound、插入位置、计数区间都可视为找单调谓词的边界。Day 23 的‘答案二分’只是把下标轴换成答案值轴：仍然是寻找 false...false|true...true 的第一次成立位置。
 // ----------------------------------------------------------------------------
 //
 // 本地输入输出格式（用于 test.in）：
@@ -71,4 +123,3 @@ int main() {
     cout << ans[0] << " " << ans[1] << "\n";
     return 0;
 }
-

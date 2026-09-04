@@ -15,6 +15,26 @@
 // 给定节点将始终是图中的第一个节点（值为 1）。
 // 你必须将给定节点的拷贝作为对克隆图的引用返回。
 //
+// 题目示例：
+// 示例 1：
+//   Input: adjList = [[2,4],[1,3],[2,4],[1,3]]
+//   Output: [[2,4],[1,3],[2,4],[1,3]]
+//   Explanation: There are 4 nodes in the graph.
+//   1st node (val = 1)'s neighbors are 2nd node (val = 2) and 4th node (val = 4).
+//   2nd node (val = 2)'s neighbors are 1st node (val = 1) and 3rd node (val = 3).
+//   3rd node (val = 3)'s neighbors are 2nd node (val = 2) and 4th node (val = 4).
+//   4th node (val = 4)'s neighbors are 1st node (val = 1) and 3rd node (val = 3).
+//
+// 示例 2：
+//   Input: adjList = [[]]
+//   Output: [[]]
+//   Explanation: Note that the input contains one empty list. The graph consists of only one node with val = 1 and it does not have any neighbors.
+//
+// 示例 3：
+//   Input: adjList = []
+//   Output: []
+//   Explanation: This an empty graph, it does not have any nodes.
+//
 // 约束与要求：
 //   - 这张图中的节点数在 [0, 100] 之间。
 //   - 1 <= Node.val <= 100

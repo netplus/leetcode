@@ -11,6 +11,19 @@
 // 例如，先修课程对 [0, 1] 表示：想要学习课程 0，你需要先完成课程 1。
 // 请你判断是否可能完成所有课程的学习？如果可以，返回 true；否则，返回 false。
 //
+// 题目示例：
+// 示例 1：
+//   Input: numCourses = 2, prerequisites = [[1,0]]
+//   Output: true
+//   Explanation: There are a total of 2 courses to take.
+//   To take course 1 you should have finished course 0. So it is possible.
+//
+// 示例 2：
+//   Input: numCourses = 2, prerequisites = [[1,0],[0,1]]
+//   Output: false
+//   Explanation: There are a total of 2 courses to take.
+//   To take course 1 you should have finished course 0, and to take course 0 you should also have finished course 1. So it is impossible.
+//
 // 约束与要求：
 //   - 1 <= numCourses <= 2000
 //   - 0 <= prerequisites.length <= 5000

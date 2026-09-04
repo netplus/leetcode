@@ -21,6 +21,7 @@ from pedagogy_week2_day9 import PEDAGOGY_WEEK2_DAY9
 from pedagogy_week2_day10 import PEDAGOGY_WEEK2_DAY10
 from pedagogy_week2_day11 import PEDAGOGY_WEEK2_DAY11
 from pedagogy_week2_day12 import PEDAGOGY_WEEK2_DAY12
+from pedagogy_derivations import DERIVATION_OVERRIDES
 from chinese_titles import validate_title_coverage
 
 
@@ -60,6 +61,17 @@ for num, patch in PEDAGOGY_OVERRIDES.items():
     ]
     REFINEMENTS[num] = merged
 
+# Optimization derivations are intentionally separate from the main pedagogy
+# registry: the same LC number may already have a seven-layer rewrite.  This
+# layer only adds the optional bridge required by AGENTS.md from a real direct
+# algorithm to the optimized mechanism.
+for num, derivation in DERIVATION_OVERRIDES.items():
+    if num not in REFINEMENTS:
+        raise RuntimeError(f"derivation override references unknown lc{num}")
+    if not derivation.strip():
+        raise RuntimeError(f"lc{num}: empty optimization derivation")
+    REFINEMENTS[num] = {**REFINEMENTS[num], "derivation": derivation}
+
 
 def get_refinement(num: int) -> dict:
     """Return the reviewed material for one LeetCode number."""
@@ -74,12 +86,16 @@ def _append_text_block(lines: list[str], title: str, text: str) -> None:
 
 
 def _render_visual_analysis(item: dict) -> str:
-    """Render the AGENTS.md visual -> formula -> steps learning structure."""
+    """Render the AGENTS.md derivation + visual -> formula -> steps structure."""
     lines = [
         "// ----------------------------------------------------------------------------",
         f"// 解法精讲｜{item['pattern']}",
         "//",
     ]
+
+    if item.get("derivation"):
+        _append_text_block(lines, "0. 优化是怎么来的", item["derivation"])
+        lines.append("//")
 
     _append_text_block(lines, "1. 图像直觉", item["visual"])
     lines.append("//")

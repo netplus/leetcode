@@ -10,6 +10,34 @@
 // 任务可以按任何顺序完成，但有一个限制：两个相同种类的任务之间必须有长度为 n 的冷却时间。
 // 返回完成所有任务所需要的最短时间间隔。
 //
+// 题目示例：
+// 示例 1：
+//   Input: tasks = ["A","A","A","B","B","B"], n = 2
+//
+//   Output: 8
+//
+//   Explanation: A possible sequence is: A -> B -> idle -> A -> B -> idle -> A -> B.
+//
+//   After completing task A, you must wait two intervals before doing A again. The same applies to task B. In the 3^rd interval, neither A nor B can be done, so you idle. By the 4^th interval, you can do A again as 2 intervals have passed.
+//
+// 示例 2：
+//   Input: tasks = ["A","C","A","B","D","B"], n = 1
+//
+//   Output: 6
+//
+//   Explanation: A possible sequence is: A -> B -> C -> D -> A -> B.
+//
+//   With a cooling interval of 1, you can repeat a task after just one other task.
+//
+// 示例 3：
+//   Input: tasks = ["A","A","A", "B","B","B"], n = 3
+//
+//   Output: 10
+//
+//   Explanation: A possible sequence is: A -> B -> idle -> idle -> A -> B -> idle -> idle -> A -> B.
+//
+//   There are only two types of tasks, A and B, which need to be separated by 3 intervals. This leads to idling twice between repetitions of these tasks.
+//
 // 约束与要求：
 //   - 1 <= tasks.length <= 10^4
 //   - tasks[i] 是大写英文字母

@@ -1,8 +1,8 @@
 """Reviewed analysis and implementation registry for all practice problems.
 
 The week modules keep each problem's baseline reviewed explanation next to its
-code.  High-touch pedagogy modules add visual learning rewrites one problem at a
-time.  `gen_all.py` consumes the merged registry, so regenerating the workspace
+code. High-touch pedagogy modules add visual learning rewrites one problem at a
+time. `gen_all.py` consumes the merged registry, so regenerating the workspace
 preserves both reviewed implementations and the improved pedagogy.
 """
 
@@ -15,6 +15,7 @@ from pedagogy_week1 import PEDAGOGY_WEEK1
 from pedagogy_week1_day4 import PEDAGOGY_WEEK1_DAY4
 from pedagogy_week1_day5 import PEDAGOGY_WEEK1_DAY5
 from pedagogy_week1_day6 import PEDAGOGY_WEEK1_DAY6
+from pedagogy_week1_day7 import PEDAGOGY_WEEK1_DAY7
 from chinese_titles import validate_title_coverage
 
 
@@ -26,6 +27,7 @@ _PEDAGOGY_MODULES = (
     PEDAGOGY_WEEK1_DAY4,
     PEDAGOGY_WEEK1_DAY5,
     PEDAGOGY_WEEK1_DAY6,
+    PEDAGOGY_WEEK1_DAY7,
 )
 
 PEDAGOGY_OVERRIDES = {}

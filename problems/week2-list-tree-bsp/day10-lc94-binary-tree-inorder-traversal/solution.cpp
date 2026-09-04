@@ -7,6 +7,25 @@
 // 题目描述：
 // 给定一个二叉树的根节点 root，返回它的中序遍历。
 //
+// 题目示例：
+// 示例 1：
+//   Input: root = [1,null,2,3]
+//   Output: [1,3,2]
+//   Explanation:
+//
+// 示例 2：
+//   Input: root = [1,2,3,4,5,null,8,null,null,6,7,9]
+//   Output: [4,2,6,5,7,1,3,9,8]
+//   Explanation:
+//
+// 示例 3：
+//   Input: root = []
+//   Output: []
+//
+// 示例 4：
+//   Input: root = [1]
+//   Output: [1]
+//
 // 约束与要求：
 //   - 树中节点数目在范围 [0, 100] 内
 //   - -100 <= Node.val <= 100

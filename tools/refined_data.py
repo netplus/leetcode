@@ -28,6 +28,7 @@ from pedagogy_week3_day16 import PEDAGOGY_WEEK3_DAY16
 from pedagogy_week3_day17 import PEDAGOGY_WEEK3_DAY17
 from pedagogy_derivations import DERIVATION_OVERRIDES
 from pedagogy_derivations_backfill import DERIVATION_BACKFILL_OVERRIDES
+from pedagogy_prerequisites import PREREQUISITE_OVERRIDES
 from chinese_titles import validate_title_coverage
 
 
@@ -72,6 +73,15 @@ for num, patch in PEDAGOGY_OVERRIDES.items():
     ]
     REFINEMENTS[num] = merged
 
+# Prerequisite concepts are a separate optional layer. They appear before any
+# optimization derivation so a later proof never relies on an undefined term.
+for num, prerequisite in PREREQUISITE_OVERRIDES.items():
+    if num not in REFINEMENTS:
+        raise RuntimeError(f"prerequisite override references unknown lc{num}")
+    if not prerequisite.strip():
+        raise RuntimeError(f"lc{num}: empty prerequisite concept block")
+    REFINEMENTS[num] = {**REFINEMENTS[num], "prerequisite": prerequisite}
+
 # Optimization derivations are intentionally separate from the main pedagogy
 # registry: the same LC number may already have a seven-layer rewrite. These
 # modules only add the optional bridge required by AGENTS.md from a real direct
@@ -104,12 +114,16 @@ def _append_text_block(lines: list[str], title: str, text: str) -> None:
 
 
 def _render_visual_analysis(item: dict) -> str:
-    """Render the AGENTS.md derivation + visual -> formula -> steps structure."""
+    """Render prerequisite -> derivation -> visual -> formula -> steps."""
     lines = [
         "// ----------------------------------------------------------------------------",
         f"// 解法精讲｜{item['pattern']}",
         "//",
     ]
+
+    if item.get("prerequisite"):
+        _append_text_block(lines, "前置概念", item["prerequisite"])
+        lines.append("//")
 
     if item.get("derivation"):
         _append_text_block(lines, "0. 优化是怎么来的", item["derivation"])

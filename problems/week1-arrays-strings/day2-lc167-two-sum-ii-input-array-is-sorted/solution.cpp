@@ -11,6 +11,22 @@
 // 你可以假设每个输入只对应唯一的答案，而且你不可以重复使用相同的元素。
 // 你所设计的解决方案必须只使用常量级的额外空间。
 //
+// 题目示例：
+// 示例 1：
+//   Input: numbers = [2,7,11,15], target = 9
+//   Output: [1,2]
+//   Explanation: The sum of 2 and 7 is 9. Therefore, index1 = 1, index2 = 2. We return [1, 2].
+//
+// 示例 2：
+//   Input: numbers = [2,3,4], target = 6
+//   Output: [1,3]
+//   Explanation: The sum of 2 and 4 is 6. Therefore index1 = 1, index2 = 3. We return [1, 3].
+//
+// 示例 3：
+//   Input: numbers = [-1,0], target = -1
+//   Output: [1,2]
+//   Explanation: The sum of -1 and 0 is -1. Therefore index1 = 1, index2 = 2. We return [1, 2].
+//
 // 约束与要求：
 //   - 2 <= numbers.length <= 3 * 10^4
 //   - -1000 <= numbers[i] <= 1000

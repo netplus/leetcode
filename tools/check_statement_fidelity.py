@@ -2,8 +2,9 @@
 """Verify learner-facing statements for every generated problem.
 
 This is an offline 106-problem guard.  The effective learner-facing metadata is
-`official Chinese cache + reviewed statement overrides`.  Every generated
-solution.cpp must contain that exact rendered description and constraint block.
+`official Chinese cache + reviewed statement overrides + official examples`.
+Every generated solution.cpp must contain the exact rendered description,
+example, and constraint blocks.
 
 It intentionally does not fetch the network.  Refreshing the raw official cache
 is a separate maintenance action (`fetch_chinese_problem_info.py` /
@@ -56,6 +57,7 @@ def main() -> None:
         checks = {
             "title": f"// LC-{problem['num']}：{metadata['title']}",
             "description": metadata["description"],
+            "examples": metadata["examples"],
             "constraints": metadata["constraints"],
         }
         for field, expected in checks.items():
@@ -69,7 +71,10 @@ def main() -> None:
             "statement fidelity check failed:\n  - " + "\n  - ".join(failures)
         )
 
-    print(f"Statement fidelity OK: {len(problems)}/106 generated problems match effective metadata.")
+    print(
+        f"Statement fidelity OK: {len(problems)}/106 generated problems "
+        "match effective metadata, including examples."
+    )
 
 
 if __name__ == "__main__":

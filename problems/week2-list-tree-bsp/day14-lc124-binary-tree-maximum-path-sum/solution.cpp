@@ -11,6 +11,17 @@
 // 路径和是路径中各节点值的总和。
 // 给你一个二叉树的根节点 root，返回其最大路径和。
 //
+// 题目示例：
+// 示例 1：
+//   Input: root = [1,2,3]
+//   Output: 6
+//   Explanation: The optimal path is 2 -> 1 -> 3 with a path sum of 2 + 1 + 3 = 6.
+//
+// 示例 2：
+//   Input: root = [-10,9,20,null,null,15,7]
+//   Output: 42
+//   Explanation: The optimal path is 15 -> 20 -> 7 with a path sum of 15 + 20 + 7 = 42.
+//
 // 约束与要求：
 //   - 树中节点数目范围是 [1, 3 * 10^4]
 //   - -1000 <= Node.val <= 1000

@@ -7,6 +7,25 @@
 // 题目描述：
 // 给定一个二叉树的根节点 root，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。
 //
+// 题目示例：
+// 示例 1：
+//   Input: root = [1,2,3,null,5,null,4]
+//   Output: [1,3,4]
+//   Explanation:
+//
+// 示例 2：
+//   Input: root = [1,2,3,4,null,null,null,5]
+//   Output: [1,3,4,5]
+//   Explanation:
+//
+// 示例 3：
+//   Input: root = [1,null,3]
+//   Output: [1,3]
+//
+// 示例 4：
+//   Input: root = []
+//   Output: []
+//
 // 约束与要求：
 //   - 二叉树的节点个数的范围是 [0,100]
 //   - -100 <= Node.val <= 100

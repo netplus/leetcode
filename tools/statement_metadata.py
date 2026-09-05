@@ -1,8 +1,10 @@
-"""Learner-facing statement metadata with persistent official-text corrections.
+"""Learner-facing statement metadata aligned to the LeetCode Wiki baseline.
 
-The raw Chinese cache is intentionally refreshable.  Curated corrections live in
-statement_overrides.py and are applied after the cache is loaded so a refresh
-cannot silently undo a reviewed fix.
+For statement facts, the repository treats the Chinese page at
+``https://leetcode.doocs.org/lc/<num>/`` as the source of truth.  The raw
+Chinese cache is intentionally refreshable; reviewed doocs-aligned corrections
+live in ``statement_overrides.py`` and are applied after the cache is loaded so
+a refresh cannot silently undo them.
 """
 
 from chinese_metadata import (
@@ -28,8 +30,9 @@ def get_statement_metadata(problem: dict) -> dict:
         )
 
     # Examples are statement-level learning material.  They are parsed from the
-    # cached official snapshots (or reviewed premium fallbacks), not handwritten
-    # inside generated solution.cpp files.
+    # cached snapshots (or reviewed premium fallbacks).  When a snapshot and
+    # doocs disagree, refresh/curate the snapshot rather than hand-editing a
+    # generated solution.cpp file.
     data["examples"] = render_examples(problem["num"])
     return data
 

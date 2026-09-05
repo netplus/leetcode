@@ -116,12 +116,16 @@ using namespace std;
 class Solution {
 public:
     vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
+        // [a,b] 表示“学 a 前必须先学 b”，所以图边必须是 b -> a；
+        // indegree[a] 统计 a 当前还剩多少个尚未完成的直接先修课程。
         vector<vector<int>> next(numCourses);
         vector<int> indegree(numCourses, 0);
         for (const auto& relation : prerequisites) {
             next[relation[1]].push_back(relation[0]);
             ++indegree[relation[0]];
         }
+
+        // 初始入度为 0 的课程没有任何未完成先修，可以立即作为拓扑序的候选起点。
         queue<int> ready;
         for (int course = 0; course < numCourses; ++course)
             if (indegree[course] == 0) ready.push(course);
@@ -130,10 +134,17 @@ public:
         while (!ready.empty()) {
             int course = ready.front();
             ready.pop();
+
+            // 一个课程只有在入度已为 0 时才会进入 ready，因此此刻把它写入 order 一定满足全部先修约束。
             order.push_back(course);
+
+            // “完成 course”相当于删除它的所有出边；某后继只有在最后一条未完成先修边被删除、
+            // 入度恰好降到 0 时才第一次入队，因此每门课不会重复进入 ready。
             for (int dependent : next[course])
                 if (--indegree[dependent] == 0) ready.push(dependent);
         }
+
+        // 若输出了全部课程，order 就是一条合法拓扑序；若数量不足，剩余节点始终无法产生零入度点，说明被有向环卡住。
         return static_cast<int>(order.size()) == numCourses ? order : vector<int>{};
     }
 };

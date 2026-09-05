@@ -39,6 +39,7 @@ from pedagogy_derivations import DERIVATION_OVERRIDES
 from pedagogy_derivations_backfill import DERIVATION_BACKFILL_OVERRIDES
 from pedagogy_prerequisites import PREREQUISITE_OVERRIDES
 from code_comment_overrides import CODE_COMMENT_OVERRIDES
+from code_comments_week1_day2 import CODE_COMMENTS_WEEK1_DAY2
 from chinese_titles import validate_title_coverage
 
 
@@ -120,9 +121,21 @@ for num, derivation in DERIVATIONS.items():
     REFINEMENTS[num] = {**REFINEMENTS[num], "derivation": derivation}
 
 # Key implementation comments are maintained as a separate high-touch layer.
-# This lets us improve one reviewed problem at a time without rewriting the
-# baseline week modules, while still keeping generated solution.cpp reproducible.
-for num, code in CODE_COMMENT_OVERRIDES.items():
+# Historical reviews are split into small learning-day modules, but entries are
+# still added only after an independent per-problem review.
+_CODE_COMMENT_MODULES = (
+    CODE_COMMENT_OVERRIDES,
+    CODE_COMMENTS_WEEK1_DAY2,
+)
+
+CODE_COMMENTS = {}
+for module in _CODE_COMMENT_MODULES:
+    overlap = set(CODE_COMMENTS) & set(module)
+    if overlap:
+        raise RuntimeError(f"duplicate code comment overrides: {sorted(overlap)}")
+    CODE_COMMENTS.update(module)
+
+for num, code in CODE_COMMENTS.items():
     if num not in REFINEMENTS:
         raise RuntimeError(f"code comment override references unknown lc{num}")
     if "class Solution" not in code:

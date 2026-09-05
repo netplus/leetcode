@@ -93,9 +93,13 @@ using namespace std;
 // ---------- 题解实现 ----------
 class Solution {
     static int firstAtLeast(const vector<int>& nums, long long value) {
+        // 搜索半开区间 [left,right)，函数契约是返回第一个 nums[i]>=value 的位置；
+        // 若所有元素都更小，则返回 nums.size() 这个合法的“尾后位置”。
         int left = 0, right = static_cast<int>(nums.size());
         while (left < right) {
             int middle = left + (right - left) / 2;
+            // nums[middle] < value 时，middle 不可能是答案，连同左侧一起丢弃；
+            // 否则 middle 仍可能就是第一个满足位置，所以 right=middle 而不是 middle-1。
             if (nums[middle] < value) left = middle + 1;
             else right = middle;
         }
@@ -104,8 +108,12 @@ class Solution {
 
 public:
     vector<int> searchRange(vector<int>& nums, int target) {
+        // first 是第一个 >=target 的位置；只有它真实等于 target 时，目标才存在。
         int first = firstAtLeast(nums, target);
         if (first == static_cast<int>(nums.size()) || nums[first] != target) return {-1, -1};
+
+        // 第一个 >=target+1 的位置，就是所有 target 的尾后边界；减一得到最后一个 target。
+        // 用 long long 做 target+1，避免 target==INT_MAX 时整数溢出。
         int afterLast = firstAtLeast(nums, static_cast<long long>(target) + 1);
         return {first, afterLast - 1};
     }

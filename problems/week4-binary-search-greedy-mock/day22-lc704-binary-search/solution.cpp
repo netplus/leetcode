@@ -10,14 +10,14 @@
 //
 // 题目示例：
 // 示例 1：
-//   Input: nums = [-1,0,3,5,9,12], target = 9
-//   Output: 4
-//   Explanation: 9 exists in nums and its index is 4
+//   输入：nums = [-1,0,3,5,9,12], target = 9
+//   输出：4
+//   解释：9 位于 nums 的下标 4。
 //
 // 示例 2：
-//   Input: nums = [-1,0,3,5,9,12], target = 2
-//   Output: -1
-//   Explanation: 2 does not exist in nums so return -1
+//   输入：nums = [-1,0,3,5,9,12], target = 2
+//   输出：-1
+//   解释：nums 中不存在 2，因此返回 -1。
 //
 // 约束与要求：
 //   - 你可以假设 nums 中的所有元素是不重复的

@@ -145,7 +145,7 @@
 | # | 中文标题 | Priority | Hint / Pattern |
 |---|-------|----------|----------------|
 | 994 | 腐烂的橘子 | P0 🚩 | multi-source BFS |
-| 127 | 单词接龙 | P0 | BFS + build graph |
+| 127 | 单词接龙 | P0 | BFS + implicit one-letter neighbors |
 | 542 | 01 矩阵 | P1 | multi-source BFS |
 | 417 | 太平洋大西洋水流问题 | P1 | reverse BFS from borders |
 
@@ -170,7 +170,7 @@
 |---|-------|----------|----------------|
 | 62 | 不同路径 | P0 | grid DP |
 | 64 | 最小路径和 | P0 | grid DP |
-| 300 | 最长递增子序列 | P0 🚩 | O(n²) + binary search |
+| 300 | 最长递增子序列 | P0 🚩 | O(n²) DP -> tails + binary search |
 | 1143 | 最长公共子序列 | P0 🚩 | 2D DP |
 
 ### Day 20 — DP Knapsack / Interval
@@ -254,12 +254,12 @@
 
 ## Problem Count
 
-| Week | P0 | P1 | Total |
-|------|----|----|-------|
-| W1 | 18 | 10 | 28 |
-| W2 | 18 | 12 | 30 |
-| W3 | 18 | 10 | 28 |
-| W4 | 14 | 8  | 22 |
-| **Total** | **68** | **40** | **108** |
+| Week | P0 | P1 | LC problems | Mock units | Plan units |
+|------|---:|---:|------------:|-----------:|-----------:|
+| W1 | 18 | 10 | 28 | 0 | 28 |
+| W2 | 23 | 7 | 30 | 0 | 30 |
+| W3 | 20 | 8 | 28 | 0 | 28 |
+| W4 | 14 | 6 | 20 | 2 | 22 |
+| **Total** | **75** | **31** | **106** | **2** | **108** |
 
-> ~90 distinct problems over 4 weeks. Finishing all P0 (≈68) covers 90%+ of leveling-exam topics. (Some review days overlap with earlier weeks to reinforce patterns.)
+> The repository contains 106 formal LeetCode problems. Day 27/28 are two separate timed mock-exam units, not P1 problems. Finishing all 75 P0 problems covers the mandatory high-frequency core before the 31 P1 extensions.

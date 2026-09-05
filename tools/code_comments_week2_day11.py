@@ -25,6 +25,33 @@ public:
         // 此时以 root 为根的整棵子树已经完成镜像，返回给父节点继续组合。
         return root;
     }
+
+    // 非递归替代实现：把“递归栈里等待处理的节点”显式换成 BFS queue。
+    // 这不是另一套翻转规则：每个节点最终仍然只做一次左右子指针交换。
+    TreeNode* invertTreeBFS(TreeNode* root) {
+        if (!root) return nullptr;
+
+        queue<TreeNode*> pending;
+        pending.push(root);
+
+        // 不变量：pending 中保存“已经发现，但还没有执行左右交换”的节点。
+        while (!pending.empty()) {
+            TreeNode* node = pending.front();
+            pending.pop();
+
+            // 当前节点的镜像操作完全局部：只交换它自己的两个孩子入口。
+            swap(node->left, node->right);
+
+            // 这里在 swap 之后把新的 left/right 入队是安全的：
+            // 它们仍然就是当前节点原来的两个孩子，只是左右位置已经互换。
+            // 每个非空孩子只由自己的父节点入队一次，因此最终每个节点恰好处理一次。
+            if (node->left) pending.push(node->left);
+            if (node->right) pending.push(node->right);
+        }
+
+        // 所有节点都完成一次局部交换后，整棵树自然成为原树的镜像。
+        return root;
+    }
 };''',
 
     236: r'''// ---------- Solution ----------

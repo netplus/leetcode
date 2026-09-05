@@ -39,7 +39,7 @@
 | 303 | 区域和检索 - 数组不可变 | P0 | 1D prefix sum |
 | 304 | 二维区域和检索 - 矩阵不可变 | P0 | 2D prefix sum |
 | 1109 | 航班预订统计 | P0 🚩 | difference array |
-| 238 | 除自身以外数组的乘积 | P1 | prefix/suffix product |
+| 238 | 除了自身以外数组的乘积 | P1 | prefix/suffix product |
 
 ### Day 5 — Strings
 | # | 中文标题 | Priority | Hint / Pattern |
@@ -222,7 +222,7 @@
 ### Day 25 — Heap / TopK
 | # | 中文标题 | Priority | Hint / Pattern |
 |---|-------|----------|----------------|
-| 215 | 数组中的第 K 个最大元素 | P0 🚩 | min-heap size k / quickselect |
+| 215 | 数组中的第K个最大元素 | P0 🚩 | min-heap size k / quickselect |
 | 347 | 前 K 个高频元素 | P0 🚩 | hash + heap |
 | 295 | 数据流的中位数 | P0 🚩 | two heaps |
 | 23 | 合并 K 个升序链表 | P1 🚩 | min-heap |

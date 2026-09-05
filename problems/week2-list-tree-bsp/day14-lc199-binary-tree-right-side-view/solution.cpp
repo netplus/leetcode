@@ -153,18 +153,30 @@ public:
     vector<int> rightSideView(TreeNode* root) {
         vector<int> answer;
         if (!root) return answer;
+
+        // 完全复用 LC-102：每轮开始时 pending 恰好按从左到右顺序保存当前层全部节点。
         queue<TreeNode*> pending;
         pending.push(root);
+
         while (!pending.empty()) {
+            // 在孩子入队前冻结当前层宽度；循环中的 pending.size() 会因下一层节点加入而变化。
             const int width = static_cast<int>(pending.size());
+
             for (int i = 0; i < width; ++i) {
                 TreeNode* node = pending.front();
                 pending.pop();
+
+                // 当前层按 left->right 顺序出队，因此第 width-1 个节点就是这一层最右节点。
+                // 每层只在这个位置聚合一次答案；BFS 框架本身与 LC-102 不变。
                 if (i == width - 1) answer.push_back(node->val);
+
+                // 孩子仍按 left、right 入队，保证下一轮 frontier 继续保持从左到右顺序；
+                // 这个顺序正是“最后一个 == 最右节点”的前提。
                 if (node->left) pending.push(node->left);
                 if (node->right) pending.push(node->right);
             }
         }
+
         return answer;
     }
 };

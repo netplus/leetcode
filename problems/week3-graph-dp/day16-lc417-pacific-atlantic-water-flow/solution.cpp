@@ -142,7 +142,7 @@ public:
                 pending.pop();
 
                 for (auto& d : directions) {
-                    const int nr = r + d[0], nc = c + d[1];
+                    int nr = r + d[0], nc = c + d[1];
 
                     // 原水流允许 high -> low/equal；把边反过来以后，海洋向内陆只能走到 high/equal：
                     // heights[next] >= heights[current]。首次发现时立即标记，避免重复入队。

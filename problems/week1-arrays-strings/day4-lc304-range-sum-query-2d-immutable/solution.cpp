@@ -117,6 +117,8 @@ using namespace std;
 
 // ---------- 题解实现 ----------
 class Solution {
+    // prefix[r][c] 表示原矩阵半开矩形 [0,r) × [0,c) 的元素和。
+    // 因而 prefix 比原矩阵多一行一列“0 边界”，把 r==0 / c==0 的情况统一进同一公式。
     vector<vector<long long>> prefix;
 
 public:
@@ -124,8 +126,13 @@ public:
         const int rows = static_cast<int>(matrix.size());
         const int cols = static_cast<int>(matrix[0].size());
         prefix.assign(rows + 1, vector<long long>(cols + 1, 0));
+
         for (int r = 0; r < rows; ++r) {
             for (int c = 0; c < cols; ++c) {
+                // 要得到以 (r,c) 为右下新格子的左上累计矩形：
+                // “上方矩形 + 左侧矩形”会把共同的左上区域算两次，
+                // 所以减掉 prefix[r][c] 一次，再加上当前 matrix[r][c]。
+                // r+1/c+1 表示跨过当前元素后的二维边界。
                 prefix[r + 1][c + 1] = matrix[r][c] + prefix[r][c + 1]
                                      + prefix[r + 1][c] - prefix[r][c];
             }
@@ -133,6 +140,10 @@ public:
     }
 
     int sumRegion(int row1, int col1, int row2, int col2) {
+        // 题目给的是闭矩形 [row1..row2] × [col1..col2]，
+        // 在 prefix 边界中右下角要映射成 (row2+1,col2+1)。
+        // 先取覆盖目标的大左上矩形，再减去“目标上方”和“目标左侧”；
+        // 两块被减区域的左上交集被减了两次，因此最后必须加回一次。
         long long sum = prefix[row2 + 1][col2 + 1] - prefix[row1][col2 + 1]
                       - prefix[row2 + 1][col1] + prefix[row1][col1];
         return static_cast<int>(sum);

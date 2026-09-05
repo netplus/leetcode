@@ -124,14 +124,26 @@ using namespace std;
 class Solution {
 public:
     int maxProduct(vector<int>& nums) {
+        // 三个状态都从 nums[0] 开始，保证单元素或全负数组不会被虚假的 0 初值覆盖。
+        // currentMax/currentMin 分别是“必须以当前位置结尾”的最大/最小连续子数组乘积；
+        // best 才是所有已处理终点中的历史全局最大值。
         int currentMax = nums[0];
         int currentMin = nums[0];
         int best = nums[0];
+
         for (int i = 1; i < static_cast<int>(nums.size()); ++i) {
             const int value = nums[i];
+
+            // 乘负数会把大小顺序完全翻转：旧最小值可能成为新最大值的最佳来源，旧最大值反之。
+            // 先交换两者后，后续就仍可用“最大延续最大、最小延续最小”的统一写法。
             if (value < 0) swap(currentMax, currentMin);
+
+            // 所有以 i 结尾的候选只有两类：从 value 单独重开，或把 value 接到旧后缀后。
+            // swap 已经处理了负数时的来源互换，因此这里只需分别维护新的两个极值。
             currentMax = max(value, currentMax * value);
             currentMin = min(value, currentMin * value);
+
+            // currentMax 只覆盖“当前终点”，全局答案必须另外保留历史 best。
             best = max(best, currentMax);
         }
         return best;

@@ -119,4 +119,31 @@ public:
         return static_cast<int>(best);
     }
 };''',
+
+    283: r'''// ---------- Solution ----------
+class Solution {
+public:
+    void moveZeroes(vector<int>& nums) {
+        // write 指向“下一个应该放置非零元素的位置”。
+        // 在每轮 read 开始时维护：
+        //   [0, write)    = 已扫描到的所有非零元素，顺序与原数组一致；
+        //   [write, read) = 全部为 0。
+        int write = 0;
+
+        for (int read = 0; read < static_cast<int>(nums.size()); ++read) {
+            if (nums[read] != 0) {
+                // read 从左到右发现非零元素，因此按发现顺序把它们送到 write，
+                // 天然保持稳定性，不会改变非零元素之间的相对顺序。
+                //
+                // 若 write < read，根据上面的不变量 nums[write] 必然是 0：
+                // swap 把当前非零元素填进“最早的零洞”，同时把那个 0 换到 read 位置；
+                // 随后 write++，新的 [write, read] 仍保持为零区。
+                // 若 write == read，则只是与自己交换，语义仍然正确。
+                swap(nums[write], nums[read]);
+                ++write;
+            }
+            // nums[read] == 0 时不移动 write：这个 0 正好扩张了等待填充的零洞区间。
+        }
+    }
+};''',
 }

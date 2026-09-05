@@ -81,14 +81,19 @@ using namespace std;
 
 // ---------- 题解实现 ----------
 class Solution {
-    priority_queue<int> lower;  // 较小一半，堆顶是其中最大值
-    priority_queue<int, vector<int>, greater<int>> upper;  // 较大一半
+    // lower 保存较小一半，使用大根堆以 O(1) 暴露左半最大值；
+    // upper 保存较大一半，使用小根堆以 O(1) 暴露右半最小值。
+    priority_queue<int> lower;
+    priority_queue<int, vector<int>, greater<int>> upper;
 
 public:
     void addNum(int num) {
+        // 先按当前分割线放到正确一侧，保持任意 lower 元素 <= 任意 upper 元素。
         if (lower.empty() || num <= lower.top()) lower.push(num);
         else upper.push(num);
 
+        // 再恢复大小不变量：lower 与 upper 等大，或 lower 恰好多一个。
+        // 搬运的必须是靠近中间分割线的边界元素，才能同时保持两侧的值域顺序。
         if (lower.size() > upper.size() + 1) {
             upper.push(lower.top());
             lower.pop();
@@ -99,7 +104,10 @@ public:
     }
 
     double findMedian() {
+        // 奇数总量时，多出的一个元素按约定在 lower，中位数就是左半最大值。
         if (lower.size() > upper.size()) return lower.top();
+
+        // 偶数时中位数是两个分割边界的平均；先提升到 long long 再相加，避免 int 溢出。
         return (static_cast<long long>(lower.top()) + upper.top()) / 2.0;
     }
 };

@@ -14,6 +14,22 @@
 // double findMedian() 返回到目前为止所有元素的中位数。
 // 与实际答案相差 10^-5 以内的答案将被接受。
 //
+// 题目示例：
+// 示例 1：
+//   Input
+//   ["MedianFinder", "addNum", "addNum", "findMedian", "addNum", "findMedian"]
+//   [[], [1], [2], [], [3], []]
+//   Output
+//   [null, null, null, 1.5, null, 2.0]
+//
+//   Explanation
+//   MedianFinder medianFinder = new MedianFinder();
+//   medianFinder.addNum(1); // arr = [1]
+//   medianFinder.addNum(2); // arr = [1, 2]
+//   medianFinder.findMedian(); // return 1.5 (i.e., (1 + 2) / 2)
+//   medianFinder.addNum(3); // arr[1, 2, 3]
+//   medianFinder.findMedian(); // return 2.0
+//
 // 约束与要求：
 //   - -10^5 <= num <= 10^5
 //   - 在调用 findMedian 之前，数据结构中至少有一个元素

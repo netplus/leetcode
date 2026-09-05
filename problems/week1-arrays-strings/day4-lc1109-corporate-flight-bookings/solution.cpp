@@ -224,19 +224,37 @@ using namespace std;
 class Solution {
 public:
     vector<int> corpFlightBookings(vector<vector<int>>& bookings, int n) {
+        // diff[i] 不是第 i 个航班的答案，而是“走到边界 i 时，当前有效座位数要改变多少”。
+        // 多出的 diff[n] 不对应真实航班，只承接“最后一个航班之后停止生效”的结束事件。
         vector<int> diff(n + 1, 0);
+
         for (const auto& booking : bookings) {
+            // 题面航班号是 1-based 闭区间 [first,last]。
+            // 转成 0-based 后真实范围是 [first-1,last-1]，因此：
+            // 开始事件在 first-1；结束事件在 R+1 = last。
             const int first = booking[0] - 1;
             const int afterLast = booking[1];
-            diff[first] += booking[2];
-            diff[afterLast] -= booking[2];
+            const int seats = booking[2];
+
+            // +seats：从 first 开始把这份贡献加入持续状态；
+            // -seats：从 last 后一个边界开始把同一份贡献移除。
+            // 当 last==n 时 afterLast==n，正好安全写入额外哨兵槽位 diff[n]。
+            diff[first] += seats;
+            diff[afterLast] -= seats;
         }
+
         vector<int> answer(n);
+
+        // running = 扫描到当前位置时，所有“已经开始但尚未结束”的 booking 贡献之和。
+        // 它才是当前真实航班的座位总数；diff 只负责告诉 running 在哪里发生变化。
         int running = 0;
         for (int i = 0; i < n; ++i) {
+            // diff[i]==0 时 running 原样继承前值，这正是区间内部不必重复 +=seats 的原因。
             running += diff[i];
             answer[i] = running;
         }
+
+        // 只读取 0..n-1 个真实航班；diff[n] 仅用于关闭末尾状态，不属于答案。
         return answer;
     }
 };

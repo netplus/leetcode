@@ -123,19 +123,29 @@ using namespace std;
 class Solution {
 public:
     vector<int> twoSum(vector<int>& nums, int target) {
-        unordered_map<int, int> indexOf;  // 已扫描历史：value -> index
+        // indexOf 只保存“已经扫描过”的历史元素：value -> 某个历史下标。
+        // 因此在处理 i 时，表中的下标都严格小于 i；这也是后面命中时
+        // 能保证两个下标不同的关键不变量。
+        unordered_map<int, int> indexOf;
         indexOf.reserve(nums.size() * 2); // 仅减少扩容/rehash，不影响算法正确性
 
         for (int i = 0; i < static_cast<int>(nums.size()); ++i) {
+            // 一旦当前值 nums[i] 固定，另一个值并不是“任意候选”，
+            // 而是被方程 nums[i] + old = target 唯一确定为 target-nums[i]。
+            // 哈希优化省掉的正是暴力算法里反复线性寻找这个确定值的工作。
             const int complement = target - nums[i];
 
-            // 纯查询：只问“需要的补数以前出现过吗？”，不希望缺失 key 被自动创建。
+            // 这里只查询历史，不希望查询动作产生任何新状态，所以使用 find()。
+            // 若命中，it->second 一定来自某个历史位置 < i；当前 i 尚未写入表中，
+            // 因而 return 的两个下标天然不同，不会把同一个元素使用两次。
             auto it = indexOf.find(complement);
             if (it != indexOf.end()) {
                 return {it->second, i};
             }
 
-            // 查询之后才把当前元素加入历史，保证后续命中时一定使用不同下标。
+            // 必须“先查补数，再记录当前值”。
+            // 若先插入 nums[i]，当 target == 2*nums[i] 时，当前元素可能立刻查到自己，
+            // 违反题目“不能使用两次同一个元素”的要求。
             indexOf[nums[i]] = i;
         }
         return {};  // 题目保证有唯一解；保留兜底使本地接口更健壮

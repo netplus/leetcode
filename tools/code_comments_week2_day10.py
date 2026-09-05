@@ -32,4 +32,39 @@ public:
         return order;
     }
 };''',
+
+    94: r'''// ---------- Solution ----------
+class Solution {
+public:
+    vector<int> inorderTraversal(TreeNode* root) {
+        vector<int> order;
+
+        // ancestors 不是普通“待访问节点”集合，而是一路向左递归时被暂停的调用帧：
+        // 栈中节点都还没访问自己，因为它们的左子树尚未完整返回。
+        stack<TreeNode*> ancestors;
+        TreeNode* current = root;
+
+        // current 表示当前正在进入的子树；ancestors 非空表示仍有暂停祖先等待恢复。
+        // 两者都为空时，整棵树才真正处理完。
+        while (current || !ancestors.empty()) {
+            // 模拟递归的 inorder(node->left)：一路向左下潜，
+            // 同时把“左子树回来后还要访问根、再去右边”的祖先现场保存到栈里。
+            while (current) {
+                ancestors.push(current);
+                current = current->left;
+            }
+
+            // current==nullptr 说明最近栈顶节点的左子树已经完整结束；
+            // 此刻正好处于递归中的 Left 与 Right 之间，因此现在才访问这个根。
+            current = ancestors.top();
+            ancestors.pop();
+            order.push_back(current->val);
+
+            // 根访问完后开始 inorder(root->right)；右子树内部又会先一路向左下潜。
+            current = current->right;
+        }
+
+        return order;
+    }
+};''',
 }

@@ -99,10 +99,17 @@ class Solution {
 public:
     int trap(vector<int>& height) {
         int left = 0, right = static_cast<int>(height.size()) - 1;
+        // leftMax/rightMax 分别保存已经从两端扫描到当前位置附近时见过的最高边界；
+        // 尚未移出 [left,right] 的位置还没有结算最终水量。
         int leftMax = 0, rightMax = 0;
         long long water = 0;
+
         while (left <= right) {
+            // 当 leftMax<=rightMax 时，右侧已经存在高度至少为 rightMax 的真实边界，
+            // 因而左端位置的最终水位瓶颈只可能是 leftMax，可以立即结算左端；右侧对称。
             if (leftMax <= rightMax) {
+                // 必须先把当前柱纳入左侧最高边界，再做差；这样贡献天然非负，
+                // 且 leftMax-height[left] 正是该位置已经确定的最终蓄水量。
                 leftMax = max(leftMax, height[left]);
                 water += leftMax - height[left];
                 ++left;

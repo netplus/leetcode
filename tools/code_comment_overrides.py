@@ -72,6 +72,44 @@ public:
     }
 };''',
 
+    560: r'''// ---------- Solution ----------
+class Solution {
+public:
+    int subarraySum(vector<int>& nums, int k) {
+        // frequency[p] = “当前扫描位置之前”前缀和 p 出现过多少次。
+        // 必须保存频次而不是只保存存在性：同一个历史前缀值可能来自多个位置，
+        // 每个位置都对应一个不同的子数组起点，都要分别计入答案。
+        unordered_map<long long, int> frequency;
+        frequency.reserve(nums.size() * 2 + 1);
+
+        // 虚拟空前缀：在数组任何元素之前，前缀和 0 已经出现过 1 次。
+        // 当当前 prefix == k 时，prefix-k == 0，这一项使 [0..i] 这样的
+        // 从下标 0 开始的合法子数组也能被统一公式统计，无需写特殊分支。
+        frequency[0] = 1;
+
+        long long prefix = 0;
+        int answer = 0;
+        for (int value : nums) {
+            // prefix 是“从数组开头累加到当前元素”的和。
+            prefix += value;
+
+            // 若历史前缀 oldPrefix 满足：prefix - oldPrefix = k，
+            // 则 oldPrefix = prefix-k。历史上每出现一次这个值，
+            // 就得到一个不同起点、但都以当前位置结尾的合法子数组。
+            auto it = frequency.find(prefix - k);
+            if (it != frequency.end()) {
+                answer += it->second;
+            }
+
+            // 必须先查询历史，再把当前 prefix 记录进去。
+            // 若 k==0 且先执行 ++frequency[prefix]，当前前缀会立刻匹配自己，
+            // 等价于错误统计一个长度为 0 的“空子数组”。
+            ++frequency[prefix];
+        }
+        return answer;
+    }
+};''',
+
     133: r'''// ---------- Solution ----------
 class Solution {
 public:

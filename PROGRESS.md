@@ -16,11 +16,13 @@
 | Week | Topic | Planned P0 | Done P0 | Planned total | Done | Rate | Status |
 |------|-------|------------|---------|----------------|------|------|--------|
 | W1 | Arrays / Strings / Hashing / 2-Ptr | 18 | 0 | 28 | 0 | 0% | In progress |
-| W2 | Lists / Trees / BFS-DFS / Stack | 18 | 0 | 30 | 0 | 0% | Not started |
-| W3 | Graphs / Union-Find / DP | 18 | 0 | 28 | 0 | 0% | Not started |
+| W2 | Lists / Trees / BFS-DFS / Stack | 23 | 0 | 30 | 0 | 0% | Not started |
+| W3 | Graphs / Union-Find / DP | 20 | 0 | 28 | 0 | 0% | Not started |
 | W4 | Binary Search / Greedy / Heap / Mock | 14 | 0 | 22 | 0 | 0% | Not started |
-| **Total** | | **68** | **0** | **108** | **0** | **0%** | |
+| **Total** | | **75** | **0** | **108** | **0** | **0%** | |
 
+> `Planned P0` counts only the 106 formal LeetCode problems. `Planned total` additionally includes the 2 Week 4 mock-exam units (Day 27/28), so the overall plan has 108 units.
+>
 > Plan start: 2026-07-07   Plan end: 2026-08-03 (4 weeks)
 > Actual end: __________
 
@@ -42,37 +44,37 @@
 
 | Day | Date | Done (LC#) | Time | P0 done | Note / review |
 |-----|------|-----------|------|---------|----------------|
-| D1 | 7/7 | | | /4 | hashing + prefix sum |
-| D2 | | | | /4 | two pointers |
-| D3 | | | | /4 | sliding window |
-| D4 | | | | /4 | prefix sum / difference |
-| D5 | | | | /4 | strings |
-| D6 | | | | /4 | intervals |
-| D7 | | | | /4 | week review |
+| D1 | 7/7 | | | /3 | hashing + prefix sum |
+| D2 | | | | /3 | two pointers |
+| D3 | | | | /3 | sliding window |
+| D4 | | | | /3 | prefix sum / difference |
+| D5 | | | | /2 | strings |
+| D6 | | | | /1 | intervals |
+| D7 | | | | /3 | week review |
 
 ### Week 2 · Lists / Trees / BFS-DFS / Stacks
 
 | Day | Date | Done (LC#) | Time | P0 done | Note / review |
 |-----|------|-----------|------|---------|----------------|
-| D8  | | | | /4 | list basics |
-| D9  | | | | /4 | list advanced |
+| D8  | | | | /3 | list basics |
+| D9  | | | | /3 | list advanced |
 | D10 | | | | /6 | tree traversal |
-| D11 | | | | /4 | tree properties |
-| D12 | | | | /4 | stack / monotonic stack |
-| D13 | | | | /4 | backtracking |
-| D14 | | | | /4 | week review |
+| D11 | | | | /3 | tree properties |
+| D12 | | | | /3 | stack / monotonic stack |
+| D13 | | | | /3 | backtracking |
+| D14 | | | | /2 | week review |
 
 ### Week 3 · Graphs / Union-Find / DP
 
 | Day | Date | Done (LC#) | Time | P0 done | Note / review |
 |-----|------|-----------|------|---------|----------------|
-| D15 | | | | /4 | graph traversal |
-| D16 | | | | /4 | BFS shortest path |
-| D17 | | | | /4 | union-find |
-| D18 | | | | /4 | DP intro |
+| D15 | | | | /3 | graph traversal |
+| D16 | | | | /2 | BFS shortest path |
+| D17 | | | | /2 | union-find |
+| D18 | | | | /3 | DP intro |
 | D19 | | | | /4 | DP paths / subsequences |
-| D20 | | | | /4 | DP knapsack |
-| D21 | | | | /4 | week review |
+| D20 | | | | /3 | DP knapsack |
+| D21 | | | | /3 | week review |
 
 ### Week 4 · Binary Search / Greedy / Heap / Mock
 

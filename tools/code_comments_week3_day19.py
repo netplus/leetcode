@@ -78,4 +78,37 @@ public:
         return static_cast<int>(tails.size());
     }
 };''',
+
+    1143: r'''// ---------- Solution ----------
+class Solution {
+public:
+    int longestCommonSubsequence(string text1, string text2) {
+        // dp[j] 表示当前扫描进度下，text1 前缀与 text2 前 j 个字符的 LCS 长度。
+        // 额外第 0 列恒为 0，对应任意字符串与空前缀的 LCS 长度为 0。
+        vector<int> dp(text2.size() + 1, 0);
+
+        for (char a : text1) {
+            // 每进入 text1 的新一行，diagonal 从 0 开始，表示二维表这一行最左侧的旧左上角 LCS[i-1][0]。
+            int diagonal = 0;
+
+            for (int j = 1; j <= static_cast<int>(text2.size()); ++j) {
+                // 覆盖 dp[j] 之前必须先保存它：此刻它仍是上一行同列“上方”状态，
+                // 而下一列会把这个旧值当作自己的“左上角”。
+                int oldAbove = dp[j];
+
+                // 更新当前格之前三个状态的时间版本分别是：
+                // diagonal = 旧左上；dp[j] = 旧上方；dp[j-1] = 已更新的当前行左方。
+                if (a == text2[j - 1]) dp[j] = diagonal + 1;
+                else dp[j] = max(dp[j], dp[j - 1]);
+
+                // 当前格完成后，才把原来的上方 oldAbove 交给 diagonal，
+                // 使它在下一列恰好代表新的“旧左上”。顺序提前会丢失二维依赖。
+                diagonal = oldAbove;
+            }
+        }
+
+        // 扫描完两个完整前缀后，最后一列就是两个完整字符串的 LCS 长度。
+        return dp.back();
+    }
+};''',
 }

@@ -21,7 +21,7 @@
 ```cpp
 // 1D prefix sum
 vector<int> pre(n+1, 0);
-for (int i = 0; i < n; i++) pre[i+1] = pre[i] + a[i];
+for (int i=0;i<n;i++) pre[i+1] = pre[i] + a[i];
 // sum of [l, r] = pre[r+1] - pre[l]
 
 // Difference array (range-add, then prefix-sum to recover)
@@ -67,19 +67,52 @@ return l;                      // l == r is the answer
 ```
 > Binary search on answer: replace `P(mid)` with a verify function (greedy / simulation).
 
-## 5. Monotonic Stack (next greater element)
+## 5. Monotonic Stack
+
+Do **not** start by memorizing “increasing stack / decreasing stack”. First ask:
+
+```text
+What historical positions are still unresolved?
+When can the current element resolve or permanently eliminate stack.top()?
+What becomes known at pop time?
+```
+
+Typical progression:
+
+```text
+Next Greater / Smaller
+    -> pop resolves one-sided answer (LC-739)
+Boundary expansion
+    -> pop fixes right boundary; post-pop top supplies left blocker (LC-84)
+Contribution counting
+    -> boundary distances determine how many subarrays one value owns
+```
+
+Minimal next-greater skeleton:
 
 ```cpp
 vector<int> res(n, -1);
-stack<int> st;                  // indices, stack values decreasing
-for (int i=0;i<n;i++){
-    while (!st.empty() && a[st.top()] < a[i]){
-        res[st.top()] = i;
-        st.pop();
+stack<int> pending;             // indices whose answer is still unknown
+for (int i = 0; i < n; ++i) {
+    while (!pending.empty() && a[i] > a[pending.top()]) {
+        int j = pending.top();
+        pending.pop();
+        res[j] = i;             // current i is j's first resolving event
     }
-    st.push(i);
+    pending.push(i);
 }
 ```
+
+Boundary formulas must be derived from interval semantics, not memorized. If `left` and `right` are two unusable blocking positions, the valid closed interval is `[left+1, right-1]`, so:
+
+```text
+width = (right-1) - (left+1) + 1
+      = right-left-1
+```
+
+Also state the equality policy explicitly: `< / <= / > / >=` decides which equal element owns a boundary or contribution. This is correctness-critical for duplicate values.
+
+For the full reasoning model, LC-84 derivation, equality handling, sentinels, amortized complexity, and the repository-specific teaching checklist, see [单调栈：从暴力搜索到“未决问题一次结算”](monotonic-stack.md).
 
 ## 6. Monotonic Queue (sliding window max)
 

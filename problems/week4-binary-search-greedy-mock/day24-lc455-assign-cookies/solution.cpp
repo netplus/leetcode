@@ -11,6 +11,21 @@
 // 如果 s[j] >= g[i]，我们可以将饼干 j 分配给孩子 i，这个孩子会得到满足。
 // 你的目标是满足尽可能多的孩子，并输出这个最大数值。
 //
+// 题目示例：
+// 示例 1：
+//   Input: g = [1,2,3], s = [1,1]
+//   Output: 1
+//   Explanation: You have 3 children and 2 cookies. The greed factors of 3 children are 1, 2, 3.
+//   And even though you have 2 cookies, since their size is both 1, you could only make the child whose greed factor is 1 content.
+//   You need to output 1.
+//
+// 示例 2：
+//   Input: g = [1,2], s = [1,2,3]
+//   Output: 2
+//   Explanation: You have 2 children and 3 cookies. The greed factors of 2 children are 1, 2.
+//   You have 3 cookies and their sizes are big enough to gratify all of the children,
+//   You need to output 2.
+//
 // 约束与要求：
 //   - 1 <= g.length <= 3 * 10^4
 //   - 0 <= s.length <= 3 * 10^4
@@ -20,6 +35,15 @@
 //
 // ----------------------------------------------------------------------------
 // 解法精讲｜排序 + 双指针贪心：让最小够用资源匹配最小需求
+//
+// 0. 优化是怎么来的
+//   最直接但代价很高的做法，是把“每个孩子是否拿哪块饼干”当成一个二分匹配问题：对每个孩子尝试所有尚未使用且尺寸足够的饼干，必要时回溯不同分配，最终取能满足孩子数最多的方案。它不会漏解，但会反复探索大量只在“谁拿了更大的饼干”上不同的分支。
+//
+//   真正可以删除这些分支的信息来自排序。把胃口 g 与饼干 s 都升序后，只看当前最小未满足孩子和当前最小未处理饼干：若这块饼干连最小胃口都不够，它对后面更大的胃口也永远无用，可以直接丢弃；若它已经够用，则总能通过交换把它分给当前最小胃口，而不减少最优方案能满足的孩子数，同时把更大的饼干留给更难满足的未来需求。
+//
+//   于是“枚举大量资源分配组合”被压成两个单调向右的指针；每一步都永久删除一块无用饼干，或永久固定一个不损失最优性的匹配。
+//
+//   优化类型：无序匹配组合搜索 -> 排序制造支配关系，再用交换论证进行贪心候选淘汰。
 //
 // 1. 图像直觉
 //   g = [1,2,3]

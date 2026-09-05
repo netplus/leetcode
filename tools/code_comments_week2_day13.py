@@ -134,4 +134,45 @@ public:
         return answer;
     }
 };''',
+
+    22: r'''// ---------- Solution ----------
+class Solution {
+    vector<string> answer;
+    string path;
+
+    // open/close 是当前前缀已经使用的左右括号数。
+    // 每次进入 search 时都保持 0 <= close <= open <= n，因此 path 始终是“仍可能完成”的合法前缀。
+    void search(int n, int open, int close) {
+        // 前缀始终合法且长度已达到 2*n 时，必有 open==close==n；
+        // 所以当前 path 自动是一条完整合法答案，不需要再调用 LC-20 做二次验证。
+        if (static_cast<int>(path.size()) == 2 * n) {
+            answer.push_back(path);
+            return;
+        }
+
+        // 左括号总量还没达到 n 时，可以继续开启一个尚未闭合的结构。
+        if (open < n) {
+            path.push_back('(');
+            search(n, open + 1, close);
+            path.pop_back();
+        }
+
+        // 只有当前未闭合左括号数 open-close > 0 时，才允许添加右括号；
+        // 这条条件把任何 close>open 的永久非法前缀在生成之前就剪掉。
+        if (close < open) {
+            path.push_back(')');
+            search(n, open, close + 1);
+            path.pop_back();
+        }
+    }
+
+public:
+    vector<string> generateParenthesis(int n) {
+        // 每次公开调用前清空成员状态；根搜索状态是空前缀、左右括号都尚未使用。
+        answer.clear();
+        path.clear();
+        search(n, 0, 0);
+        return answer;
+    }
+};''',
 }

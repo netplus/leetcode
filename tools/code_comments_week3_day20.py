@@ -94,4 +94,44 @@ public:
         return dp[amount] == amount + 1 ? -1 : dp[amount];
     }
 };''',
+
+    312: r'''// ---------- Solution ----------
+class Solution {
+public:
+    int maxCoins(vector<int>& nums) {
+        // 两端补的 1 是永不被戳的虚拟边界，只用于把原数组两端的越界邻居规则统一进同一个乘法公式。
+        vector<int> values;
+        values.reserve(nums.size() + 2);
+        values.push_back(1);
+        values.insert(values.end(), nums.begin(), nums.end());
+        values.push_back(1);
+        const int n = static_cast<int>(values.size());
+
+        // dp[left][right] 表示：把开区间 (left,right) 内所有真实气球都戳完能得到的最大收益。
+        // 相邻边界 right=left+1 时区间为空，默认 0 正好就是基础状态。
+        vector<vector<int>> dp(n, vector<int>(n, 0));
+
+        // width=right-left。大区间依赖更短的 (left,last) 与 (last,right)，
+        // 所以必须按 width 从小到大；width=2 是第一个恰好含一个内部气球的非空区间。
+        for (int width = 2; width < n; ++width) {
+            for (int left = 0; left + width < n; ++left) {
+                int right = left + width;
+
+                // 枚举 last 作为 (left,right) 内“最后被戳”的气球。
+                // 到它最后被戳时，其余内部气球都已消失，真实邻居被固定成边界 left/right，
+                // 因而最后一步收益可以稳定写成 values[left]*values[last]*values[right]。
+                for (int last = left + 1; last < right; ++last) {
+                    // last 一直保留到最后，会把此前操作分成互不干扰的左右两个开区间；
+                    // 两个子区间宽度都更小，此时已经求好，可以直接组合并取最大值。
+                    dp[left][right] = max(dp[left][right],
+                        dp[left][last] + values[left] * values[last] * values[right]
+                        + dp[last][right]);
+                }
+            }
+        }
+
+        // 两个虚拟边界 0 与 n-1 之间正好覆盖全部原始气球。
+        return dp[0][n - 1];
+    }
+};''',
 }

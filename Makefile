@@ -25,6 +25,7 @@ all: $(BINS)
 verify-meta:
 	@python3 tools/gen_review_report.py --check
 	@python3 tools/sync_plan_titles.py --check
+	@python3 tools/check_plan_counts.py
 	@python3 tools/check_learning_metadata.py
 	@python3 tools/check_statement_fidelity.py
 	@python3 tools/check_generated_fidelity.py

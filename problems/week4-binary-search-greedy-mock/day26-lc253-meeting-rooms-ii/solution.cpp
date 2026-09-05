@@ -94,14 +94,24 @@ using namespace std;
 class Solution {
 public:
     int minMeetingRooms(vector<vector<int>>& intervals) {
+        // 按开始时间推进时间线；之后遇到的会议只会开始得更晚，
+        // 所以一场已经结束的旧会议一旦弹出，就永远不需要重新考虑。
         sort(intervals.begin(), intervals.end());
+
+        // endTimes 只保存“已经开始但在当前 start 时刻仍未结束”的会议结束时间；
+        // 小根堆让最早释放的房间始终站在堆顶。
         priority_queue<int, vector<int>, greater<int>> endTimes;
         int best = 0;
         for (const auto& meeting : intervals) {
+            // 仓库采用半开区间 [start,end)：end==nextStart 时不重叠，可以复用同一房间。
+            // 必须弹出所有已结束会议，而不是只弹一个，因为可能同时释放多间房。
             while (!endTimes.empty() && endTimes.top() <= meeting[0]) endTimes.pop();
+
+            // 当前会议从此刻开始占用一间房；push 后堆大小就是这一时刻同时活跃的会议数。
             endTimes.push(meeting[1]);
             best = max(best, static_cast<int>(endTimes.size()));
         }
+        // 全程最大并发会议数既是任何方案的下界，也能通过复用最早结束房间实现。
         return best;
     }
 };

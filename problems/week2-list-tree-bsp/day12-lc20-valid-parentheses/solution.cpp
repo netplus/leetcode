@@ -13,22 +13,27 @@
 // 题目示例：
 // 示例 1：
 //   Input: s = "()"
+//
 //   Output: true
 //
 // 示例 2：
 //   Input: s = "()[]{}"
+//
 //   Output: true
 //
 // 示例 3：
 //   Input: s = "(]"
+//
 //   Output: false
 //
 // 示例 4：
 //   Input: s = "([])"
+//
 //   Output: true
 //
 // 示例 5：
 //   Input: s = "([)]"
+//
 //   Output: false
 //
 // 约束与要求：

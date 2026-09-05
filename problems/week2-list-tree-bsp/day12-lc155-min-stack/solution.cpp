@@ -14,12 +14,14 @@
 //
 // 题目示例：
 // 示例 1：
-//   Input:
+//   Input
 //   ["MinStack","push","push","push","getMin","pop","top","getMin"]
 //   [[],[-2],[0],[-3],[],[],[],[]]
-//   Output:
+//
+//   Output
 //   [null,null,null,null,-3,null,0,-2]
-//   Explanation:
+//
+//   Explanation
 //   MinStack minStack = new MinStack();
 //   minStack.push(-2);
 //   minStack.push(0);

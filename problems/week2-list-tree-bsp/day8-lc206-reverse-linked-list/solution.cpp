@@ -64,8 +64,7 @@
 //
 // 5. 为什么不会漏 / 不会重
 //   每个节点恰好在成为 current 时处理一次：先保存它原来的后继，再只改一次 next 指针，把它接入反转前缀。
-//   因此不会漏节点；current 每轮都沿保存的原链后缀前进，也不会重复处理。循环结束 current=null，说明未处理后缀为空，此时 previous
-//   覆盖原链全部节点且方向完全反转。
+//   因此不会漏节点；current 每轮都沿保存的原链后缀前进，也不会重复处理。循环结束 current=null，说明未处理后缀为空，此时 previous 覆盖原链全部节点且方向完全反转。
 //
 // 6. 边界与易错点
 //   最危险的是先写 current->next=previous 再取原 next，这会直接丢失剩余链表；返回值应是 previous，而不是已经变成尾节点的原 head。空链表和单节点都自然满足循环逻辑。
@@ -145,4 +144,3 @@ int main() {
     printList(sol.reverseList(head));
     return 0;
 }
-

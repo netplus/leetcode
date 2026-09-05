@@ -157,4 +157,3 @@ int main() {
     cout << (sol.canPartition(a) ? 1 : 0) << "\n";
     return 0;
 }
-

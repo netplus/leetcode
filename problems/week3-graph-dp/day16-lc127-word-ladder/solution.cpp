@@ -12,6 +12,17 @@
 // s_k == endWord。
 // 给你两个单词 beginWord 和 endWord 以及一个字典 wordList，返回从 beginWord 到 endWord 的最短转换序列中的单词数目；如果不存在这样的转换序列，返回 0。
 //
+// 题目示例：
+// 示例 1：
+//   Input: beginWord = "hit", endWord = "cog", wordList = ["hot","dot","dog","lot","log","cog"]
+//   Output: 5
+//   Explanation: One shortest transformation sequence is "hit" -> "hot" -> "dot" -> "dog" -> cog", which is 5 words long.
+//
+// 示例 2：
+//   Input: beginWord = "hit", endWord = "cog", wordList = ["hot","dot","dog","lot","log"]
+//   Output: 0
+//   Explanation: The endWord "cog" is not in wordList, therefore there is no valid transformation sequence.
+//
 // 约束与要求：
 //   - 1 <= beginWord.length <= 10
 //   - endWord.length == beginWord.length

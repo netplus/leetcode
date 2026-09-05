@@ -10,20 +10,26 @@
 // 题目示例：
 // 示例 1：
 //   Input: root = [1,2,3,null,5,null,4]
+//
 //   Output: [1,3,4]
+//
 //   Explanation:
 //
 // 示例 2：
 //   Input: root = [1,2,3,4,null,null,null,5]
+//
 //   Output: [1,3,4,5]
+//
 //   Explanation:
 //
 // 示例 3：
 //   Input: root = [1,null,3]
+//
 //   Output: [1,3]
 //
 // 示例 4：
 //   Input: root = []
+//
 //   Output: []
 //
 // 约束与要求：

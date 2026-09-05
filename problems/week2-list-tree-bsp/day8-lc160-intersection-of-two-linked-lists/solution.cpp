@@ -185,4 +185,3 @@ int main() {
     cout << (ans ? ans->val : -1) << "\n";
     return 0;
 }
-

@@ -9,6 +9,18 @@
 // 在这里，a 和 b 是小写字母（不一定不同），表示单字母变量名。
 // 只有当可以将整数分配给变量名，以便满足所有给定的方程时才返回 true，否则返回 false。
 //
+// 题目示例：
+// 示例 1：
+//   Input: equations = ["a==b","b!=a"]
+//   Output: false
+//   Explanation: If we assign say, a = 1 and b = 1, then the first equation is satisfied, but not the second.
+//   There is no way to assign the variables to satisfy both equations.
+//
+// 示例 2：
+//   Input: equations = ["b==a","a==b"]
+//   Output: true
+//   Explanation: We could assign a = 1 and b = 1 to satisfy both equations.
+//
 // 约束与要求：
 //   - 1 <= equations.length <= 500
 //   - equations[i].length == 4

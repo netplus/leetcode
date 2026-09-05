@@ -157,4 +157,3 @@ int main() {
     cout << sol.coinChange(c, amount) << "\n";
     return 0;
 }
-

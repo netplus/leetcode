@@ -150,4 +150,3 @@ int main() {
     printList(sol.mergeTwoLists(buildList(a), buildList(b)));
     return 0;
 }
-

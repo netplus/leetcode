@@ -10,6 +10,26 @@
 // 你可以选择从下标为 0 或下标为 1 的台阶开始爬楼梯。
 // 请你计算并返回达到楼梯顶部的最低花费。
 //
+// 题目示例：
+// 示例 1：
+//   Input: cost = [10,15,20]
+//   Output: 15
+//   Explanation: You will start at index 1.
+//   - Pay 15 and climb two steps to reach the top.
+//   The total cost is 15.
+//
+// 示例 2：
+//   Input: cost = [1,100,1,1,1,100,1,1,100,1]
+//   Output: 6
+//   Explanation: You will start at index 0.
+//   - Pay 1 and climb two steps to reach index 2.
+//   - Pay 1 and climb two steps to reach index 4.
+//   - Pay 1 and climb two steps to reach index 6.
+//   - Pay 1 and climb one step to reach index 7.
+//   - Pay 1 and climb two steps to reach index 9.
+//   - Pay 1 and climb one step to reach the top.
+//   The total cost is 6.
+//
 // 约束与要求：
 //   - 2 <= cost.length <= 1000
 //   - 0 <= cost[i] <= 999
@@ -138,4 +158,3 @@ int main() {
     cout << sol.minCostClimbingStairs(a) << "\n";
     return 0;
 }
-

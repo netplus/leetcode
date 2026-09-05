@@ -81,8 +81,7 @@
 //   记忆：prefix 存边界；区间和 = 右边界累计 - 左边界累计。
 //
 // 5. 为什么不会漏 / 不会重
-//   prefix[right+1] 包含 nums[0..right]，prefix[left] 包含 nums[0..left-1]；
-//   两段共同的左侧部分被相减抵消，恰好只留下 nums[left..right]。
+//   prefix[right+1] 包含 nums[0..right]，prefix[left] 包含 nums[0..left-1]；两段共同的左侧部分被相减抵消，恰好只留下 nums[left..right]。
 //
 // 6. 边界与易错点
 //   最常见错误是把 right 写成 prefix[right]，本质上是混淆了“元素下标”和“边界下标”；额外的 prefix[0]=0 让 left=0 时无需特殊分支。

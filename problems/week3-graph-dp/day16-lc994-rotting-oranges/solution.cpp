@@ -10,6 +10,21 @@
 // 返回直到单元格中没有新鲜橘子为止所必须经过的最小分钟数。
 // 如果不可能，返回 -1。
 //
+// 题目示例：
+// 示例 1：
+//   Input: grid = [[2,1,1],[1,1,0],[0,1,1]]
+//   Output: 4
+//
+// 示例 2：
+//   Input: grid = [[2,1,1],[0,1,1],[1,0,1]]
+//   Output: -1
+//   Explanation: The orange in the bottom left corner (row 2, column 0) is never rotten, because rotting only happens 4-directionally.
+//
+// 示例 3：
+//   Input: grid = [[0,2]]
+//   Output: 0
+//   Explanation: Since there are already no fresh oranges at minute 0, the answer is just 0.
+//
 // 约束与要求：
 //   - m == grid.length
 //   - n == grid[i].length

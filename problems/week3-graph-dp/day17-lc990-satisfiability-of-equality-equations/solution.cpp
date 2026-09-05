@@ -117,11 +117,17 @@ using namespace std;
 class Solution {
 public:
     bool equationsPossible(vector<string>& equations) {
+        // 26 个小写字母各自先代表一个独立等价类；parent[root]==root 表示代表元。
         array<int, 26> parent;
         iota(parent.begin(), parent.end(), 0);
+
+        // find 返回变量当前所属等价类的代表根，并通过路径压缩加速后续查询。
         function<int(int)> find = [&](int x) {
             return parent[x] == x ? x : parent[x] = find(parent[x]);
         };
+
+        // 第一遍只处理所有 ==：必须先把直接与间接的相等关系全部闭包起来。
+        // 不能遇到 != 就立即判断，因为后面的等式可能通过传递性再把两端合到同一集合。
         for (const string& equation : equations) {
             if (equation[1] == '=') {
                 int a = find(equation[0] - 'a');
@@ -129,11 +135,17 @@ public:
                 parent[a] = b;
             }
         }
+
+        // 第二遍才检查 !=：此时同根意味着等式闭包已经强制两变量必须取相同值，
+        // 若当前约束又要求不等，就产生不可满足的逻辑矛盾。
         for (const string& equation : equations) {
             if (equation[1] == '!' && find(equation[0] - 'a') == find(equation[3] - 'a')) {
+                // x!=x 也会自然落入这里，因为任意变量始终与自己同根。
                 return false;
             }
         }
+
+        // 所有 != 都跨不同等价类时，可给不同根分配不同整数，从而同时满足全部约束。
         return true;
     }
 };

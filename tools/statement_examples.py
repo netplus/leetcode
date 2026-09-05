@@ -1,10 +1,10 @@
 """Offline learner-facing examples aligned to the LeetCode Wiki statement.
 
 Examples are statement facts, not pedagogy.  The Chinese doocs page at
-``https://leetcode.doocs.org/lc/<num>/`` is the learner-facing baseline.  Use
-cached examples when they agree with that page; otherwise keep a reviewed
-override.  Premium problems whose cached snapshot has no body use the examples
-published by doocs rather than invented explanatory text.
+``https://leetcode.doocs.org/lc/<num>/`` is the learner-facing baseline.
+Reviewed doocs overrides take precedence over the refreshable cache; otherwise
+use cached examples, then the offline snapshot fallback.  Premium problems
+whose cached snapshot has no body use reviewed examples from doocs.
 """
 
 from pathlib import Path
@@ -25,21 +25,36 @@ CHINESE_EXAMPLES = {
 }
 
 
-# Premium snapshots currently contain only title/slug metadata.  These bodies
-# mirror the Input/Output examples shown on their doocs Chinese pages; do not
-# add an Explanation when the source page does not contain one.
+# Reviewed doocs examples.  Keep Input/Output values faithful to the page; brief
+# Chinese explanations may be normalized/paraphrased for learner readability.
 EXAMPLE_OVERRIDES = {
+    438: [
+        """输入：s = "cbaebabacd", p = "abc"
+输出：[0,6]
+解释：从下标 0 开始的 "cba" 和从下标 6 开始的 "bac" 都与 "abc" 具有相同字符频次，因此都是异位词。""",
+        """输入：s = "abab", p = "ab"
+输出：[0,1,2]
+解释：从下标 0、1、2 开始的长度 2 子串分别是 "ab"、"ba"、"ab"，都与 p 互为异位词。""",
+    ],
+    704: [
+        """输入：nums = [-1,0,3,5,9,12], target = 9
+输出：4
+解释：9 位于 nums 的下标 4。""",
+        """输入：nums = [-1,0,3,5,9,12], target = 2
+输出：-1
+解释：nums 中不存在 2，因此返回 -1。""",
+    ],
     252: [
-        """Input: intervals = [[0,30],[5,10],[15,20]]
-Output: false""",
-        """Input: intervals = [[7,10],[2,4]]
-Output: true""",
+        """输入：intervals = [[0,30],[5,10],[15,20]]
+输出：false""",
+        """输入：intervals = [[7,10],[2,4]]
+输出：true""",
     ],
     253: [
-        """Input: intervals = [[0,30],[5,10],[15,20]]
-Output: 2""",
-        """Input: intervals = [[7,10],[2,4]]
-Output: 1""",
+        """输入：intervals = [[0,30],[5,10],[15,20]]
+输出：2""",
+        """输入：intervals = [[7,10],[2,4]]
+输出：1""",
     ],
 }
 
@@ -65,11 +80,11 @@ def _clean_example_block(text: str) -> str:
 
 
 def get_examples(num: int) -> list[str]:
-    """Return doocs-aligned cached/reviewed example bodies for one LC number."""
-    if num in CHINESE_EXAMPLES:
-        return list(CHINESE_EXAMPLES[num])
+    """Return doocs-aligned reviewed/cached example bodies for one LC number."""
     if num in EXAMPLE_OVERRIDES:
         return list(EXAMPLE_OVERRIDES[num])
+    if num in CHINESE_EXAMPLES:
+        return list(CHINESE_EXAMPLES[num])
 
     path = HERE / "official" / f"lc{num}.txt"
     if not path.exists():
@@ -116,4 +131,4 @@ def validate_example_coverage(problems: list[dict]) -> None:
     """Require at least one statement-level example for every generated problem."""
     missing = [problem["num"] for problem in problems if not get_examples(problem["num"])]
     if missing:
-        raise RuntimeError(f"official examples missing for problems: {missing}")
+        raise RuntimeError(f"statement examples missing for problems: {missing}")

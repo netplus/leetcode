@@ -106,8 +106,14 @@ public:
     vector<vector<int>> updateMatrix(vector<vector<int>>& mat) {
         const int rows = static_cast<int>(mat.size());
         const int cols = static_cast<int>(mat[0].size());
+
+        // distance 同时保存答案和 visited 状态：
+        // -1 表示“尚未被任何 0 的波前到达，最近距离还没确定”；非负值就是已经确定的最短距离。
         vector<vector<int>> distance(rows, vector<int>(cols, -1));
         queue<pair<int, int>> pending;
+
+        // 所有原始 0 必须在 BFS 开始前同时成为距离 0 的源。
+        // 这样队列中的不同波前是在同一张图上并行扩散，而不是逐个 0 重复跑搜索。
         for (int r = 0; r < rows; ++r) {
             for (int c = 0; c < cols; ++c) {
                 if (mat[r][c] == 0) {
@@ -121,14 +127,22 @@ public:
         while (!pending.empty()) {
             auto [r, c] = pending.front();
             pending.pop();
+
+            // 多源 BFS 仍按 distance 非降序扩展；当前格的距离已经是到所有 0 中最近一个的最短距离。
             for (auto& d : directions) {
                 int nr = r + d[0], nc = c + d[1];
+
+                // 只处理 distance==-1 的格子。一个格子第一次被任意源的波前到达时，
+                // distance[current]+1 已经是全体 0 源中的最短值，因此以后无需再次松弛或比较。
                 if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && distance[nr][nc] == -1) {
+                    // 赋值发生在入队之前：从这一刻起该格已被声明 visited，其他波前不会重复入队它。
                     distance[nr][nc] = distance[r][c] + 1;
                     pending.push({nr, nc});
                 }
             }
         }
+
+        // 题目保证至少有一个 0；四邻网格连通，因此所有格最终都会从 -1 变成其最近 0 距离。
         return distance;
     }
 };

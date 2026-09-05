@@ -99,9 +99,17 @@ using namespace std;
 class Solution {
 public:
     int jump(vector<int>& nums) {
+        // currentEnd 是“用当前 jumps 次跳跃能覆盖的这一层右边界”；
+        // farthest 是扫描这一整层时，下一跳最多能把边界推进到哪里。
         int jumps = 0, currentEnd = 0, farthest = 0;
+
+        // 不扫描最后一个下标：一旦进入终点就已经完成，若在终点再次触发层尾会多计一跳。
         for (int i = 0; i + 1 < static_cast<int>(nums.size()); ++i) {
+            // 层内只收集所有起点的下一跳最远覆盖，不立即决定从哪个具体位置起跳。
             farthest = max(farthest, i + nums[i]);
+
+            // 只有扫描完当前层的全部起点（i==currentEnd）时，才真正消耗一次跳跃，
+            // 并把下一层边界整体更新为这一层汇总出的 farthest。
             if (i == currentEnd) {
                 ++jumps;
                 currentEnd = farthest;

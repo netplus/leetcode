@@ -66,6 +66,14 @@ def main() -> None:
                     f"LC-{problem['num']}: generated {field} differs from effective official metadata"
                 )
 
+        # Keep generated files whitespace-stable: exactly one final newline and
+        # no extra blank line at EOF.  This mirrors render() in gen_all.py and
+        # catches the drift that `git diff --check` reports as a new blank line.
+        if text != text.rstrip("\n") + "\n":
+            failures.append(
+                f"LC-{problem['num']}: generated solution.cpp must end with exactly one newline"
+            )
+
     if failures:
         raise SystemExit(
             "statement fidelity check failed:\n  - " + "\n  - ".join(failures)
@@ -73,7 +81,7 @@ def main() -> None:
 
     print(
         f"Statement fidelity OK: {len(problems)}/106 generated problems "
-        "match effective metadata, including examples."
+        "match effective metadata, including examples and EOF formatting."
     )
 
 

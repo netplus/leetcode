@@ -12,6 +12,22 @@
 // 请你找出并返回数组中的最小元素。
 // 你必须设计一个时间复杂度为 O(log n) 的算法解决此问题。
 //
+// 题目示例：
+// 示例 1：
+//   Input: nums = [3,4,5,1,2]
+//   Output: 1
+//   Explanation: The original array was [1,2,3,4,5] rotated 3 times.
+//
+// 示例 2：
+//   Input: nums = [4,5,6,7,0,1,2]
+//   Output: 0
+//   Explanation: The original array was [0,1,2,4,5,6,7] and it was rotated 4 times.
+//
+// 示例 3：
+//   Input: nums = [11,13,15,17]
+//   Output: 11
+//   Explanation: The original array was [11,13,15,17] and it was rotated 4 times.
+//
 // 约束与要求：
 //   - n == nums.length
 //   - 1 <= n <= 5000

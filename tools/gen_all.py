@@ -137,7 +137,11 @@ public:
     }
     for k, v in replacements.items():
         s = s.replace(k, v)
-    return s
+
+    # Generated text must end with exactly one newline.  Several main() harness
+    # strings already include a trailing newline, while TEMPLATE adds another;
+    # normalize that composition here so regeneration is whitespace-stable.
+    return s.rstrip("\n") + "\n"
 
 
 def write_problem(p: dict) -> None:

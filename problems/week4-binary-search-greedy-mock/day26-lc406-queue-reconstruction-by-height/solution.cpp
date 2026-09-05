@@ -105,12 +105,18 @@ using namespace std;
 class Solution {
 public:
     vector<vector<int>> reconstructQueue(vector<vector<int>>& people) {
+        // 先处理高个：当轮到 [h,k] 时，answer 中所有人都满足 height>=h，
+        // 因而“前面有多少个会被当前人计数的人”就等于插入位置本身。
+        // 同身高必须按 k 升序，让 k 较小者先固定，后续同高者不会插到它前面破坏其计数。
         sort(people.begin(), people.end(), [](const vector<int>& a, const vector<int>& b) {
             if (a[0] != b[0]) return a[0] > b[0];
             return a[1] < b[1];
         });
+
         vector<vector<int>> answer;
         for (const auto& person : people) {
+            // 此刻已有元素全都不矮于 person，所以插入下标 k 后，
+            // person 前方恰有 k 个 height>=person[0] 的人；以后加入的更矮者不计入它的约束。
             answer.insert(answer.begin() + person[1], person);
         }
         return answer;

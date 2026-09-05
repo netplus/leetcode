@@ -139,17 +139,26 @@ using namespace std;
 class Solution {
 public:
     void nextPermutation(vector<int>& nums) {
+        // 从右向左寻找最右的 nums[pivot] < nums[pivot+1]。
+        // 越过的后缀因此必然是“非递增”排列；它已经是这些后缀元素能形成的最大字典序，
+        // 只重排这个后缀不可能让整体继续增大，所以必须修改它左边的 pivot。
         int pivot = static_cast<int>(nums.size()) - 2;
         while (pivot >= 0 && nums[pivot] >= nums[pivot + 1]) --pivot;
-        if (pivot >= 0) {
-            int successor = static_cast<int>(nums.size()) - 1;
 
-            /*找刚刚比pivot大的那个数*/
+        if (pivot >= 0) {
+            // 为了得到“刚刚更大”的排列，pivot 不能随便换一个更大值，
+            // 而应换成后缀中最小的严格较大值。
+            // 后缀当前非递增，所以从最右向左遇到的第一个 > nums[pivot] 的元素正是这个候选。
+            int successor = static_cast<int>(nums.size()) - 1;
             while (nums[successor] <= nums[pivot]) --successor;
 
+            // 这一步让最靠右的可变高位产生最小严格增量。
             swap(nums[pivot], nums[successor]);
         }
-        /*尾部本来就是有序非递减数组， 因此可以直接倒过来即可*/
+
+        // pivot 右侧原本是非递增后缀；交换后仍保持可直接反转成最小顺序的结构。
+        // reverse 把低位降到当前新前缀下的最小排列。
+        // 若 pivot==-1，说明整个数组已经是最大排列；同一个 reverse 会把全数组变成最小排列。
         reverse(nums.begin() + pivot + 1, nums.end());
     }
 };

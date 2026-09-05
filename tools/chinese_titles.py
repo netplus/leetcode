@@ -1,8 +1,10 @@
 """Canonical Chinese titles for every problem in this workspace.
 
-English titles remain in ``gen_data.py`` as source metadata.  Generated
-learner-facing files use this registry so the Chinese naming stays consistent
-across solution headers, the study plan, and the statement-review ledger.
+The learner-facing title baseline is the Chinese problem page on
+``https://leetcode.doocs.org/lc/<num>/``.  English titles remain in
+``gen_data.py`` as source metadata. Generated files use this registry so the
+Chinese naming stays consistent across solution headers, the study plan, and
+the statement-review ledger.
 """
 
 CHINESE_TITLES = {
@@ -71,11 +73,11 @@ CHINESE_TITLES = {
     209: "长度最小的子数组",
     210: "课程表 II",
     213: "打家劫舍 II",
-    215: "数组中的第 K 个最大元素",
+    215: "数组中的第K个最大元素",
     226: "翻转二叉树",
     234: "回文链表",
     236: "二叉树的最近公共祖先",
-    238: "除自身以外数组的乘积",
+    238: "除了自身以外数组的乘积",
     239: "滑动窗口最大值",
     252: "会议室",
     253: "会议室 II",

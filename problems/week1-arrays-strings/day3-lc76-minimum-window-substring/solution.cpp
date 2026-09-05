@@ -124,26 +124,52 @@ class Solution {
 public:
     string minWindow(string s, string t) {
         if (t.size() > s.size()) return "";
+
+        // need[c] 仍是一张“欠账表”：正数=还欠，0=刚好，负数=窗口中有富余。
+        // 这里使用 256 个字节槽位，因此非 t 字符初始 need=0，进入窗口后自然变成负数；
+        // 不需要再维护一张“字符是否属于 t”的额外表。
         array<int, 256> need{};
         for (unsigned char c : t) ++need[c];
 
+        // missing 表示尚未满足的字符槽位总数；missing==0 <=> 当前窗口覆盖了 t。
         int missing = static_cast<int>(t.size());
-        int left = 0, bestStart = 0, bestLength = INT_MAX;
+        int left = 0;
+
+        // INT_MAX 是“尚未找到任何合法窗口”的哨兵；
+        // bestStart/bestLength 只在窗口合法时更新。
+        int bestStart = 0, bestLength = INT_MAX;
+
         for (int right = 0; right < static_cast<int>(s.size()); ++right) {
             unsigned char rc = static_cast<unsigned char>(s[right]);
-            if (need[rc] > 0) --missing;  // 只有“还欠的”算偿还；非 t 字符 need=0 不触发
-            --need[rc];                   // 无条件 --：非 t 字符 0->-1 富余，不影响 missing
 
+            // 与 LC-438 相同：进入前如果 need[rc] > 0，当前字符真正偿还了一份欠账。
+            // 随后无条件 --need[rc]；非 t 字符只是从 0 变 -1，missing 不受影响。
+            if (need[rc] > 0) --missing;
+            --need[rc];
+
+            // 一旦 missing==0，当前 [left,right] 已合法。
+            // 对固定 right，继续右移 left 才有机会得到更短窗口；
+            // 所以这里必须用 while，把这个 right 下所有仍合法的左边界都检查到刚失效为止。
             while (missing == 0) {
+                // 当前窗口此刻仍覆盖 t，必须在删除左端之前先记录候选。
+                // 若先移除 left，可能恰好删掉一份必需字符，从而漏掉当前合法窗口。
                 if (right - left + 1 < bestLength) {
                     bestStart = left;
                     bestLength = right - left + 1;
                 }
+
                 unsigned char lc = static_cast<unsigned char>(s[left++]);
-                ++need[lc];                   // 无条件 ++：与收入端 -- 对称，need 总和守恒
-                if (need[lc] > 0) ++missing;  // 刚移除了一个必需字符（非 t 字符最多到 0，不会触发）
+
+                // 移出字符与收入字符严格对称：先把 need[lc] 恢复 1。
+                // 若恢复后 need[lc] > 0，说明刚刚移走的是一份不可缺少的字符，
+                // 窗口从这一刻重新变非法，因此 missing++，while 会停止收缩。
+                // 非 t 字符或富余字符最多把 need 恢复到 <=0，不会影响 missing。
+                ++need[lc];
+                if (need[lc] > 0) ++missing;
             }
         }
+
+        // 哨兵未被改写说明整个 s 中从未出现覆盖 t 的窗口。
         return bestLength == INT_MAX ? "" : s.substr(bestStart, bestLength);
     }
 };

@@ -90,4 +90,63 @@ public:
         return {};
     }
 };''',
+
+    685: r'''// ---------- Solution ----------
+class Solution {
+public:
+    vector<int> findRedundantDirectedConnection(vector<vector<int>>& edges) {
+        const int n = static_cast<int>(edges.size());
+
+        // 第一阶段只处理“每个非根节点最多一个父亲”这条有根树结构约束。
+        // directParent[v]==0 表示 v 还没见过父边；否则再次出现 -> v 就是唯一可能的二父节点。
+        vector<int> directParent(n + 1, 0);
+        int earlier = -1, later = -1;
+
+        for (int i = 0; i < n; ++i) {
+            int from = edges[i][0], to = edges[i][1];
+            if (directParent[to] == 0) {
+                directParent[to] = from;
+            } else {
+                // 当前 i 是较晚出现的第二条父边 later。
+                // 再向前找到同样指向 to 的第一条父边 earlier；真正答案只可能在这两条边中。
+                for (int j = 0; j < i; ++j) {
+                    if (edges[j][1] == to) {
+                        earlier = j;
+                        break;
+                    }
+                }
+                later = i;
+                break;
+            }
+        }
+
+        // 第二阶段复用 LC-684：把边方向暂时忽略，用 DSU 判断“剩余边是否还形成环”。
+        vector<int> parent(n + 1);
+        iota(parent.begin(), parent.end(), 0);
+        function<int(int)> find = [&](int x) {
+            return parent[x] == x ? x : parent[x] = find(parent[x]);
+        };
+
+        for (int i = 0; i < n; ++i) {
+            // 若存在二父冲突，先假设删除较晚的 later；因此重放图时必须跳过它。
+            if (i == later) continue;
+
+            int a = find(edges[i][0]);
+            int b = find(edges[i][1]);
+
+            if (a == b) {
+                // 没有二父候选：问题退化为 LC-684，当前边就是唯一闭环边。
+                // 有二父候选：later 已被跳过却仍成环，说明 later 不是答案；必须删 earlier。
+                return earlier == -1 ? edges[i] : edges[earlier];
+            }
+
+            // 当前边没有成环，才把两个集合合并，维持“此前重放边的连通性”不变量。
+            parent[b] = a;
+        }
+
+        // 能走到这里说明：跳过 later 后整张图没有环。
+        // 因而删除 later 已经同时解决了二父问题并恢复有根树。
+        return edges[later];
+    }
+};''',
 }

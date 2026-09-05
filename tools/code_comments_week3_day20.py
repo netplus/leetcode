@@ -35,4 +35,36 @@ public:
         return reachable[target];
     }
 };''',
+
+    494: r'''// ---------- Solution ----------
+class Solution {
+public:
+    int findTargetSumWays(vector<int>& nums, int target) {
+        const int total = accumulate(nums.begin(), nums.end(), 0);
+
+        // 设加正号元素和为 P、负号元素和为 N：P-N=target，P+N=total，
+        // 因而 P=(total+target)/2。绝对目标超过 total 或右侧为奇数时，不存在整数子集和解。
+        if (abs(target) > total || (total + target) % 2 != 0) return 0;
+        const int positiveSum = (total + target) / 2;
+
+        // ways[sum] 表示：只使用已经处理过的数组下标，和恰好为 sum 的下标子集数量。
+        // ways[0]=1 对应“空子集”这一种基础方案；没有这个 1，后续任何 value 都无法从 0 建出第一批方案。
+        vector<long long> ways(positiveSum + 1, 0);
+        ways[0] = 1;
+
+        for (int value : nums) {
+            // 与 LC-416 完全相同：每个数组下标只能分到正号集合 0/1 次，所以 sum 必须倒序。
+            // 这样 ways[sum-value] 在读取时仍只统计此前下标，不会在同一轮重复使用当前 value。
+            for (int sum = positiveSum; sum >= value; --sum) {
+                // 旧 ways[sum] 是“不选当前下标”的方案；ways[sum-value] 是“选当前下标”的方案。
+                // 当 value==0 时，这行变成 ways[sum]+=ways[sum]，恰好把每个方案翻倍，
+                // 对应同一个 0 可以分别选择 +0 或 -0，两种表达式确实不同。
+                ways[sum] += ways[sum - value];
+            }
+        }
+
+        // 每个和为 positiveSum 的正号下标集合，都唯一决定其余下标放负号，因此计数与目标表达式一一对应。
+        return static_cast<int>(ways[positiveSum]);
+    }
+};''',
 }

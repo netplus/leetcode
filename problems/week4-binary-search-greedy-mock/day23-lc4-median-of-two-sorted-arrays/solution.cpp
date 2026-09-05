@@ -126,26 +126,40 @@ using namespace std;
 class Solution {
 public:
     double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        // 始终在较短数组上二分 cut1。这样 cut1∈[0,m] 时，
+        // 由固定左侧总元素数推导出的 cut2 也会落在 [0,n]，避免额外越界分支。
         if (nums1.size() > nums2.size()) return findMedianSortedArrays(nums2, nums1);
         const int m = static_cast<int>(nums1.size());
         const int n = static_cast<int>(nums2.size());
+
+        // cut1/cut2 表示“左半部分各取多少个元素”，不是数组下标。
+        // +1 让总长度为奇数时，多出来的那个中位元素统一放在左半部分。
         const int leftSize = (m + n + 1) / 2;
         int left = 0, right = m;
 
         while (left <= right) {
             const int cut1 = left + (right - left) / 2;
             const int cut2 = leftSize - cut1;
+
+            // 切口落在数组端点时，用 ±∞ 作为“空侧”的虚拟边界，
+            // 这样所有切法都能使用同一组交叉比较，不必为首尾单独分支。
             const int left1 = cut1 == 0 ? INT_MIN : nums1[cut1 - 1];
             const int right1 = cut1 == m ? INT_MAX : nums1[cut1];
             const int left2 = cut2 == 0 ? INT_MIN : nums2[cut2 - 1];
             const int right2 = cut2 == n ? INT_MAX : nums2[cut2];
 
+            // 两个交叉不等式同时成立，才说明“合并后的所有左侧元素 <= 所有右侧元素”。
             if (left1 <= right2 && left2 <= right1) {
                 const int leftMax = max(left1, left2);
+                // 奇数时左半多一个元素，中位数就是左侧最大值。
                 if ((m + n) % 2 == 1) return leftMax;
                 const int rightMin = min(right1, right2);
+                // 偶数时取两个中间边界的平均；先提升为 long long，避免两个 int 相加溢出。
                 return (static_cast<long long>(leftMax) + rightMin) / 2.0;
             }
+
+            // left1>right2 表示 nums1 左侧拿得太多，cut1 必须左移；
+            // 否则必是 left2>right1，说明 nums1 左侧拿得太少，cut1 必须右移。
             if (left1 > right2) right = cut1 - 1;
             else left = cut1 + 1;
         }

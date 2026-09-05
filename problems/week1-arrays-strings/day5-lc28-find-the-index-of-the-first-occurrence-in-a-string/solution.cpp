@@ -113,24 +113,47 @@ class Solution {
 public:
     int strStr(string haystack, string needle) {
         if (needle.empty()) return 0;
+
+        // lps[i] = needle[0..i] 的最长“真前缀 = 后缀”长度。
+        // 它预先记录：若已经匹配到 i 后下一字符失配，最多还能保留多少个已确认字符。
         vector<int> lps(needle.size(), 0);
+
+        // 构造阶段：i 是当前要计算 lps 的位置；len 是当前正在尝试延伸的边界长度。
         for (int i = 1, len = 0; i < static_cast<int>(needle.size());) {
             if (needle[i] == needle[len]) {
+                // 当前字符能接到边界后面，最长边界长度增加 1；
+                // 只有确定 lps[i] 后 i 才前进。
                 lps[i++] = ++len;
             } else if (len > 0) {
-                len = lps[len - 1];  // 尝试更短的、仍可能成立的边界
+                // 当前长度 len 的边界延伸失败，但较短边界仍可能成功。
+                // needle[0..len-1] 已知存在长度 lps[len-1] 的次长边界，
+                // 所以直接跳到它继续尝试；i 不动，因为当前 needle[i] 还没得到答案。
+                len = lps[len - 1];
             } else {
+                // 连长度 1 的边界都不存在，当前位置的最长真前后缀只能是 0。
                 lps[i++] = 0;
             }
         }
 
+        // 匹配阶段：i 指向尚未处理的文本字符；j 表示 needle[0..j-1]
+        // 已经与文本末尾连续匹配，亦即“当前已匹配长度”。
         for (int i = 0, j = 0; i < static_cast<int>(haystack.size());) {
             if (haystack[i] == needle[j]) {
+                // 当前字符匹配后，同时消费文本字符并把模式已匹配长度加 1。
                 ++i;
-                if (++j == static_cast<int>(needle.size())) return i - j;
+                if (++j == static_cast<int>(needle.size())) {
+                    // i 此时已经指向完整匹配片段的后一位，长度为 j，
+                    // 因而起点 = 右边界后一位 - 匹配长度 = i-j。
+                    return i - j;
+                }
             } else if (j > 0) {
+                // 文本当前字符 haystack[i] 还没有被成功消费，i 不能前进。
+                // 已匹配的 j 个字符中，后缀已有一部分等于模式前缀；
+                // 回退到 lps[j-1] 就能保留这段已验证信息，直接拿同一个文本字符继续比较。
                 j = lps[j - 1];
             } else {
+                // j==0 时没有任何已匹配边界可复用，当前文本字符不可能作为本次匹配开头，
+                // 这时才安全推进 i。
                 ++i;
             }
         }

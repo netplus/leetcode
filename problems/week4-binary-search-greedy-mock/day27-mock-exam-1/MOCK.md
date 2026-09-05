@@ -20,8 +20,12 @@ input has exactly one solution.
 Constraints: 3 <= n <= 1000, -1000 <= nums[i] <= 1000, -1e4 <= target <= 1e4.
 
 Example:
-  Input:  nums = [-1,2,1,-4], target = 1
-  Output: 2    (sum = -1 + 2 + 1 = 2)
+  Input:
+    4 1
+    -1 2 1 -4
+  Output:
+    2
+  Explanation: -1 + 2 + 1 = 2 is the closest sum to target 1.
 
 I/O for your a.in: line 1 = n target; line 2 = n ints. Print the closest sum.
 
@@ -38,9 +42,22 @@ Define:
 
 Constraints: 0 <= n <= 1000, -1e4 <= val <= 1e4, random is null or a valid index.
 
-Example: list [[7,null],[13,0],[11,4],[10,2],[1,0]] means node0 val=7 random=null;
-node1 val=13 random->node0; node2 val=11 random->node4; etc. The copy must have
-the same structure and random links.
+Example:
+  Input:
+    5
+    7 -1
+    13 0
+    11 4
+    10 2
+    1 0
+  Output:
+    7 -1
+    13 0
+    11 4
+    10 2
+    1 0
+  Explanation: the copied nodes have the same value/random-index structure,
+  but every copied node and pointer must refer only to the new list.
 
 I/O for your b.in: line 1 = n; next n lines "val randomIndex" (randomIndex = -1 for
 null). Print the copied list as n lines "val randomIndex" (the copied random's
@@ -62,8 +79,13 @@ Define the TreeNode struct as in the other problems.
 Constraints: number of nodes in [1, 1e4], 0 <= Node.val <= 1e4.
 
 Example:
-  Input (level order): 3 2 3 -1 3 -1 1
-  Output: 7    (rob node 3 (root) + node 3 (level 2 right) + node 1? -> 3+3+1=7)
+  Input:
+    7
+    3 2 3 -1 3 -1 1
+  Output:
+    7
+  Explanation: rob the root (3) and its two non-adjacent grandchildren with
+  values 3 and 1, for 3 + 3 + 1 = 7.
 
 I/O for your c.in: line 1 = n; line 2 = n level-order values (-1 = null). Print
 the maximum amount.

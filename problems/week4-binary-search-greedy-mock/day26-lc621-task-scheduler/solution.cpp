@@ -113,11 +113,20 @@ using namespace std;
 class Solution {
 public:
     int leastInterval(vector<char>& tasks, int n) {
+        // 任务只有 A..Z，先统计最终频次；真正撑开冷却时间轴的是最高频任务。
         array<int, 26> frequency{};
         for (char task : tasks) ++frequency[task - 'A'];
+
         const int maxFrequency = *max_element(frequency.begin(), frequency.end());
+        // 可能有多种任务并列最高频，它们都会占据骨架最后一列，因此不能只按一种最高频任务计算。
         const int maxCount = static_cast<int>(count(frequency.begin(), frequency.end(), maxFrequency));
+
+        // 最高频任务有 maxFrequency 次：前 maxFrequency-1 组之间都必须隔出 n 个冷却位置，
+        // 所以形成 (maxFrequency-1) 个长度 n+1 的完整块；最后再放 maxCount 个并列最高频任务。
         const int skeleton = (maxFrequency - 1) * (n + 1) + maxCount;
+
+        // skeleton 是冷却约束强制出的下界；tasks.size() 是“每个真实任务至少占一个时间单位”的下界。
+        // 其他任务足够多时会把骨架 idle 全填满，答案由任务数主导；否则不可避免的 idle 让骨架主导。
         return max(static_cast<int>(tasks.size()), skeleton);
     }
 };

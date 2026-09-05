@@ -40,6 +40,7 @@ from pedagogy_derivations_backfill import DERIVATION_BACKFILL_OVERRIDES
 from pedagogy_prerequisites import PREREQUISITE_OVERRIDES
 from code_comment_overrides import CODE_COMMENT_OVERRIDES
 from code_comments_week1_day2 import CODE_COMMENTS_WEEK1_DAY2
+from code_comments_week1_rest import CODE_COMMENTS_WEEK1_REST
 from chinese_titles import validate_title_coverage
 
 
@@ -126,6 +127,7 @@ for num, derivation in DERIVATIONS.items():
 _CODE_COMMENT_MODULES = (
     CODE_COMMENT_OVERRIDES,
     CODE_COMMENTS_WEEK1_DAY2,
+    CODE_COMMENTS_WEEK1_REST,
 )
 
 CODE_COMMENTS = {}

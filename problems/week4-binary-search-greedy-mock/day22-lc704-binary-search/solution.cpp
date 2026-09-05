@@ -90,13 +90,19 @@ using namespace std;
 class Solution {
 public:
     int search(vector<int>& nums, int target) {
+        // 搜索区间采用闭区间 [left,right]；只要 left<=right，就仍至少有一个候选位置。
         int left = 0, right = static_cast<int>(nums.size()) - 1;
         while (left <= right) {
+            // 这样写与 (left+right)/2 等价，但避免两个大下标直接相加可能溢出。
             const int middle = left + (right - left) / 2;
             if (nums[middle] == target) return middle;
+
+            // 数组严格递增：middle 值偏小时，middle 及其左侧都不可能等于 target；
+            // 反之 middle 及其右侧都可整体排除。更新后仍保持“若答案存在，它一定在 [left,right]”。
             if (nums[middle] < target) left = middle + 1;
             else right = middle - 1;
         }
+        // left>right 表示候选闭区间已经为空。
         return -1;
     }
 };

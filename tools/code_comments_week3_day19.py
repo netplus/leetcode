@@ -54,4 +54,28 @@ public:
         return dp[cols - 1];
     }
 };''',
+
+    300: r'''// ---------- Solution ----------
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        // tails[len-1] 表示：当前已扫描前缀中，长度恰为 len 的严格递增子序列
+        // 所能取得的最小结尾值。它是“各长度的最优摘要”，不保证整个 tails 本身对应同一条真实 LIS。
+        vector<int> tails;
+
+        for (int value : nums) {
+            // tails 严格递增，因此可以二分定位第一个 >= value 的位置。
+            // 严格递增必须用 lower_bound：相等值只能改善同一长度的结尾，不能把长度延长。
+            auto position = lower_bound(tails.begin(), tails.end(), value);
+
+            // 若 value 大于所有已有最小结尾，它可以接在当前最长序列之后，LIS 长度真正 +1；
+            // 否则只把同一长度的结尾改善成更小/相同的 value，为未来留下更多可接续空间，长度不变。
+            if (position == tails.end()) tails.push_back(value);
+            else *position = value;
+        }
+
+        // tails 的槽位数与“当前存在多少种长度 1..L”一一对应，因此 size 就是 LIS 长度。
+        return static_cast<int>(tails.size());
+    }
+};''',
 }

@@ -66,11 +66,9 @@ public:
 
         for (int money : nums) {
             // 当前房只有两类互斥决策：
-            // skip：不偷当前房，直接继承前一前缀最优 previous1；
-            // take：偷当前房，则相邻前一房不能偷，只能接 previous2 + money。
-            const int skip = previous1;
-            const int take = previous2 + money;
-            const int current = max(skip, take);
+            // 不偷当前房 -> previous1；偷当前房 -> previous2 + money。
+            // 两类已经覆盖全部合法方案，因此当前前缀只需保留二者较大值。
+            int current = max(previous1, previous2 + money);
 
             // 必须先用旧 previous2/previous1 算完 current，再整体向前滚动；
             // 若提前覆盖 previous1，会破坏下一轮对“前两前缀最优”的状态含义。

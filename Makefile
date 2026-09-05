@@ -19,15 +19,19 @@ CFLAGS   := -std=c11 -O2 -Wall -Wextra
 SRCS := $(shell find problems -name 'solution.cpp' -o -name 'solution.c' 2>/dev/null)
 BINS := $(patsubst %.cpp,%,$(patsubst %.c,%,$(SRCS)))
 
-.PHONY: all clean list help pch verify-meta verify
+.PHONY: all clean list help pch verify-doocs verify-meta verify
 all: $(BINS)
 
-verify-meta:
+# Offline statement-contract gate.  The reviewed doocs-aligned canonical
+# metadata is the baseline; website refresh/review is intentionally separate.
+verify-doocs:
+	@python3 tools/check_statement_fidelity.py
+
+verify-meta: verify-doocs
 	@python3 tools/gen_review_report.py --check
 	@python3 tools/sync_plan_titles.py --check
 	@python3 tools/check_plan_counts.py
 	@python3 tools/check_learning_metadata.py
-	@python3 tools/check_statement_fidelity.py
 	@python3 tools/check_generated_fidelity.py
 
 verify: verify-meta all
@@ -65,12 +69,14 @@ help:
 	@echo "  make all            compile every solution"
 	@echo "  make list           list all targets"
 	@echo ""
-	@echo "  Batch (judge all cases per problem):"
+	@echo "  Batch / verification:"
 	@echo "  make judge-all       judge every problem, roll-up summary"
 	@echo "  make judge-w1        judge all of Week 1 (judge-w2..judge-w4 analogous)"
 	@echo "  make judge-d1        judge Day 1 (judge-d2..judge-d28 analogous)"
 	@echo "  make status          which problems are implemented vs still stub"
-	@echo "  make verify          canonical audit + metadata + compile + all judges"
+	@echo "  make verify-doocs    exact statement audit against reviewed doocs baseline"
+	@echo "  make verify-meta     doocs + metadata + canonical/generated fidelity audit"
+	@echo "  make verify          verify-meta + compile + all judges"
 	@echo "  make clean           clean"
 
 # ---------------------------------------------------------------------------

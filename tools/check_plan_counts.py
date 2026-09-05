@@ -17,6 +17,14 @@ from statement_metadata import get_statement_metadata  # noqa: E402
 MOCK_UNITS = {1: 0, 2: 0, 3: 0, 4: 2}
 
 
+def normalized_priority(display_priority: str) -> str:
+    if display_priority.startswith("P0"):
+        return "P0"
+    if display_priority.startswith("P1"):
+        return "P1"
+    raise ValueError(f"unexpected priority {display_priority!r}")
+
+
 def main() -> None:
     problems = []
     gen_data.build(lambda **problem: problems.append(problem))
@@ -31,9 +39,10 @@ def main() -> None:
     for problem in problems:
         week = problem["week"]
         day = problem["day"]
-        priority = get_statement_metadata(problem)["priority"]
-        if priority not in {"P0", "P1"}:
-            raise SystemExit(f"LC-{problem['num']}: unexpected priority {priority!r}")
+        try:
+            priority = normalized_priority(get_statement_metadata(problem)["priority"])
+        except ValueError as error:
+            raise SystemExit(f"LC-{problem['num']}: {error}") from error
         week_priority[week][priority] += 1
         week_total[week] += 1
         if priority == "P0":

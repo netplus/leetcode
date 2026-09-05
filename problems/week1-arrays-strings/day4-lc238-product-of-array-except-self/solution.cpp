@@ -102,23 +102,30 @@ using namespace std;
 class Solution {
 public:
     vector<int> productExceptSelf(vector<int>& nums) {
+        // answer 最终承载输出，因此先借它暂存每个位置的“左侧乘积”，
+        // 不再额外申请一张 prefix 数组。
         vector<int> answer(nums.size(), 1);
-        // 实现技巧（滚动暂存）：answer[i] 先暂存"i 之前所有前缀元素的乘积"，
-        // 写完后把 nums[i] 乘进 leftProduct，这份更新后的暂存值就是下一轮
-        // answer[i+1] 需要的前缀乘积——暂存值就地滚动，不需要额外数组。
+
+        // 进入下标 i 时，leftProduct 恰好等于 nums[0..i-1] 的乘积，
+        // 明确不包含 nums[i]；初始 1 是空乘积的单位元。
         int leftProduct = 1;
         for (int i = 0; i < static_cast<int>(nums.size()); ++i) {
+            // 必须先把“不含自己”的左侧乘积写给 answer[i]，
+            // 再把 nums[i] 纳入状态，供下一位置 i+1 使用；顺序反了就会把自己乘进去。
             answer[i] = leftProduct;
             leftProduct *= nums[i];
         }
 
-        // 右往左同理：rightProduct 暂存右侧后缀乘积，先乘入 answer[i]，
-        // 再把 nums[i] 纳入，滚动成下一轮的后缀乘积。
+        // 从右往左完全对称：进入 i 时，rightProduct 只包含 nums[i+1..n-1]。
         int rightProduct = 1;
         for (int i = static_cast<int>(nums.size()) - 1; i >= 0; --i) {
+            // answer[i] 此时已经是左侧乘积，先乘当前“不含自己”的右侧乘积，
+            // 才得到最终的 except-self 结果；随后再把 nums[i] 纳入右侧滚动状态。
             answer[i] *= rightProduct;
             rightProduct *= nums[i];
         }
+
+        // 整个过程从未做除法，所以 nums 中含 0 也无需特殊分支。
         return answer;
     }
 };

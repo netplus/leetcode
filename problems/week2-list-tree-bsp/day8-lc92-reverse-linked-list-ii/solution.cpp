@@ -113,17 +113,35 @@ struct ListNode {
 class Solution {
 public:
     ListNode* reverseBetween(ListNode* head, int left, int right) {
+        // dummy 让 left==1 时仍然存在统一的“区间前驱”；
+        // 返回 dummy.next 也会自动得到可能发生变化的新头节点。
         ListNode dummy(0, head);
         ListNode* before = &dummy;
+
+        // before 最终固定在第 left 个节点之前，之后整个反转过程都不再移动它。
         for (int pos = 1; pos < left; ++pos) before = before->next;
 
+        // first 是原区间的第一个节点。
+        // 头插过程中它的位置不断向右退，但指针本身不动，并始终充当“已反转区间的尾”。
         ListNode* first = before->next;
+
+        // 区间长度为 right-left+1；第一个节点 first 不需要搬，
+        // 只需把它后面的 right-left 个节点依次提到 before 后面。
         for (int i = 0; i < right - left; ++i) {
             ListNode* moved = first->next;
-            first->next = moved->next;   // 从区间剩余部分摘下 moved
+
+            // 必须先让 first 跳过 moved，保持“反转段尾 -> 未处理后缀”的连接。
+            // 如果先改 moved->next 而没有摘干净 moved，原链关系可能形成环或丢失剩余入口。
+            first->next = moved->next;
+
+            // moved 插到当前反转段最前面：先让它指向旧头，再让 before 改指 moved。
+            // before 始终不动，因此每次都是同一个插入口。
             moved->next = before->next;
-            before->next = moved;        // 插到已反转部分最前面
+            before->next = moved;
         }
+
+        // 区间外前缀由 before 保持连接，区间外后缀由 first->next 保持连接；
+        // dummy.next 因此始终是整个结果链表的统一入口。
         return dummy.next;
     }
 };

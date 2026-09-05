@@ -107,4 +107,27 @@ public:
         return dummy.next;
     }
 };''',
+
+    160: r'''// ---------- Solution ----------
+class Solution {
+public:
+    ListNode* getIntersectionNode(ListNode* headA, ListNode* headB) {
+        // a/b 比较的是“节点地址/身份”，不是 val。
+        // 两个不同节点即使值相同也不算相交；真正相交后，两条链共享的是同一批节点对象。
+        ListNode* a = headA;
+        ListNode* b = headB;
+
+        while (a != b) {
+            // a 走完 A 后改走 B，形成虚拟路径 A+B；
+            // b 走完 B 后改走 A，形成虚拟路径 B+A。
+            // 换头不是重新搜索，而是在把两条独有前缀的长度差放到另一段路径中自动抵消。
+            a = a ? a->next : headB;
+            b = b ? b->next : headA;
+        }
+
+        // 若有公共尾，两条等长虚拟路径会在第一个共享节点地址处对齐；
+        // 若没有公共节点，它们最终会同时走到 nullptr，此时 a==b 同样结束循环。
+        return a;
+    }
+};''',
 }

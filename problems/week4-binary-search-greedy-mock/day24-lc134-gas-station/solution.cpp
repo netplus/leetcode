@@ -105,16 +105,25 @@ using namespace std;
 class Solution {
 public:
     int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {
+        // total 记录整圈净收益，决定“是否存在解”；
+        // currentTank 只记录当前候选 start 从起点走到 i 的局部剩余油量。
         int total = 0, currentTank = 0, start = 0;
         for (int i = 0; i < static_cast<int>(gas.size()); ++i) {
             const int gain = gas[i] - cost[i];
             total += gain;
             currentTank += gain;
+
+            // 若 start..i 第一次累加成负数，不只是 start 失败：
+            // 因为 start 到任意中间点此前前缀都非负，从其中任何 j∈(start,i] 重新出发，
+            // 到 i 的净收益只会更差，因此这整段起点都可永久排除，下一候选直接跳到 i+1。
             if (currentTank < 0) {
                 start = i + 1;
                 currentTank = 0;
             }
         }
+
+        // 局部失败时不能清空 total；只有整圈总油量不少于总消耗时才可能存在起点。
+        // total>=0 时，所有早于 start 的候选已经被逐段证明失败，最后留下的 start 即可走完整圈。
         return total >= 0 ? start : -1;
     }
 };

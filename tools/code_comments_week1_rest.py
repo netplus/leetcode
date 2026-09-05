@@ -74,4 +74,53 @@ public:
         return best;
     }
 };''',
+
+    438: r'''// ---------- Solution ----------
+class Solution {
+public:
+    vector<int> findAnagrams(string s, string p) {
+        // need[c] 是一张“欠账表”：初始表示 p 还需要多少个字符 c。
+        // 窗口收入字符时做 --need；因此 need[c] < 0 并不是错误，
+        // 而是表示当前窗口里的 c 超过了 p 所需的数量。
+        array<int, 26> need{};
+        for (char c : p) ++need[c - 'a'];
+
+        vector<int> answer;
+
+        // missing 不是“还缺多少种字符”，而是“还缺多少个字符槽位”。
+        // 初始等于 |p|；每真正填上一份仍在欠的字符，才减少 1。
+        int missing = static_cast<int>(p.size());
+        int left = 0;
+
+        for (int right = 0; right < static_cast<int>(s.size()); ++right) {
+            int in = s[right] - 'a';
+
+            // 必须先判断 need[in] > 0，再执行 --need[in]：
+            // 只有“进入之前仍有欠账”的这一个字符，才真正填掉一个 missing 槽位；
+            // 若 need[in] <= 0，说明这个字符只是额外富余，不能让 missing 继续下降。
+            if (need[in] > 0) --missing;
+            --need[in];
+
+            // 上一轮窗口长度至多为 |p|，本轮只新加入 1 个字符，
+            // 所以一旦超长只需移出最左边 1 个字符即可恢复定长窗口。
+            if (right - left + 1 > static_cast<int>(p.size())) {
+                int out = s[left++] - 'a';
+
+                // 离开窗口相当于撤销此前的一次 --need[out]，所以先 ++need[out]。
+                // 如果恢复后 need[out] > 0，说明窗口重新缺少一份 out，
+                // 此时才需要把 missing 加回 1。顺序不能反，否则会误判富余字符。
+                ++need[out];
+                if (need[out] > 0) ++missing;
+            }
+
+            // 窗口长度恰好等于 |p| 时，missing==0 表示 p 要求的每一个字符槽位都已满足。
+            // 由于总长度又没有额外空间，不可能同时存在“某字符多了、另一字符少了”，
+            // 因而频次向量必然与 p 完全一致，当前 left 就是一个异位词起点。
+            if (right - left + 1 == static_cast<int>(p.size()) && missing == 0) {
+                answer.push_back(left);
+            }
+        }
+        return answer;
+    }
+};''',
 }

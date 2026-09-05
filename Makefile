@@ -1,11 +1,11 @@
 # Makefile - LeetCode exam practice workspace (C/C++)
 # Usage:
 #   make lc1            build & run LC-1 (feeds its test.in, prints stdin + stdout)
-#   make w1d1            build & run the single problem for week1/day1
-#   make w1d10-3         build & run the 3rd problem on week1/day10
-#   make all             compile every solution.{cpp,c}
-#   make list            list all compilable targets
-#   make clean           remove build artifacts
+#   make w1d1           build & run the single problem for week1/day1
+#   make w2d10-3        build & run the 3rd problem on week2/day10
+#   make all            compile every solution.{cpp,c}
+#   make list           list all compilable targets
+#   make clean          remove build artifacts
 #
 # All convenience targets just dispatch to tools/run.sh, which does the
 # directory lookup and execution. No GNU make foreach/eval (kept simple + robust).
@@ -27,6 +27,7 @@ verify-meta:
 	@python3 tools/sync_plan_titles.py --check
 	@python3 tools/check_learning_metadata.py
 	@python3 tools/check_statement_fidelity.py
+	@python3 tools/check_generated_fidelity.py
 
 verify: verify-meta all
 	@$(MAKE) --no-print-directory judge-all
@@ -50,7 +51,7 @@ list:
 	@echo ""
 	@echo "Convenience targets:"
 	@echo "  make lc<NUM>      e.g. make lc1"
-	@echo "  make w<WK>d<DY>   e.g. make w1d1, or w1d10-3 (i-th problem on a day)"
+	@echo "  make w<WK>d<DY>   e.g. make w1d1, or w2d10-3 (i-th problem on a day)"
 
 clean:
 	rm -f $(BINS) /tmp/run_w*d* /tmp/run_lc*
@@ -59,16 +60,16 @@ help:
 	@echo "Usage:"
 	@echo "  make lc1            build & run LC-1 (feeds test.in)"
 	@echo "  make w1d1           build & run week1/day1's problem"
-	@echo "  make w1d10-3        build & run the 3rd problem on week1/day10"
+	@echo "  make w2d10-3        build & run the 3rd problem on week2/day10"
 	@echo "  make all            compile every solution"
 	@echo "  make list           list all targets"
 	@echo ""
 	@echo "  Batch (judge all cases per problem):"
 	@echo "  make judge-all       judge every problem, roll-up summary"
-	@echo "  make judge-w1        judge all of Week 1   (w1..w4)"
-	@echo "  make judge-d1        judge Day 1 across weeks (d1..d28)"
+	@echo "  make judge-w1        judge all of Week 1 (judge-w2..judge-w4 analogous)"
+	@echo "  make judge-d1        judge Day 1 (judge-d2..judge-d28 analogous)"
 	@echo "  make status          which problems are implemented vs still stub"
-	@echo "  make verify          metadata audit + compile + all multi-case judges"
+	@echo "  make verify          canonical audit + metadata + compile + all judges"
 	@echo "  make clean           clean"
 
 # ---------------------------------------------------------------------------

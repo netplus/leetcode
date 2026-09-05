@@ -139,6 +139,9 @@ class Solution {
 public:
     void reorderList(ListNode* head) {
         if (!head || !head->next) return;
+
+        // fast 从 head->next 出发，使切分结果满足：偶数长度两半等长，奇数长度前半段多一个节点。
+        // 循环结束时 slow 正好停在前半段最后一个节点，也就是待断链的位置。
         ListNode* slow = head;
         ListNode* fast = head->next;
         while (fast && fast->next) {
@@ -146,8 +149,13 @@ public:
             fast = fast->next->next;
         }
 
+        // second 保存后半段入口后必须立即断开 first/second 两段；
+        // 否则后续反转并交织时旧的 slow->next 仍存在，可能让节点形成环。
         ListNode* second = slow->next;
-        slow->next = nullptr;  // 先断链，避免交织时产生环
+        slow->next = nullptr;
+
+        // 完全复用 LC-206：把原后半段从 ...->Ln-1->Ln 改成 Ln->Ln-1->...，
+        // 这样“从尾向前读取”被变成可以沿 next 正向读取。
         ListNode* reversed = nullptr;
         while (second) {
             ListNode* next = second->next;
@@ -156,16 +164,23 @@ public:
             second = next;
         }
 
+        // 此时 first 依次给出 L0,L1,...；second 依次给出 Ln,Ln-1,...。
+        // 每轮从两条正向链各取一个节点，拉链式生成目标顺序。
         ListNode* first = head;
         second = reversed;
         while (second) {
+            // 改 next 前先保住两条链各自尚未处理的入口，否则交织后无法继续原链。
             ListNode* nextFirst = first->next;
             ListNode* nextSecond = second->next;
+
             first->next = second;
             second->next = nextFirst;
+
             first = nextFirst;
             second = nextSecond;
         }
+
+        // 后半段长度不会超过前半段；second 用尽时，若有奇数长度中点，它已自然留在结果末尾。
     }
 };
 

@@ -1,39 +1,52 @@
-"""Curated learner-facing statement fixes derived from official LeetCode text.
+"""Curated learner-facing statement fixes against the LeetCode Wiki baseline.
 
-`chinese_problem_info.json` is a refreshable cache of LeetCode China content.  A
-few official translations are older/less explicit than the English statement,
-and HTML-to-text extraction can occasionally leave malformed prose.  Keep such
-reviewed fixes here so refreshing the cache cannot silently re-introduce them.
+The learner-facing statement source of truth for this repository is the Chinese
+page at ``https://leetcode.doocs.org/lc/<num>/``.  The large
+``chinese_problem_info.json`` file remains an offline cache; this module records
+reviewed differences so refreshing that cache cannot silently move a generated
+problem away from the doocs statement contract.
 
-Only statement/title/constraint content belongs here.  Algorithm explanations
-remain in the pedagogy modules.
+Only title/description/constraint facts belong here.  Algorithm explanations
+remain in pedagogy modules.  Wording may be normalized for readability, but the
+input domain, examples, return contract, boundary semantics, and other facts
+must not be strengthened from a different LeetCode-language version when doocs
+uses a different Chinese statement.
 """
 
 STATEMENT_OVERRIDES = {
-    # LeetCode CN currently says only "小写字母"; the English official statement
-    # explicitly says "lowercase English letters".  Preserve the stricter input
-    # domain wording for learner-facing material.
+    # doocs Chinese uses the broader wording "小写字母".  Do not replace it with
+    # the English statement's "lowercase English letters" wording.
     438: {
         "constraints": [
             "1 <= s.length, p.length <= 3 * 10^4",
-            "s 和 p 仅包含小写英文字母",
+            "s 和 p 仅包含小写字母",
         ],
     },
 
-    # The current CN statement uses an older compact constraint block that does
-    # not mention target.  The English official statement has the complete four
-    # constraints below.
+    # doocs intentionally carries the older Chinese constraint block here.  In
+    # particular, it constrains nums[i] but does not state a target range.
     704: {
         "constraints": [
-            "1 <= nums.length <= 10^4",
-            "-10^4 < nums[i], target < 10^4",
-            "nums 中的所有整数互不相同",
-            "nums 按严格升序排列",
+            "你可以假设 nums 中的所有元素是不重复的",
+            "n 将在 [1, 10000] 之间",
+            "nums 的每个元素都将在 [-9999, 9999] 之间",
+        ],
+    },
+
+    # doocs premium statement: unlike LC-252, LC-253 requires at least one
+    # interval and does not list an intervals[i].length == 2 bullet.
+    253: {
+        "description": [
+            "给你一个会议时间安排数组 intervals，其中每个会议给出开始和结束时间，返回安排全部会议所需会议室的最小数量。",
+        ],
+        "constraints": [
+            "1 <= intervals.length <= 10^4",
+            "0 <= start_i < end_i <= 10^6",
         ],
     },
 
     # The remaining entries repair HTML/subscript extraction artifacts while
-    # preserving the official semantics.
+    # preserving the doocs Chinese statement semantics.
     127: {
         "description": [
             "字典 wordList 中从单词 beginWord 到 endWord 的转换序列是一个按下述规格形成的序列 beginWord -> s_1 -> s_2 -> ... -> s_k。",

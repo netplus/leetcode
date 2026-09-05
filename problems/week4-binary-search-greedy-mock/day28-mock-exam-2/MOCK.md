@@ -16,12 +16,13 @@ minutes until no fresh orange remains, or -1 if impossible.
 Constraints: 1 <= m, n <= 10, grid[i][j] in {0,1,2}.
 
 Example:
-  Input (m n, then m rows of n ints):
+  Input:
     3 3
     2 1 1
     1 1 0
     0 1 1
-  Output: 4
+  Output:
+    4
 
 I/O for your a.in: line 1 = m n; next m lines = n ints each. Print the minutes, or -1.
 
@@ -30,14 +31,18 @@ I/O for your a.in: line 1 = m n; next m lines = n ints each. Print the minutes, 
 ## 题目 B — 爱吃香蕉的珂珂变体（答案二分，中等）
 
 Koko can eat k bananas/hour. Each hour she picks one pile and eats min(k, pile)
-bananas (rest of pile stays). Return the minimum integer k such that she eats all
-piles within h hours.
+bananas. If she finishes that pile early, she does not switch to another pile in
+the same hour. Return the minimum integer k such that she eats all piles within
+h hours.
 
 Constraints: 1 <= piles.length <= 1e4, piles.length <= h <= 1e9, 1 <= piles[i] <= 1e9.
 
 Example:
-  Input: piles = [3,6,7,11], h = 8
-  Output: 4
+  Input:
+    4 8
+    3 6 7 11
+  Output:
+    4
 
 I/O for your b.in: line 1 = n h; line 2 = n ints. Print the minimum k.
 
@@ -52,8 +57,12 @@ Constraints: 1 <= s.length <= 300, 1 <= wordDict.length <= 1000,
 1 <= wordDict[i].length <= 20, lowercase English letters.
 
 Example:
-  Input: s = "leetcode", wordDict = ["leet","code"]
-  Output: true (1)
+  Input:
+    leetcode
+    2
+    leet code
+  Output:
+    1
 
 I/O for your c.in: line 1 = s; line 2 = L; line 3 = L space-separated words.
 Print 1 if segmentable, else 0.

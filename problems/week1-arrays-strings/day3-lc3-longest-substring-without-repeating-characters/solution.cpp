@@ -118,13 +118,31 @@ using namespace std;
 class Solution {
 public:
     int lengthOfLongestSubstring(string s) {
+        // last[c] = 字节值 c 最近一次出现的下标；-1 表示此前从未出现。
+        // 当前实现按 0..255 的字节值索引，所以读取 char 时会转成 unsigned char，
+        // 避免某些平台上 signed char 为负而产生负数组下标。
         array<int, 256> last;
         last.fill(-1);
+
+        // 在每轮处理 right 后，窗口 [left,right] 保持“无重复字符”；
+        // left 只允许向右移动，best 保存历史最长合法窗口长度。
         int left = 0, best = 0;
         for (int right = 0; right < static_cast<int>(s.size()); ++right) {
             const unsigned char c = static_cast<unsigned char>(s[right]);
-            left = max(left, last[c] + 1);  // 冲突字符不在当前窗口时不能回退
+
+            // 处理 right 之前，旧窗口 [left,right-1] 已经无重复，
+            // 因而加入 c 后唯一可能新增的冲突就是“窗口里已经有一个 c”。
+            // 若 last[c] 仍位于当前窗口内，就必须把 left 跳到它后面；
+            // 若 last[c] 已在 left 左侧，则那个旧冲突早已被排除，left 绝不能倒退。
+            left = max(left, last[c] + 1);
+
+            // 更新 left 后，[left,right] 已重新合法，而且它是“以 right 结尾”的
+            // 最长无重复后缀，因此可以直接用这个长度更新全局 best。
             best = max(best, right - left + 1);
+
+            // 最后再把 c 的最近位置更新为 right，供未来字符查询。
+            // 必须让本轮窗口处理使用的是“旧的最近位置”；若先写 right，
+            // last[c]+1 会变成 right+1，错误地把当前字符自己当成冲突对象。
             last[c] = right;
         }
         return best;

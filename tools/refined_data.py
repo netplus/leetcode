@@ -47,6 +47,7 @@ from code_comments_week1_day7 import CODE_COMMENTS_WEEK1_DAY7
 from code_comments_week2_day8 import CODE_COMMENTS_WEEK2_DAY8
 from code_comments_week2_day9 import CODE_COMMENTS_WEEK2_DAY9
 from code_comments_week2_day10 import CODE_COMMENTS_WEEK2_DAY10
+from code_comments_week2_day11 import CODE_COMMENTS_WEEK2_DAY11
 from chinese_titles import validate_title_coverage
 
 
@@ -141,6 +142,7 @@ _CODE_COMMENT_MODULES = (
     CODE_COMMENTS_WEEK2_DAY8,
     CODE_COMMENTS_WEEK2_DAY9,
     CODE_COMMENTS_WEEK2_DAY10,
+    CODE_COMMENTS_WEEK2_DAY11,
 )
 
 CODE_COMMENTS = {}

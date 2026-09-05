@@ -57,6 +57,11 @@ from code_comments_week3_day18 import CODE_COMMENTS_WEEK3_DAY18
 from code_comments_week3_day19 import CODE_COMMENTS_WEEK3_DAY19
 from code_comments_week3_day20 import CODE_COMMENTS_WEEK3_DAY20
 from code_comments_week3_day21 import CODE_COMMENTS_WEEK3_DAY21
+from code_comments_week4_day22 import CODE_COMMENTS_WEEK4_DAY22
+from code_comments_week4_day23 import CODE_COMMENTS_WEEK4_DAY23
+from code_comments_week4_day24 import CODE_COMMENTS_WEEK4_DAY24
+from code_comments_week4_day25 import CODE_COMMENTS_WEEK4_DAY25
+from code_comments_week4_day26 import CODE_COMMENTS_WEEK4_DAY26
 from chinese_titles import validate_title_coverage
 
 
@@ -161,6 +166,11 @@ _CODE_COMMENT_MODULES = (
     CODE_COMMENTS_WEEK3_DAY19,
     CODE_COMMENTS_WEEK3_DAY20,
     CODE_COMMENTS_WEEK3_DAY21,
+    CODE_COMMENTS_WEEK4_DAY22,
+    CODE_COMMENTS_WEEK4_DAY23,
+    CODE_COMMENTS_WEEK4_DAY24,
+    CODE_COMMENTS_WEEK4_DAY25,
+    CODE_COMMENTS_WEEK4_DAY26,
 )
 
 CODE_COMMENTS = {}

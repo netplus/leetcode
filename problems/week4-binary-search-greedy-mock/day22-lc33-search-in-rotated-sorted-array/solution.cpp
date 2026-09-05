@@ -12,6 +12,19 @@
 // 给你旋转后的数组 nums 和一个整数 target，如果 nums 中存在这个目标值 target，则返回它的下标，否则返回 -1。
 // 你必须设计一个时间复杂度为 O(log n) 的算法解决此问题。
 //
+// 题目示例：
+// 示例 1：
+//   Input: nums = [4,5,6,7,0,1,2], target = 0
+//   Output: 4
+//
+// 示例 2：
+//   Input: nums = [4,5,6,7,0,1,2], target = 3
+//   Output: -1
+//
+// 示例 3：
+//   Input: nums = [1], target = 0
+//   Output: -1
+//
 // 约束与要求：
 //   - 1 <= nums.length <= 5000
 //   - -10^4 <= nums[i] <= 10^4

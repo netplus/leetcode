@@ -120,18 +120,31 @@ using namespace std;
 class Solution {
 public:
     bool wordBreak(string s, vector<string>& wordDict) {
+        // 字典只承担“候选子串是否是一条合法边”的查询，因此用哈希集合避免每次线性扫描 wordDict。
         unordered_set<string> words(wordDict.begin(), wordDict.end());
+
+        // 从某个切分点出发，任何长度超过最长字典词的子串都不可能命中；
+        // maxLength 直接裁掉这些确定无用的候选结束位置。
         int maxLength = 0;
         for (const string& word : wordDict) maxLength = max(maxLength, static_cast<int>(word.size()));
+
+        // reachable[i] 表示前缀 s[0:i) 能否被字典词完整切分。
+        // 空前缀天然是一个合法起点，因此 reachable[0]=true；没有它，任何后续位置都无法被首次到达。
         vector<char> reachable(s.size() + 1, false);
         reachable[0] = true;
 
         for (int start = 0; start < static_cast<int>(s.size()); ++start) {
+            // 不可达位置没有任何合法前缀能走到这里，即使后面恰好存在字典词也不能作为完整切分使用。
             if (!reachable[start]) continue;
+
+            // 只从真正可达的切分点向前连边；同一个字典词可以在不同 start 被重复使用，
+            // 因为题目限制的是字符串拼接关系，而不是“每个字典词只能消费一次”。
             for (int length = 1; length <= maxLength && start + length <= static_cast<int>(s.size()); ++length) {
                 if (words.count(s.substr(start, length))) reachable[start + length] = true;
             }
         }
+
+        // 位置 n 可达，等价于完整前缀 s[0:n) 可以被若干字典词首尾相接地覆盖。
         return reachable[s.size()];
     }
 };

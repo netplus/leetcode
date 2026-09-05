@@ -92,4 +92,32 @@ public:
         return answer;
     }
 };''',
+
+    179: r'''// ---------- Solution ----------
+class Solution {
+public:
+    string largestNumber(vector<int>& nums) {
+        // 最终答案可能远超整数范围；先转成十进制字符串，后续只讨论“拼接顺序”。
+        vector<string> parts;
+        parts.reserve(nums.size());
+        for (int value : nums) parts.push_back(to_string(value));
+
+        sort(parts.begin(), parts.end(), [](const string& a, const string& b) {
+            // 固定其它前后文时，a/b 只有 ab 与 ba 两种局部顺序。
+            // 若 a+b 更大，就必须让 a 在 b 前，否则交换二者会让最终拼接结果变大。
+            // 使用严格 > 很重要：当 a+b == b+a 时返回 false，满足 std::sort 的严格比较要求。
+            return a + b > b + a;
+        });
+
+        // 排序后的 parts[0] 已经是最应该放在最前面的元素。
+        // 若它仍为 "0"，说明没有任何非零字符串能排到 0 前面，因此所有输入都只能是 0；
+        // 规范化返回单个 "0"，而不是 "000..."。
+        if (parts[0] == "0") return "0";
+
+        string answer;
+        // 比较器已经确定了全局相对顺序；这里按该顺序直接拼接即可。
+        for (const string& part : parts) answer += part;
+        return answer;
+    }
+};''',
 }

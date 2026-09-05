@@ -59,4 +59,74 @@ public:
         return 0;
     }
 };''',
+
+    417: r'''// ---------- Solution ----------
+class Solution {
+public:
+    vector<vector<int>> pacificAtlantic(vector<vector<int>>& heights) {
+        const int rows = static_cast<int>(heights.size());
+        const int cols = static_cast<int>(heights[0].size());
+
+        // 同一个格子“能否到太平洋”和“能否到大西洋”是两份独立可达状态，不能共用 visited。
+        vector<vector<char>> pacific(rows, vector<char>(cols, false));
+        vector<vector<char>> atlantic(rows, vector<char>(cols, false));
+
+        // flood 在“反向水流图”里做一次多源 BFS：seen 表示当前这一个海洋能反向到达哪些内陆格。
+        // starts 按值传入，是一份本次洪泛专用的源列表；调用处用 move 只是在避免额外复制。
+        auto flood = [&](vector<vector<char>>& seen, vector<pair<int, int>> starts) {
+            queue<pair<int, int>> pending;
+
+            // 同一海洋的两条边会在角落产生重复源；入队前先检查 seen，确保每个源格只进入队列一次。
+            for (auto [r, c] : starts) {
+                if (!seen[r][c]) {
+                    seen[r][c] = true;
+                    pending.push({r, c});
+                }
+            }
+
+            const int directions[4][2] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+            while (!pending.empty()) {
+                auto [r, c] = pending.front();
+                pending.pop();
+
+                for (auto& d : directions) {
+                    const int nr = r + d[0], nc = c + d[1];
+
+                    // 原水流允许 high -> low/equal；把边反过来以后，海洋向内陆只能走到 high/equal：
+                    // heights[next] >= heights[current]。首次发现时立即标记，避免重复入队。
+                    if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && !seen[nr][nc]
+                        && heights[nr][nc] >= heights[r][c]) {
+                        seen[nr][nc] = true;
+                        pending.push({nr, nc});
+                    }
+                }
+            }
+        };
+
+        vector<pair<int, int>> pStarts, aStarts;
+
+        // 太平洋接触左边界，大西洋接触右边界。
+        for (int r = 0; r < rows; ++r) {
+            pStarts.push_back({r, 0});
+            aStarts.push_back({r, cols - 1});
+        }
+
+        // 太平洋接触上边界，大西洋接触下边界；四个角的重复会由 flood 的 seen 检查消掉。
+        for (int c = 0; c < cols; ++c) {
+            pStarts.push_back({0, c});
+            aStarts.push_back({rows - 1, c});
+        }
+
+        // move 只是把临时源列表的存储交给 lambda 参数，减少一次 vector 拷贝；不改变多源 BFS 语义。
+        flood(pacific, move(pStarts));
+        flood(atlantic, move(aStarts));
+
+        vector<vector<int>> answer;
+        // 一个格子原方向能同时流向两海洋，当且仅当它属于两次反向可达集合的交集。
+        for (int r = 0; r < rows; ++r)
+            for (int c = 0; c < cols; ++c)
+                if (pacific[r][c] && atlantic[r][c]) answer.push_back({r, c});
+        return answer;
+    }
+};''',
 }

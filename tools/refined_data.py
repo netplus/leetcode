@@ -38,6 +38,7 @@ from pedagogy_week4_day26 import PEDAGOGY_WEEK4_DAY26
 from pedagogy_derivations import DERIVATION_OVERRIDES
 from pedagogy_derivations_backfill import DERIVATION_BACKFILL_OVERRIDES
 from pedagogy_prerequisites import PREREQUISITE_OVERRIDES
+from code_comment_overrides import CODE_COMMENT_OVERRIDES
 from chinese_titles import validate_title_coverage
 
 
@@ -117,6 +118,16 @@ for num, derivation in DERIVATIONS.items():
     if not derivation.strip():
         raise RuntimeError(f"lc{num}: empty optimization derivation")
     REFINEMENTS[num] = {**REFINEMENTS[num], "derivation": derivation}
+
+# Key implementation comments are maintained as a separate high-touch layer.
+# This lets us improve one reviewed problem at a time without rewriting the
+# baseline week modules, while still keeping generated solution.cpp reproducible.
+for num, code in CODE_COMMENT_OVERRIDES.items():
+    if num not in REFINEMENTS:
+        raise RuntimeError(f"code comment override references unknown lc{num}")
+    if "class Solution" not in code:
+        raise RuntimeError(f"lc{num}: code comment override does not define class Solution")
+    REFINEMENTS[num] = {**REFINEMENTS[num], "code": code}
 
 
 def get_refinement(num: int) -> dict:

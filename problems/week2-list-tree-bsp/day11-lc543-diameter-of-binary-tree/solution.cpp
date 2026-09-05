@@ -153,18 +153,30 @@ struct TreeNode {
 
 // ---------- 题解实现 ----------
 class Solution {
+    // 全局记录“已经在某个节点闭合完成”的最佳双臂路径；按边数计。
     int diameter = 0;
 
+    // height(node) 的返回契约只允许一条可继续向父节点延伸的单臂高度。
+    // 这里高度按节点数计：空子树为 0，叶子节点会返回 1。
     int height(TreeNode* node) {
         if (!node) return 0;
+
+        // 后序先拿到左右子树已经计算好的单臂高度。
         const int leftHeight = height(node->left);
         const int rightHeight = height(node->right);
+
+        // 当前节点可以把左右两臂同时闭合成一条完整路径。
+        // 因 leftHeight/rightHeight 是从孩子向下的节点数，站在当前 node 看，
+        // 它们恰好等于向左/向右可走的边数，所以候选直径直接是两者之和，不再 +1。
         diameter = max(diameter, leftHeight + rightHeight);
+
+        // 但返回父节点时路径不能在当前 node 分叉，只能选择更长的一侧继续向上。
         return 1 + max(leftHeight, rightHeight);
     }
 
 public:
     int diameterOfBinaryTree(TreeNode* root) {
+        // 成员状态每次公开调用前重置，避免复用同一个 Solution 对象时保留旧答案。
         diameter = 0;
         height(root);
         return diameter;

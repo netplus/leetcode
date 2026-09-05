@@ -106,12 +106,25 @@ using namespace std;
 class Solution {
 public:
     int rob(vector<int>& nums) {
+        // previous1 不是“上一间房的钱”，而是前一整个前缀的最优总收益；
+        // previous2 则是再少一间房的前缀最优。空前缀的最优收益为 0。
         int previous2 = 0, previous1 = 0;
+
         for (int money : nums) {
-            int current = max(previous1, previous2 + money);
+            // 当前房只有两类互斥决策：
+            // skip：不偷当前房，直接继承前一前缀最优 previous1；
+            // take：偷当前房，则相邻前一房不能偷，只能接 previous2 + money。
+            const int skip = previous1;
+            const int take = previous2 + money;
+            const int current = max(skip, take);
+
+            // 必须先用旧 previous2/previous1 算完 current，再整体向前滚动；
+            // 若提前覆盖 previous1，会破坏下一轮对“前两前缀最优”的状态含义。
             previous2 = previous1;
             previous1 = current;
         }
+
+        // 所有房处理完后，previous1 就是整条线性街道的最大合法收益。
         return previous1;
     }
 };
@@ -128,4 +141,3 @@ int main() {
     cout << sol.rob(a) << "\n";
     return 0;
 }
-

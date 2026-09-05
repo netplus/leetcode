@@ -100,21 +100,34 @@ using namespace std;
 // ---------- 题解实现 ----------
 class Solution {
     vector<vector<int>> answer;
+
+    // path 是当前已经选中的子集；与排列不同，path 的任意长度都已经构成一个合法答案。
     vector<int> path;
 
+    // start 规定下一步只能从哪个原数组下标开始选。
+    // 因此 path 中元素对应的原下标始终严格递增，为每个“无序子集”建立唯一构造顺序。
     void search(const vector<int>& nums, int start) {
+        // 当前搜索节点本身就是一个合法子集；根节点 path=[] 也会在这里收集为空集。
         answer.push_back(path);
+
+        // 只允许从 start 向右枚举下一元素，不再回头选择更小下标。
         for (int i = start; i < static_cast<int>(nums.size()); ++i) {
+            // 做选择后，下一层传 i+1：当前下标不能重复使用，也不会生成 [2,1] 这种同集合的另一顺序。
             path.push_back(nums[i]);
             search(nums, i + 1);
+
+            // 子树探索完后撤销当前元素，恢复父节点对应的子集，再尝试下一个兄弟候选。
             path.pop_back();
         }
     }
 
 public:
     vector<vector<int>> subsets(vector<int>& nums) {
+        // 成员状态在每次公开调用前重置，保证同一个 Solution 对象可重复使用。
         answer.clear();
         path.clear();
+
+        // start=0 表示根节点还没有排除任何候选；search 会先收集空集。
         search(nums, 0);
         return answer;
     }

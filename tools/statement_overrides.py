@@ -37,7 +37,7 @@ STATEMENT_OVERRIDES = {
     # aligned to their doocs Chinese pages rather than to local harness wording.
     252: {
         "description": [
-            "给定一个会议时间安排数组 intervals，其中每个会议包含开始时间和结束时间，判断一个人能否参加其中的全部会议。",
+            "给定一个会议时间安排的数组 intervals，每个会议时间都会包括开始和结束的时间 intervals[i] = [start_i, end_i]，请你判断一个人是否能够参加这里面的全部会议。",
         ],
         "constraints": [
             "0 <= intervals.length <= 10^4",
@@ -47,7 +47,7 @@ STATEMENT_OVERRIDES = {
     },
     253: {
         "description": [
-            "给你一个会议时间安排数组 intervals，其中每个会议给出开始和结束时间，返回安排全部会议所需会议室的最小数量。",
+            "给你一个会议时间安排的数组 intervals，每个会议时间都会包括开始和结束的时间 intervals[i] = [start_i, end_i]，返回所需会议室的最小数量。",
         ],
         "constraints": [
             "1 <= intervals.length <= 10^4",

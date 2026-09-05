@@ -55,4 +55,41 @@ public:
         return answer;
     }
 };''',
+
+    57: r'''// ---------- Solution ----------
+class Solution {
+public:
+    vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {
+        vector<vector<int>> answer;
+        int i = 0, n = static_cast<int>(intervals.size());
+
+        // 第一阶段：只复制“完全位于 newInterval 左侧”的区间。
+        // 闭区间下必须满足 old.end < new.start 才真正分离；若 end==start 仍共享端点，应进入合并阶段。
+        while (i < n && intervals[i][1] < newInterval[0]) {
+            answer.push_back(intervals[i++]);
+        }
+
+        // 第二阶段：连续吸收所有与当前 newInterval 相交的区间。
+        // 注意判断使用的是“不断扩张后的” newInterval[1]：
+        // 前一个区间把右端撑大后，原本不与初始新区间相交的后续区间也可能被新右端触及。
+        while (i < n && intervals[i][0] <= newInterval[1]) {
+            // 相交后，新活动并集的边界就是两者端点的 min/max。
+            // 这里直接修改 newInterval，使它承担 LC-56 中“当前活动并集”的角色。
+            newInterval[0] = min(newInterval[0], intervals[i][0]);
+            newInterval[1] = max(newInterval[1], intervals[i][1]);
+            ++i;
+        }
+
+        // 中段结束有两种可能：已扫描完，或下一段 start > 当前 new.end。
+        // 后一种情况下，因原 intervals 已按 start 排序，后续区间都永久在右侧，
+        // 所以当前 newInterval 已经最终封口，可以只输出一次。
+        answer.push_back(newInterval);
+
+        // 第三阶段：剩余区间全在最终 newInterval 右侧；原输入又已排序且互不重叠，
+        // 因此无需再做任何合并或排序，按原顺序直接追加即可。
+        while (i < n) answer.push_back(intervals[i++]);
+
+        return answer;
+    }
+};''',
 }

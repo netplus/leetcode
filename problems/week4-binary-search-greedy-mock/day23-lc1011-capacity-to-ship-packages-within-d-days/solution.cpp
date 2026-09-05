@@ -142,20 +142,29 @@ using namespace std;
 class Solution {
 public:
     int shipWithinDays(vector<int>& weights, int days) {
+        // 容量不能小于最重单件；容量等于总重量时一天即可运完，一定可行。
         long long left = *max_element(weights.begin(), weights.end());
         long long right = accumulate(weights.begin(), weights.end(), 0LL);
+
         auto daysNeeded = [&](long long capacity) {
             int used = 1;
             long long load = 0;
             for (int weight : weights) {
+                // 包裹顺序不能改变。固定 capacity 后，当前天能继续装就继续装；
+                // 若提前换天，只会浪费当前天剩余容量，不可能减少总天数。
                 if (load + weight > capacity) {
                     ++used;
                     load = 0;
                 }
+                // 若刚开启新的一天，触发换天的这个包裹就是新一天的第一件，不能漏掉。
                 load += weight;
             }
+            // 这是固定 capacity 下按原顺序运输所需的最少天数。
             return used;
         };
+
+        // capacity 越大，daysNeeded 只会不增，所以 feasible(capacity)=[daysNeeded<=days]
+        // 呈 F...F | T...T；二分寻找第一个可行容量。
         while (left < right) {
             long long middle = left + (right - left) / 2;
             if (daysNeeded(middle) <= days) right = middle;

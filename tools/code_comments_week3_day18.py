@@ -31,4 +31,28 @@ public:
         return previous1;
     }
 };''',
+
+    746: r'''// ---------- Solution ----------
+class Solution {
+public:
+    int minCostClimbingStairs(vector<int>& cost) {
+        // 状态定义：dp[i] = 到达位置 i 的最低累计花费；位置 n 是楼顶这个虚拟位置。
+        // 题目允许免费从 0 或 1 开始，所以 dp[0]=dp[1]=0。
+        int previous2 = 0, previous1 = 0;
+
+        for (int i = 2; i <= static_cast<int>(cost.size()); ++i) {
+            // 进入 i 时：previous2=dp[i-2]，previous1=dp[i-1]。
+            // cost[j] 是“从台阶 j 离开”时支付，因此最后一步从 i-1 来要加 cost[i-1]，
+            // 从 i-2 来则加 cost[i-2]；两类合法最后来源取较小值。
+            int current = min(previous1 + cost[i - 1], previous2 + cost[i - 2]);
+
+            // 与 LC-70 一样，必须先算 current 再覆盖旧状态；否则会丢掉当前递推仍需要的 dp[i-2]/dp[i-1]。
+            previous2 = previous1;
+            previous1 = current;
+        }
+
+        // 循环允许 i==n，所以最终 previous1 对应 dp[n]，也就是已经到达楼顶而非最后一级台阶。
+        return previous1;
+    }
+};''',
 }

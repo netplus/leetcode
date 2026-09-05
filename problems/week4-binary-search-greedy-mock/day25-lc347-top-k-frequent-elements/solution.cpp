@@ -79,15 +79,23 @@ using namespace std;
 class Solution {
 public:
     vector<int> topKFrequent(vector<int>& nums, int k) {
+        // 必须先完成最终频率统计；若边扫描 nums 边做 Top-K，某个 value 后续还会继续增频，
+        // 当前“弱者”并不一定真的弱，不能安全淘汰。
         unordered_map<int, int> frequency;
         for (int value : nums) ++frequency[value];
 
+        // top 是大小最多为 k 的最小堆，pair.first=count；
+        // 堆顶始终是“当前 Top-K 候选里最弱的一个”，方便候选过多时 O(log k) 淘汰门槛元素。
         priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> top;
         for (auto [value, count] : frequency) {
             top.push({count, value});
+            // 新候选加入后若有 k+1 个，只需删除其中频率最低者；
+            // 被删元素不可能属于已处理元素的 Top-K，且最终频率已固定，以后也不会重新变强。
             if (static_cast<int>(top.size()) > k) top.pop();
         }
+
         vector<int> answer;
+        // 题目允许任意顺序，所以直接逐个弹出剩余 k 个候选即可；无需再排序。
         while (!top.empty()) {
             answer.push_back(top.top().second);
             top.pop();

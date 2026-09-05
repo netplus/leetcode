@@ -1,8 +1,7 @@
 """Reviewed analysis and implementation registry for all practice problems.
 
 The week modules keep each problem's baseline reviewed explanation next to its
-code. High-touch pedagogy modules add visual learning rewrites one problem at a
-time. `gen_all.py` consumes the merged registry, so regenerating the workspace
+code. High-touch pedagogy modules add visual learning rewrites one problem at a time. `gen_all.py` consumes the merged registry, so regenerating the workspace
 preserves both reviewed implementations and the improved pedagogy.
 """
 
@@ -44,6 +43,7 @@ from code_comments_week1_rest import CODE_COMMENTS_WEEK1_REST
 from code_comments_week1_day4 import CODE_COMMENTS_WEEK1_DAY4
 from code_comments_week1_day5 import CODE_COMMENTS_WEEK1_DAY5
 from code_comments_week1_day6 import CODE_COMMENTS_WEEK1_DAY6
+from code_comments_week1_day7 import CODE_COMMENTS_WEEK1_DAY7
 from chinese_titles import validate_title_coverage
 
 
@@ -134,6 +134,7 @@ _CODE_COMMENT_MODULES = (
     CODE_COMMENTS_WEEK1_DAY4,
     CODE_COMMENTS_WEEK1_DAY5,
     CODE_COMMENTS_WEEK1_DAY6,
+    CODE_COMMENTS_WEEK1_DAY7,
 )
 
 CODE_COMMENTS = {}

@@ -29,4 +29,38 @@ public:
         return false;
     }
 };''',
+
+    142: r'''// ---------- Solution ----------
+class Solution {
+public:
+    ListNode* detectCycle(ListNode* head) {
+        ListNode* slow = head;
+        ListNode* fast = head;
+
+        // slow/fast 初始都等于 head，因此不能在“尚未走一步”时把 slow==fast 当作环内相遇。
+        // do...while 强制先推进，再检查是否真正相遇。
+        do {
+            // fast 下一轮要走两步；只要 fast 或 fast->next 为空，就说明存在真实链尾、没有环。
+            if (!fast || !fast->next) return nullptr;
+            slow = slow->next;
+            fast = fast->next->next;
+        } while (slow != fast);
+
+        // 第一阶段相遇点 M 已经携带路程关系：
+        // 若 head->entry 距离为 a，entry->M 为 b，环长为 L，第一次相遇满足 a+b=kL，
+        // 因而 a=(k-1)L+(L-b)。也就是“从 head 到入口”与“从 M 到入口再绕整圈”同长。
+        slow = head;
+
+        // 第二阶段必须取消 1:2 速度差，让两者都每轮走 1 步。
+        // slow 从 head 走 a 步到入口；fast 从 M 走同样 a 步，也恰好落在入口。
+        // 在入口之前 slow 位于非环前缀而 fast 始终在环内，所以不会提前相遇。
+        while (slow != fast) {
+            slow = slow->next;
+            fast = fast->next;
+        }
+
+        // 两者第一次重新会合的节点就是环入口。
+        return slow;
+    }
+};''',
 }

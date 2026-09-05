@@ -97,15 +97,20 @@ using namespace std;
 class Solution {
 public:
     int search(vector<int>& nums, int target) {
+        // 仍维护闭区间 [left,right]：若 target 存在，它始终在这个候选区间内。
         int left = 0, right = static_cast<int>(nums.size()) - 1;
         while (left <= right) {
             int middle = left + (right - left) / 2;
             if (nums[middle] == target) return middle;
 
-            if (nums[left] <= nums[middle]) {  // 左半段有序
+            // 旋转数组没有重复值，因此 [left,middle] 与 [middle,right] 至少有一半保持严格有序。
+            if (nums[left] <= nums[middle]) {
+                // 左半段有序，只有 target 落在 [nums[left],nums[middle]) 时才保留左半段；
+                // 否则整个左半段都可排除，去右侧继续找。
                 if (nums[left] <= target && target < nums[middle]) right = middle - 1;
                 else left = middle + 1;
-            } else {                           // 右半段有序
+            } else {
+                // 否则右半段必有序；同样用它的值域判断 target 是否可能在其中。
                 if (nums[middle] < target && target <= nums[right]) left = middle + 1;
                 else right = middle - 1;
             }

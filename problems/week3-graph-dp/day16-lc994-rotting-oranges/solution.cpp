@@ -115,7 +115,11 @@ public:
     int orangesRotting(vector<vector<int>>& grid) {
         const int rows = static_cast<int>(grid.size());
         const int cols = static_cast<int>(grid[0].size());
+
+        // rotten 是“当前传播前沿”队列；初始化时所有原始腐烂橘子都作为时间 0 的多源起点。
         queue<pair<int, int>> rotten;
+
+        // fresh 是尚未被任何传播波前覆盖的新鲜橘子数量，也是判断最终是否还有不可达节点的剩余工作计数器。
         int fresh = 0;
         for (int r = 0; r < rows; ++r) {
             for (int c = 0; c < cols; ++c) {
@@ -126,15 +130,24 @@ public:
 
         const int directions[4][2] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
         int minutes = 0;
+
+        // 没有 fresh 时无需进入循环，minutes 自然保持 0；
+        // rotten 为空但 fresh>0 时也无法继续传播，最终会返回 -1。
         while (!rotten.empty() && fresh > 0) {
+            // 冻结这一分钟开始时的 frontier 大小。处理过程中新入队的橘子属于“下一分钟”，
+            // 不能在本轮继续传播，否则会把多分钟链式感染错误压缩到同一分钟。
             int layer = static_cast<int>(rotten.size());
             ++minutes;
+
             while (layer--) {
                 auto [r, c] = rotten.front();
                 rotten.pop();
+
                 for (auto& d : directions) {
                     int nr = r + d[0], nc = c + d[1];
                     if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && grid[nr][nc] == 1) {
+                        // 感染时立即执行 1->2，相当于“入队即 visited”；
+                        // 这样同一新鲜橘子即使同时邻接多个腐烂橘子，也只会入队一次、fresh-- 一次。
                         grid[nr][nc] = 2;
                         --fresh;
                         rotten.push({nr, nc});
@@ -142,6 +155,9 @@ public:
                 }
             }
         }
+
+        // fresh==0 表示所有新鲜橘子都已在某一 BFS 层被覆盖；
+        // 若队列耗尽后 fresh 仍大于 0，则这些橘子与所有初始腐烂源都不可达。
         return fresh == 0 ? minutes : -1;
     }
 };

@@ -33,8 +33,18 @@ STATEMENT_OVERRIDES = {
         ],
     },
 
-    # doocs premium statement: unlike LC-252, LC-253 requires at least one
-    # interval and does not list an intervals[i].length == 2 bullet.
+    # Premium problem snapshots have no cached body.  Keep the statement facts
+    # aligned to their doocs Chinese pages rather than to local harness wording.
+    252: {
+        "description": [
+            "给定一个会议时间安排数组 intervals，其中每个会议包含开始时间和结束时间，判断一个人能否参加其中的全部会议。",
+        ],
+        "constraints": [
+            "0 <= intervals.length <= 10^4",
+            "intervals[i].length == 2",
+            "0 <= start_i < end_i <= 10^6",
+        ],
+    },
     253: {
         "description": [
             "给你一个会议时间安排数组 intervals，其中每个会议给出开始和结束时间，返回安排全部会议所需会议室的最小数量。",

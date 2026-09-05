@@ -102,19 +102,29 @@ using namespace std;
 
 // ---------- 题解实现 ----------
 class Solution {
+    // 这个 helper 就是 LC-198 的线性版本，区间采用闭区间 [left,right]。
     static int robRange(const vector<int>& nums, int left, int right) {
         int previous2 = 0, previous1 = 0;
+
         for (int i = left; i <= right; ++i) {
+            // 在已经断开的线性区间内，递推与 LC-198 完全相同：
+            // 不选 nums[i] -> previous1；选 nums[i] -> previous2 + nums[i]。
             int current = max(previous1, previous2 + nums[i]);
             previous2 = previous1;
             previous1 = current;
         }
+
         return previous1;
     }
 
 public:
     int rob(vector<int>& nums) {
+        // 单节点环没有“首尾两个不同端点”可供拆分，唯一合法最优就是这间房本身。
         if (nums.size() == 1) return nums[0];
+
+        // 环形约束只比 LC-198 多一条边：房 0 与房 n-1 不能同时选。
+        // case A 排除最后一间 -> [0,n-2]；case B 排除第一间 -> [1,n-1]。
+        // 任意合法方案至少属于其中一个 case，因此两条线性最优取 max 就覆盖全局最优。
         return max(robRange(nums, 0, static_cast<int>(nums.size()) - 2),
                    robRange(nums, 1, static_cast<int>(nums.size()) - 1));
     }

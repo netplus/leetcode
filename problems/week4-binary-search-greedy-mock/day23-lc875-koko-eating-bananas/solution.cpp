@@ -117,17 +117,30 @@ using namespace std;
 class Solution {
 public:
     int minEatingSpeed(vector<int>& piles, int h) {
+        // 速度至少为 1；取最大堆大小时，每堆最多一小时，因此一定可行。
+        // 所以最小可行速度必位于闭区间 [1,maxPile]。
         int left = 1, right = *max_element(piles.begin(), piles.end());
+
+        // canFinish(speed) 是答案轴上的单调谓词：速度越大，总耗时只会不增。
         auto canFinish = [&](int speed) {
             long long hours = 0;
             for (int pile : piles) {
+                // 每一堆必须单独向上取整：一个小时只能处理当前这一堆，
+                // 吃完后剩余的“小时容量”不能转移到下一堆。
+                // 先提升 pile 到 long long，避免 pile+speed-1 的 int 加法溢出。
                 hours += (static_cast<long long>(pile) + speed - 1) / speed;
+
+                // 一旦已经超过 h，后面的堆只会继续增加耗时，可以提前判定不可行。
                 if (hours > h) return false;
             }
             return true;
         };
+
+        // 可行速度构成连续后缀 F...F | T...T，寻找第一个 true。
         while (left < right) {
             int middle = left + (right - left) / 2;
+            // middle 可行时它仍可能就是最小答案，所以保留 middle；
+            // 不可行时所有更小速度同样不可行，可一次全部丢弃。
             if (canFinish(middle)) right = middle;
             else left = middle + 1;
         }

@@ -104,16 +104,30 @@ using namespace std;
 class Solution {
 public:
     vector<int> dailyTemperatures(vector<int>& temperatures) {
+        // 默认 0 正好代表“直到末尾都没有更暖日期”；只有被未来事件结算的下标才会改写。
         vector<int> answer(temperatures.size(), 0);
+
+        // pending 存“还没找到第一个更暖日期”的历史下标。
+        // 下标从底到顶递增，对应温度单调不增；栈顶是最近、最先有机会被当前温度结算的日期。
         stack<int> pending;
+
         for (int day = 0; day < static_cast<int>(temperatures.size()); ++day) {
+            // 当前温度严格高于栈顶时，day 就是该历史日期第一次遇到的更暖日：
+            // 若更早已有答案，它早已在当时被弹栈，不可能继续留在 pending。
+            // 相等温度不能弹，因为题目要求 strictly warmer。
             while (!pending.empty() && temperatures[day] > temperatures[pending.top()]) {
                 const int previous = pending.top();
                 pending.pop();
+
+                // pending 存的是下标而非温度，正是为了直接得到等待天数 day-previous。
                 answer[previous] = day - previous;
             }
+
+            // 当前日期暂时不知道未来答案，加入未决集合；以后由第一个严格更暖的日期负责结算。
             pending.push(day);
         }
+
+        // 扫描结束仍留在栈中的日期从未遇到更暖日，保持初始化的 0。
         return answer;
     }
 };

@@ -8,6 +8,27 @@
 // 给你一个链表数组，每个链表都已经按升序排列。
 // 请你将所有链表合并到一个升序链表中，返回合并后的链表。
 //
+// 题目示例：
+// 示例 1：
+//   Input: lists = [[1,4,5],[1,3,4],[2,6]]
+//   Output: [1,1,2,3,4,4,5,6]
+//   Explanation: The linked-lists are:
+//   [
+//   1->4->5,
+//   1->3->4,
+//   2->6
+//   ]
+//   merging them into one sorted linked list:
+//   1->1->2->3->4->4->5->6
+//
+// 示例 2：
+//   Input: lists = []
+//   Output: []
+//
+// 示例 3：
+//   Input: lists = [[]]
+//   Output: []
+//
 // 约束与要求：
 //   - k == lists.length
 //   - 0 <= k <= 10^4

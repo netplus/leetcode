@@ -140,15 +140,26 @@ public:
     vector<int> postorderTraversal(TreeNode* root) {
         vector<int> order;
         if (!root) return order;
+
+        // 第一阶段并不直接生成后序，而是生成更容易用单栈维护的 Root -> Right -> Left。
         stack<TreeNode*> pending;
         pending.push(root);
+
         while (!pending.empty()) {
             TreeNode* node = pending.top();
             pending.pop();
+
+            // 节点一弹出就记录，所以当前序列的“根”一定先出现。
             order.push_back(node->val);
+
+            // 想让下一次先处理 right，就必须让 right 后入栈：
+            // 因此与 LC-144 相反，先压 left、再压 right，最终得到 Root -> Right -> Left。
             if (node->left) pending.push(node->left);
             if (node->right) pending.push(node->right);
         }
+
+        // 对整棵树的 Root -> Right -> Left 序列整体反转，
+        // 每个局部相对顺序同步变成 Left -> Right -> Root，即真正后序。
         reverse(order.begin(), order.end());
         return order;
     }

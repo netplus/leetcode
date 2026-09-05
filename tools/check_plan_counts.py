@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate PLAN/PROGRESS counts against effective canonical metadata."""
+"""Validate PLAN/PROGRESS counts and priorities against canonical metadata."""
 
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -15,6 +15,10 @@ from statement_metadata import get_statement_metadata  # noqa: E402
 
 
 MOCK_UNITS = {1: 0, 2: 0, 3: 0, 4: 2}
+PLAN_PROBLEM_ROW = re.compile(
+    r"^\|\s*([0-9]+(?:/[0-9]+)*)\s*\|[^|]*\|\s*(P[01])(?:\s+🚩)?\s*\|",
+    re.MULTILINE,
+)
 
 
 def normalized_priority(display_priority: str) -> str:
@@ -35,6 +39,7 @@ def main() -> None:
     week_priority = defaultdict(Counter)
     day_p0 = Counter()
     week_total = Counter()
+    effective_priority: dict[int, str] = {}
 
     for problem in problems:
         week = problem["week"]
@@ -43,6 +48,7 @@ def main() -> None:
             priority = normalized_priority(get_statement_metadata(problem)["priority"])
         except ValueError as error:
             raise SystemExit(f"LC-{problem['num']}: {error}") from error
+        effective_priority[problem["num"]] = priority
         week_priority[week][priority] += 1
         week_total[week] += 1
         if priority == "P0":
@@ -51,6 +57,34 @@ def main() -> None:
     plan = (ROOT / "PLAN.md").read_text(encoding="utf-8")
     progress = (ROOT / "PROGRESS.md").read_text(encoding="utf-8")
     errors: list[str] = []
+
+    # Parse every LC row in PLAN.md, including the grouped 144/94/145 row.
+    plan_priority: dict[int, str] = {}
+    duplicates: list[int] = []
+    for match in PLAN_PROBLEM_ROW.finditer(plan):
+        numbers, priority = match.groups()
+        for token in numbers.split("/"):
+            num = int(token)
+            if num in plan_priority:
+                duplicates.append(num)
+            plan_priority[num] = priority
+
+    expected_numbers = set(effective_priority)
+    actual_numbers = set(plan_priority)
+    if duplicates:
+        errors.append(f"PLAN.md: duplicate LC rows {sorted(set(duplicates))}")
+    if expected_numbers != actual_numbers:
+        errors.append(
+            "PLAN.md: problem coverage mismatch "
+            f"missing={sorted(expected_numbers - actual_numbers)}, "
+            f"extra={sorted(actual_numbers - expected_numbers)}"
+        )
+    for num in sorted(expected_numbers & actual_numbers):
+        if plan_priority[num] != effective_priority[num]:
+            errors.append(
+                f"PLAN.md: LC-{num} priority is {plan_priority[num]}, "
+                f"canonical priority is {effective_priority[num]}"
+            )
 
     total_p0 = 0
     total_p1 = 0

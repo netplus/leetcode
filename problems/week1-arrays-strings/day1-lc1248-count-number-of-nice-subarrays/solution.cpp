@@ -102,22 +102,34 @@ using namespace std;
 class Solution {
 public:
     int numberOfSubarrays(vector<int>& nums, int k) {
+        // 这里不是在保存“元素和”，而是在保存“累计遇到的奇数个数”。
+        // frequency[p] 表示：在当前元素之前，累计奇数数 p 一共出现过多少次。
+        // 同一个 p 可出现在多个位置；每个位置都是一个不同的候选起点，因此必须保存频次。
         unordered_map<int, int> frequency;
         frequency.reserve(nums.size() * 2 + 1);
-        frequency[0] = 1;  // 空前缀：还没看任何元素时，累计奇数数为 0
+
+        // 数组开始前还没看任何元素，累计奇数数为 0，记作一次虚拟空前缀。
+        // 这样当当前 prefix == k 时，[0..i] 也能通过 prefix-k==0 被统一统计。
+        frequency[0] = 1;
 
         int prefix = 0;
         int answer = 0;
         for (int value : nums) {
-            prefix += value & 1;  // 奇数 -> 1，偶数 -> 0
+            // 把题目先变形成 LC-560：奇数贡献 1，偶数贡献 0。
+            // 因而 prefix 始终表示“从数组开头到当前位置累计出现了多少个奇数”。
+            prefix += value & 1;
 
-            // 纯查询：历史上有多少次累计奇数数等于 prefix-k？
+            // 若某个历史累计值 oldPrefix 满足 prefix-oldPrefix == k，
+            // 那么它之后到当前位置这一段就恰好含 k 个奇数，即 oldPrefix=prefix-k。
+            // 历史上该值出现几次，就有几个不同起点的优美子数组。
             auto it = frequency.find(prefix - k);
             if (it != frequency.end()) {
                 answer += it->second;
             }
 
-            // 查询完成后，再把“现在”加入历史，供后续位置使用。
+            // 查询结束后再把当前 prefix 归入历史，保持 frequency 只描述“过去”的不变量。
+            // 本题约束 k>=1，即使先记当前值也不会产生 prefix==prefix-k 的自匹配；
+            // 但保持“先查过去、再记现在”与 LC-560 完全一致，也让推广到 k==0 时仍然正确。
             ++frequency[prefix];
         }
         return answer;

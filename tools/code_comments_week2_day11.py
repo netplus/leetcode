@@ -26,4 +26,27 @@ public:
         return root;
     }
 };''',
+
+    236: r'''// ---------- Solution ----------
+class Solution {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        // 返回值不是普通“搜索结果”，而是当前子树向父节点上报的一份有效证据：
+        // nullptr 表示这棵子树没有目标；p/q 表示当前命中目标；其它非空节点表示子树内已形成汇合点。
+        // 当前节点若就是 p/q，可直接上报自己；若另一目标在它的后代中，按定义它本身就应是 LCA。
+        if (!root || root == p || root == q) return root;
+
+        // 后序收集左右子树证据；每棵子树内部会先完成自己的判断再向当前节点汇报。
+        TreeNode* left = lowestCommonAncestor(root->left, p, q);
+        TreeNode* right = lowestCommonAncestor(root->right, p, q);
+
+        // 左右同时非空，说明两份目标证据第一次在当前节点的两侧汇合；
+        // 更低的单个子树不可能同时包含两边证据，因此当前 root 就是最低公共祖先。
+        if (left && right) return root;
+
+        // 只有一边有证据时，当前节点还不是汇合点，原样把唯一证据继续向父节点传递；
+        // 两边都空时这个表达式也自然返回 nullptr。
+        return left ? left : right;
+    }
+};''',
 }

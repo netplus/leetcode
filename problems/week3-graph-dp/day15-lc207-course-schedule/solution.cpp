@@ -118,26 +118,45 @@ using namespace std;
 class Solution {
 public:
     bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+        // next[u] 保存“完成 u 之后会释放哪些后修课程”；
+        // indegree[v] 保存 v 当前还剩多少条尚未被删除的先修依赖。
         vector<vector<int>> next(numCourses);
         vector<int> indegree(numCourses, 0);
+
         for (const auto& edge : prerequisites) {
+            // 题目给 [a,b] 的语义是“先修 b，才能学习 a”，
+            // 所以有向边必须建成 b -> a，而不是 a -> b。
+            // 这条边也意味着 a 多了一项尚未满足的前置依赖，因此 indegree[a]++。
             next[edge[1]].push_back(edge[0]);
             ++indegree[edge[0]];
         }
+
+        // ready 中始终只放“当前剩余入度为 0”的课程：
+        // 它们已经没有未完成的先修课，可以作为合法的下一步。
+        // 没有任何依赖的孤立课程也必须在这里进入队列，否则会漏计课程。
         queue<int> ready;
         for (int course = 0; course < numCourses; ++course) {
             if (indegree[course] == 0) ready.push(course);
         }
 
+        // completed 不是 BFS 层数，而是已经从剩余依赖图中合法删除的节点数。
         int completed = 0;
         while (!ready.empty()) {
             int course = ready.front();
             ready.pop();
             ++completed;
+
+            // 完成 course 等价于从“剩余图”中删掉 course 以及它的所有出边。
+            // 因此每条 course -> dependent 都让 dependent 少一个未满足先修条件。
             for (int dependent : next[course]) {
+                // 只有入度恰好从 1 降到 0 的这一刻才入队。
+                // 更早时仍有先修没完成；更晚再入队会造成同一课程重复处理。
                 if (--indegree[dependent] == 0) ready.push(dependent);
             }
         }
+
+        // DAG 会持续产生零入度节点，最终删完全部课程；
+        // 若 completed 不足，剩余子图没有零入度节点，说明其中存在有向环互相等待。
         return completed == numCourses;
     }
 };

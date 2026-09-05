@@ -96,15 +96,23 @@ struct ListNode {
 class Solution {
 public:
     ListNode* mergeKLists(vector<ListNode*>& lists) {
+        // priority_queue 默认是大根堆；比较器返回 a->val>b->val 后，值更小的节点优先出队。
         auto greaterNode = [](ListNode* a, ListNode* b) { return a->val > b->val; };
         priority_queue<ListNode*, vector<ListNode*>, decltype(greaterNode)> smallest(greaterNode);
+
+        // 每条有序链只暴露一个 frontier：当前最小的未输出节点。
+        // 同一链更后的节点被这个头节点挡住，没必要提前全部入堆。
         for (ListNode* head : lists) if (head) smallest.push(head);
 
         ListNode dummy;
         ListNode* tail = &dummy;
         while (!smallest.empty()) {
+            // 所有链各自的 frontier 中，堆顶就是全局最小的剩余节点。
             ListNode* node = smallest.top();
             smallest.pop();
+
+            // node 被输出后，只有它所属链的 frontier 发生变化；
+            // 将 node->next 补入堆即可恢复“每条未耗尽链恰暴露一个头”的不变量。
             if (node->next) smallest.push(node->next);
             tail->next = node;
             tail = node;

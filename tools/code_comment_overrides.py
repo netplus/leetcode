@@ -148,4 +148,57 @@ public:
         return completed == numCourses;
     }
 };''',
+
+    695: r'''// ---------- Solution ----------
+class Solution {
+public:
+    int maxAreaOfIsland(vector<vector<int>>& grid) {
+        if (grid.empty() || grid[0].empty()) return 0;
+        const int rows = static_cast<int>(grid.size());
+        const int cols = static_cast<int>(grid[0].size());
+        const int directions[4][2] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        int best = 0;
+
+        // 与 LC-200 一样，外层扫描只在遇到“尚未被染色的新陆地”时启动一次 BFS。
+        // 不同点是：这里不统计分量个数，而是要统计每个分量包含多少个陆地格。
+        for (int r = 0; r < rows; ++r) {
+            for (int c = 0; c < cols; ++c) {
+                if (grid[r][c] != 1) continue;
+
+                // area 只描述“当前这一座岛”的面积；每发现新分量都必须重新从 0 开始。
+                int area = 0;
+                queue<pair<int, int>> pending;
+
+                // 仍然采用“入队即标记”。这样 pending 中的每个格子都已经唯一占有一次处理资格，
+                // 后续不会被其它邻居重复加入队列。
+                pending.push({r, c});
+                grid[r][c] = 0;
+
+                while (!pending.empty()) {
+                    auto [x, y] = pending.front();
+                    pending.pop();
+
+                    // 面积统一在“格子正式出队处理”时 +1。
+                    // 每个格子只会出队一次，因此每块陆地恰好贡献 1；
+                    // 不要在发现邻居时也计数，否则同一个格会被重复计算。
+                    ++area;
+
+                    for (auto& d : directions) {
+                        int nx = x + d[0], ny = y + d[1];
+                        if (nx >= 0 && nx < rows && ny >= 0 && ny < cols && grid[nx][ny] == 1) {
+                            // 先染色再入队，继续保持“一格只入队一次”的 visited 不变量。
+                            grid[nx][ny] = 0;
+                            pending.push({nx, ny});
+                        }
+                    }
+                }
+
+                // 队列清空后，area 才代表一个完整连通分量的面积。
+                // 此时再和历史最大值比较，避免把尚未遍历完整的局部面积当成最终候选。
+                best = max(best, area);
+            }
+        }
+        return best;
+    }
+};''',
 }

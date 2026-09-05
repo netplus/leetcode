@@ -109,15 +109,21 @@ using namespace std;
 
 // ---------- 题解实现 ----------
 class Solution {
-    stack<pair<int, int>> values;  // {实际值, 压入该值后的最小值}
+    // 每一层同时保存“实际值”和“压入这一层之后整个栈的最小值”。
+    // 因此栈顶 pair 自带当前状态摘要，getMin 无需回头扫描历史元素。
+    stack<pair<int, int>> values;
 
 public:
     void push(int val) {
+        // 新状态的最小值只依赖“上一层最小值”和当前 val；空栈时 val 自己就是最小值。
         const int minimum = values.empty() ? val : min(val, values.top().second);
         values.push({val, minimum});
     }
 
+    // pair 整层弹出后，下面一层原先保存的 minimum 自动恢复成当前栈的正确最小值；无需重算。
     void pop() { values.pop(); }
+
+    // first 是当前真实栈顶值；second 是当前整个栈的最小摘要。
     int top() { return values.top().first; }
     int getMin() { return values.top().second; }
 };

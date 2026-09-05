@@ -1,10 +1,10 @@
-"""Offline learner-facing examples parsed from cached official statements.
+"""Offline learner-facing examples aligned to the LeetCode Wiki statement.
 
-Examples are statement facts, not pedagogy.  Prefer cached Chinese official
-examples when available; otherwise fall back to the cached official English
-snapshot so Input / Output / Explanation stay traceable to an official source.
-Premium problems whose snapshot has no body use small reviewed fallbacks, just as
-the Chinese statement cache already does for their descriptions/constraints.
+Examples are statement facts, not pedagogy.  The Chinese doocs page at
+``https://leetcode.doocs.org/lc/<num>/`` is the learner-facing baseline.  Use
+cached examples when they agree with that page; otherwise keep a reviewed
+override.  Premium problems whose cached snapshot has no body use the examples
+published by doocs rather than invented explanatory text.
 """
 
 from pathlib import Path
@@ -25,24 +25,21 @@ CHINESE_EXAMPLES = {
 }
 
 
-# Premium snapshots currently contain only title/slug metadata.  Keep these
-# reviewed examples explicit rather than silently substituting local harness I/O.
+# Premium snapshots currently contain only title/slug metadata.  These bodies
+# mirror the Input/Output examples shown on their doocs Chinese pages; do not
+# add an Explanation when the source page does not contain one.
 EXAMPLE_OVERRIDES = {
     252: [
         """Input: intervals = [[0,30],[5,10],[15,20]]
-Output: false
-Explanation: The meetings [0,30] and [5,10] overlap, so one person cannot attend all meetings.""",
+Output: false""",
         """Input: intervals = [[7,10],[2,4]]
-Output: true
-Explanation: The two meetings do not overlap.""",
+Output: true""",
     ],
     253: [
         """Input: intervals = [[0,30],[5,10],[15,20]]
-Output: 2
-Explanation: At most two meetings overlap at the same time, so two rooms are sufficient.""",
+Output: 2""",
         """Input: intervals = [[7,10],[2,4]]
-Output: 1
-Explanation: The meetings do not overlap, so one room is sufficient.""",
+Output: 1""",
     ],
 }
 
@@ -68,7 +65,7 @@ def _clean_example_block(text: str) -> str:
 
 
 def get_examples(num: int) -> list[str]:
-    """Return official/reviewed example bodies for one LC number."""
+    """Return doocs-aligned cached/reviewed example bodies for one LC number."""
     if num in CHINESE_EXAMPLES:
         return list(CHINESE_EXAMPLES[num])
     if num in EXAMPLE_OVERRIDES:

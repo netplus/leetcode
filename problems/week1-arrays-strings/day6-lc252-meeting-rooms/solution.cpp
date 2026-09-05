@@ -5,24 +5,21 @@
 // 学习进度：第 1 周 / 第 6 天
 // ----------------------------------------------------------------------------
 // 题目描述：
-// 给定一组会议时间区间 intervals，判断一个人能否参加全部会议。
-// 本地适配器把会议表示为半开区间 [start, end)；两个区间有时间重叠时，无法同时参加。
+// 给定一个会议时间安排数组 intervals，其中每个会议包含开始时间和结束时间，判断一个人能否参加其中的全部会议。
 //
 // 题目示例：
 // 示例 1：
 //   Input: intervals = [[0,30],[5,10],[15,20]]
 //   Output: false
-//   Explanation: The meetings [0,30] and [5,10] overlap, so one person cannot attend all meetings.
 //
 // 示例 2：
 //   Input: intervals = [[7,10],[2,4]]
 //   Output: true
-//   Explanation: The two meetings do not overlap.
 //
 // 约束与要求：
 //   - 0 <= intervals.length <= 10^4
 //   - intervals[i].length == 2
-//   - 0 <= start < end <= 10^6
+//   - 0 <= start_i < end_i <= 10^6
 //
 // 复杂度目标：O(m log m) 时间。
 //

@@ -22,6 +22,7 @@
 // 示例 3：
 //   Input: nums = [7,8,9,11,12]
 //   Output: 1
+//   Explanation: The smallest positive integer 1 is missing.
 //
 // 约束与要求：
 //   - 1 <= nums.length <= 10^5

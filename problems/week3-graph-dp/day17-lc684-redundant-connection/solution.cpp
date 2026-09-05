@@ -114,16 +114,29 @@ using namespace std;
 class Solution {
 public:
     vector<int> findRedundantConnection(vector<vector<int>>& edges) {
+        // 节点编号是 1..n，因此下标 0 不参与算法，parent 需要开到 n+1。
         vector<int> parent(edges.size() + 1);
         iota(parent.begin(), parent.end(), 0);
+
+        // find 返回当前连通分量代表根，并用路径压缩缩短后续查询链。
         function<int(int)> find = [&](int x) {
             return parent[x] == x ? x : parent[x] = find(parent[x]);
         };
+
         for (const auto& edge : edges) {
-            int a = find(edge[0]), b = find(edge[1]);
+            // 一定要在把当前边加入 DSU 之前查询两端代表根。
+            // 此时 a==b 等价于：仅靠此前已经处理的边，edge[0] 与 edge[1] 之间就已经存在路径。
+            int a = find(edge[0]);
+            int b = find(edge[1]);
+
+            // 旧路径已经存在，再加入当前无向边就会闭合成环；当前边正是需要删除的冗余边。
             if (a == b) return edge;
+
+            // 只有两端原本属于不同连通分量时才合并；这类边是在连接两个块，不会形成环。
             parent[a] = b;
         }
+
+        // 题目保证输入由一棵树额外加入一条边得到，因此正常情况下不会走到这里。
         return {};
     }
 };

@@ -101,13 +101,27 @@ using namespace std;
 class Solution {
 public:
     int maxArea(vector<int>& height) {
+        // 从最宽的容器开始。之后 width = right-left 只会越来越小，
+        // 因而每次移动端点前，都必须证明被丢掉的那一端以后不可能参与更优答案。
         int left = 0, right = static_cast<int>(height.size()) - 1;
         long long best = 0;
+
         while (left < right) {
+            // 水面高度由两端较短者限制；较高的一端超出的部分不能贡献面积。
             const int limitingHeight = min(height[left], height[right]);
             best = max(best, 1LL * limitingHeight * (right - left));
-            if (height[left] <= height[right]) ++left;  // 只有短板变化才可能改善
-            else --right;
+
+            if (height[left] <= height[right]) {
+                // 左端是短板。当前 right 已给了这块左板能够获得的最大剩余宽度。
+                // 如果保留 left、只把 right 向左移：宽度一定更小，
+                // 而有效高度仍 <= height[left]，所以面积不可能超过当前组合。
+                // 因此所有“继续使用这个 left”的更窄候选都被当前状态支配，可永久排除 left。
+                ++left;
+            } else {
+                // 右端是短板时完全对称：保留 right 只会缩小宽度，
+                // 有效高度又不可能超过 height[right]，所以 right 可以安全丢弃。
+                --right;
+            }
         }
         return static_cast<int>(best);
     }

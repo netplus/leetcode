@@ -154,4 +154,49 @@ public:
         return 1 + max(maxDepth(root->left), maxDepth(root->right));
     }
 };''',
+
+    105: r'''// ---------- Solution ----------
+class Solution {
+    // 节点值唯一，因此可把 inorder 中“寻找根切点”的线性扫描预处理成 O(1) 索引查询。
+    unordered_map<int, int> inorderIndex;
+
+    // preorderIndex 始终指向“尚未消费的下一个前序元素”；
+    // 因为前序是 Root -> Left -> Right，递归构树时也必须严格先建左、再建右。
+    int preorderIndex = 0;
+
+    // 当前调用只负责 inorder[left..right] 这一批节点所形成的子树。
+    TreeNode* build(const vector<int>& preorder, int left, int right) {
+        // left>right 表示当前中序区间为空，对应一棵空子树。
+        if (left > right) return nullptr;
+
+        // 前序中的下一个未消费值一定是当前子树根；取走后立即推进全局消费游标。
+        const int rootValue = preorder[preorderIndex++];
+        TreeNode* root = new TreeNode(rootValue);
+
+        // 根在 inorder 中的唯一位置把当前区间精确切成左子树节点集合和右子树节点集合。
+        const int middle = inorderIndex[rootValue];
+
+        // 这里的顺序不能交换：preorder 在根之后先给完整左子树，再给完整右子树。
+        // 左递归会恰好消费掉属于 inorder[left..middle-1] 的那些前序根，
+        // 返回时 preorderIndex 才自然落到右子树的第一个根。
+        root->left = build(preorder, left, middle - 1);
+        root->right = build(preorder, middle + 1, right);
+        return root;
+    }
+
+public:
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        // 成员状态在每次公开调用前重置，避免同一个 Solution 对象重复调用时沿用旧索引/游标。
+        inorderIndex.clear();
+        preorderIndex = 0;
+
+        // 预建 value -> inorder index，把每层递归重新找根的 O(n) 工作消掉。
+        for (int i = 0; i < static_cast<int>(inorder.size()); ++i) {
+            inorderIndex[inorder[i]] = i;
+        }
+
+        // 顶层子树覆盖完整 inorder 区间；之后每次递归都只缩小这个合法边界。
+        return build(preorder, 0, static_cast<int>(inorder.size()) - 1);
+    }
+};''',
 }

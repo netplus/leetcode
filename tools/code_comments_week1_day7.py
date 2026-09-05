@@ -40,4 +40,35 @@ public:
         return answer;
     }
 };''',
+
+    41: r'''// ---------- Solution ----------
+class Solution {
+public:
+    int firstMissingPositive(vector<int>& nums) {
+        const int n = static_cast<int>(nums.size());
+
+        for (int i = 0; i < n; ++i) {
+            // 只有 1..n 可能对应真实答案槽位；x 的唯一“家”是下标 x-1。
+            // <=0 或 >n 的值不可能影响 1..n 哪个缺失，因此无需搬动。
+            //
+            // 第三个条件 nums[nums[i]-1] != nums[i] 是重复值保险：
+            // 若目标槽已经放着同一个 x，继续 swap 只会在两个相同值之间来回，造成死循环。
+            while (nums[i] >= 1 && nums[i] <= n && nums[nums[i] - 1] != nums[i]) {
+                // 把当前合法值 x 送到唯一槽位 x-1。
+                // 交换后当前位置 i 会换回来另一个值；它也可能属于 [1,n] 且尚未归位，
+                // 所以这里必须继续 while，而不能一次 swap 后直接进入下一个 i。
+                swap(nums[i], nums[nums[i] - 1]);
+            }
+        }
+
+        // 归位结束后，若值 x 出现过，则它必然占据槽位 x-1。
+        // 因此从左到右第一个 nums[i] != i+1 的位置，正好对应最小缺失正数 i+1。
+        for (int i = 0; i < n; ++i) {
+            if (nums[i] != i + 1) return i + 1;
+        }
+
+        // 1..n 全部出现时，最小缺失正数只能是 n+1。
+        return n + 1;
+    }
+};''',
 }

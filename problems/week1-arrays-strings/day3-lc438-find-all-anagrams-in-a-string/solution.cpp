@@ -10,19 +10,14 @@
 //
 // 题目示例：
 // 示例 1：
-//   Input: s = "cbaebabacd", p = "abc"
-//   Output: [0,6]
-//   Explanation:
-//   The substring with start index = 0 is "cba", which is an anagram of "abc".
-//   The substring with start index = 6 is "bac", which is an anagram of "abc".
+//   输入：s = "cbaebabacd", p = "abc"
+//   输出：[0,6]
+//   解释：从下标 0 开始的 "cba" 和从下标 6 开始的 "bac" 都与 "abc" 具有相同字符频次，因此都是异位词。
 //
 // 示例 2：
-//   Input: s = "abab", p = "ab"
-//   Output: [0,1,2]
-//   Explanation:
-//   The substring with start index = 0 is "ab", which is an anagram of "ab".
-//   The substring with start index = 1 is "ba", which is an anagram of "ab".
-//   The substring with start index = 2 is "ab", which is an anagram of "ab".
+//   输入：s = "abab", p = "ab"
+//   输出：[0,1,2]
+//   解释：从下标 0、1、2 开始的长度 2 子串分别是 "ab"、"ba"、"ab"，都与 p 互为异位词。
 //
 // 约束与要求：
 //   - 1 <= s.length, p.length <= 3 * 10^4

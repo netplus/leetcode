@@ -104,4 +104,36 @@ public:
         return answer;
     }
 };''',
+
+    238: r'''// ---------- Solution ----------
+class Solution {
+public:
+    vector<int> productExceptSelf(vector<int>& nums) {
+        // answer 最终承载输出，因此先借它暂存每个位置的“左侧乘积”，
+        // 不再额外申请一张 prefix 数组。
+        vector<int> answer(nums.size(), 1);
+
+        // 进入下标 i 时，leftProduct 恰好等于 nums[0..i-1] 的乘积，
+        // 明确不包含 nums[i]；初始 1 是空乘积的单位元。
+        int leftProduct = 1;
+        for (int i = 0; i < static_cast<int>(nums.size()); ++i) {
+            // 必须先把“不含自己”的左侧乘积写给 answer[i]，
+            // 再把 nums[i] 纳入状态，供下一位置 i+1 使用；顺序反了就会把自己乘进去。
+            answer[i] = leftProduct;
+            leftProduct *= nums[i];
+        }
+
+        // 从右往左完全对称：进入 i 时，rightProduct 只包含 nums[i+1..n-1]。
+        int rightProduct = 1;
+        for (int i = static_cast<int>(nums.size()) - 1; i >= 0; --i) {
+            // answer[i] 此时已经是左侧乘积，先乘当前“不含自己”的右侧乘积，
+            // 才得到最终的 except-self 结果；随后再把 nums[i] 纳入右侧滚动状态。
+            answer[i] *= rightProduct;
+            rightProduct *= nums[i];
+        }
+
+        // 整个过程从未做除法，所以 nums 中含 0 也无需特殊分支。
+        return answer;
+    }
+};''',
 }

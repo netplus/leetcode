@@ -29,8 +29,12 @@ input has exactly one solution.
 Constraints: 3 <= n <= 1000, -1000 <= nums[i] <= 1000, -1e4 <= target <= 1e4.
 
 Example:
-  Input:  nums = [-1,2,1,-4], target = 1
-  Output: 2    (sum = -1 + 2 + 1 = 2)
+  Input:
+    4 1
+    -1 2 1 -4
+  Output:
+    2
+  Explanation: -1 + 2 + 1 = 2 is the closest sum to target 1.
 
 I/O for your a.in: line 1 = n target; line 2 = n ints. Print the closest sum.
 
@@ -47,9 +51,22 @@ Define:
 
 Constraints: 0 <= n <= 1000, -1e4 <= val <= 1e4, random is null or a valid index.
 
-Example: list [[7,null],[13,0],[11,4],[10,2],[1,0]] means node0 val=7 random=null;
-node1 val=13 random->node0; node2 val=11 random->node4; etc. The copy must have
-the same structure and random links.
+Example:
+  Input:
+    5
+    7 -1
+    13 0
+    11 4
+    10 2
+    1 0
+  Output:
+    7 -1
+    13 0
+    11 4
+    10 2
+    1 0
+  Explanation: the copied nodes have the same value/random-index structure,
+  but every copied node and pointer must refer only to the new list.
 
 I/O for your b.in: line 1 = n; next n lines "val randomIndex" (randomIndex = -1 for
 null). Print the copied list as n lines "val randomIndex" (the copied random's
@@ -71,8 +88,13 @@ Define the TreeNode struct as in the other problems.
 Constraints: number of nodes in [1, 1e4], 0 <= Node.val <= 1e4.
 
 Example:
-  Input (level order): 3 2 3 -1 3 -1 1
-  Output: 7    (rob node 3 (root) + node 3 (level 2 right) + node 1? -> 3+3+1=7)
+  Input:
+    7
+    3 2 3 -1 3 -1 1
+  Output:
+    7
+  Explanation: rob the root (3) and its two non-adjacent grandchildren with
+  values 3 and 1, for 3 + 3 + 1 = 7.
 
 I/O for your c.in: line 1 = n; line 2 = n level-order values (-1 = null). Print
 the maximum amount.
@@ -105,12 +127,13 @@ minutes until no fresh orange remains, or -1 if impossible.
 Constraints: 1 <= m, n <= 10, grid[i][j] in {0,1,2}.
 
 Example:
-  Input (m n, then m rows of n ints):
+  Input:
     3 3
     2 1 1
     1 1 0
     0 1 1
-  Output: 4
+  Output:
+    4
 
 I/O for your a.in: line 1 = m n; next m lines = n ints each. Print the minutes, or -1.
 
@@ -119,14 +142,18 @@ I/O for your a.in: line 1 = m n; next m lines = n ints each. Print the minutes, 
 ## 题目 B — 爱吃香蕉的珂珂变体（答案二分，中等）
 
 Koko can eat k bananas/hour. Each hour she picks one pile and eats min(k, pile)
-bananas (rest of pile stays). Return the minimum integer k such that she eats all
-piles within h hours.
+bananas. If she finishes that pile early, she does not switch to another pile in
+the same hour. Return the minimum integer k such that she eats all piles within
+h hours.
 
 Constraints: 1 <= piles.length <= 1e4, piles.length <= h <= 1e9, 1 <= piles[i] <= 1e9.
 
 Example:
-  Input: piles = [3,6,7,11], h = 8
-  Output: 4
+  Input:
+    4 8
+    3 6 7 11
+  Output:
+    4
 
 I/O for your b.in: line 1 = n h; line 2 = n ints. Print the minimum k.
 
@@ -141,8 +168,12 @@ Constraints: 1 <= s.length <= 300, 1 <= wordDict.length <= 1000,
 1 <= wordDict[i].length <= 20, lowercase English letters.
 
 Example:
-  Input: s = "leetcode", wordDict = ["leet","code"]
-  Output: true (1)
+  Input:
+    leetcode
+    2
+    leet code
+  Output:
+    1
 
 I/O for your c.in: line 1 = s; line 2 = L; line 3 = L space-separated words.
 Print 1 if segmentable, else 0.

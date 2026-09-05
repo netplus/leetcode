@@ -74,7 +74,12 @@ using namespace std;
 class Solution {
 public:
     int findKthLargest(vector<int>& nums, int k) {
+        // “第 k 大”在完整升序序列中的下标是 n-k；重复值仍按出现次数参与排名。
         const int targetIndex = static_cast<int>(nums.size()) - k;
+
+        // nth_element 只保证 targetIndex 这个排名位置放上完整排序后应在这里的元素：
+        // 左侧元素不大于它、右侧元素不小于它，但两侧内部都不保证有序。
+        // 因此它避免了 sort 为其余 n-1 个位置建立无用的完整全序，并会原地修改 nums。
         nth_element(nums.begin(), nums.begin() + targetIndex, nums.end());
         return nums[targetIndex];
     }

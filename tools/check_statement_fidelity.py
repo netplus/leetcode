@@ -2,13 +2,13 @@
 """Verify learner-facing statements for every generated problem.
 
 This is an offline 106-problem guard.  The effective learner-facing metadata is
-`official Chinese cache + reviewed statement overrides + official examples`.
-Every generated solution.cpp must contain the exact rendered description,
-example, and constraint blocks.
+the cached Chinese statement data plus reviewed doocs-aligned overrides and
+examples.  Every generated solution.cpp must contain the exact rendered title,
+description, example, and constraint blocks.
 
-It intentionally does not fetch the network.  Refreshing the raw official cache
-is a separate maintenance action (`fetch_chinese_problem_info.py` /
-`fetch_official.py`); reviewed overrides survive that refresh.
+The checker intentionally does not fetch the network.  The statement source of
+truth is ``https://leetcode.doocs.org/lc/<num>/``; refreshing raw caches is a
+separate maintenance action, and reviewed overrides survive that refresh.
 """
 
 from pathlib import Path
@@ -63,7 +63,7 @@ def main() -> None:
         for field, expected in checks.items():
             if expected not in text:
                 failures.append(
-                    f"LC-{problem['num']}: generated {field} differs from effective official metadata"
+                    f"LC-{problem['num']}: generated {field} differs from effective doocs-aligned metadata"
                 )
 
         # Keep generated files whitespace-stable: exactly one final newline and
@@ -81,7 +81,7 @@ def main() -> None:
 
     print(
         f"Statement fidelity OK: {len(problems)}/106 generated problems "
-        "match effective metadata, including examples and EOF formatting."
+        "match effective doocs-aligned metadata, including examples and EOF formatting."
     )
 
 

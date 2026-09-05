@@ -100,12 +100,18 @@ using namespace std;
 class Solution {
 public:
     int findMin(vector<int>& nums) {
+        // [left,right] 始终包含全局最小值；left<right 时至少还有两个候选位置。
         int left = 0, right = static_cast<int>(nums.size()) - 1;
         while (left < right) {
             int middle = left + (right - left) / 2;
+
+            // 与右端比较能判断 middle 是否落在旋转前的“大值段”。
+            // nums[middle] > nums[right]：断点/最小值一定严格在 middle 右侧，所以丢掉 middle。
             if (nums[middle] > nums[right]) left = middle + 1;
+            // 否则 middle 位于包含最小值的“小值段”，最小值可能就是 middle，因此保留 middle。
             else right = middle;
         }
+        // 区间收缩到一个位置时，该位置就是旋转断点，也就是全局最小值。
         return nums[left];
     }
 };

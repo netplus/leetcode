@@ -67,4 +67,31 @@ public:
         return static_cast<int>(ways[positiveSum]);
     }
 };''',
+
+    322: r'''// ---------- Solution ----------
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {
+        // amount+1 是安全的“不可能”哨兵：若 amount 可由正面额硬币组成，
+        // 最差也只需 amount 枚面额 1 的硬币，因此任何有效最少枚数都不会达到 amount+1。
+        vector<int> dp(amount + 1, amount + 1);
+
+        // 凑出金额 0 不需要任何硬币，这是所有正金额转移的唯一基础可达状态。
+        dp[0] = 0;
+
+        // 金额从小到大，保证处理 current 时所有 current-coin 都是已经求好的更小金额状态。
+        for (int current = 1; current <= amount; ++current) {
+            for (int coin : coins) {
+                // 把 coin 看作最优方案的最后一枚硬币：若 coin<=current，
+                // 候选就是“凑出 current-coin 的最少枚数 + 当前这一枚”。
+                // 同一面额可以无限使用，所以 dp[current-coin] 即使已经包含 coin 也完全合法；
+                // 这正是与 LC-416/494 的 0/1 倒序语义不同之处。
+                if (coin <= current) dp[current] = min(dp[current], dp[current - coin] + 1);
+            }
+        }
+
+        // 哨兵未被改善说明 amount 不可达；否则 dp[amount] 就是最少硬币枚数。
+        return dp[amount] == amount + 1 ? -1 : dp[amount];
+    }
+};''',
 }

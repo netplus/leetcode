@@ -119,6 +119,7 @@ using namespace std;
 class Solution {
 public:
     int splitArray(vector<int>& nums, int k) {
+        // 最大段和至少要容纳最大的单个元素；把整个数组作为一段时，总和一定可行。
         long long left = *max_element(nums.begin(), nums.end());
         long long right = accumulate(nums.begin(), nums.end(), 0LL);
 
@@ -126,15 +127,21 @@ public:
             int groups = 1;
             long long current = 0;
             for (int value : nums) {
+                // nums 非负。固定 limit 后，当前段能继续放就不提前切；
+                // 只有加入 value 会超限时才切，得到该 limit 下所需的最少连续段数。
                 if (current + value > limit) {
                     ++groups;
                     current = 0;
                 }
+                // 触发切分的 value 属于新段，必须在清零后继续计入。
                 current += value;
             }
             return groups;
         };
 
+        // limit 越大，最少段数只会不增，因此 groupsNeeded(limit)<=k 构成可行后缀。
+        // 题目虽要求“恰好 k 段”，这里检查 <=k 仍正确：若只需少于 k 段，
+        // 因为 k<=n 且 nums 非负，可以继续把非空段拆开，最大段和不会增加。
         while (left < right) {
             long long middle = left + (right - left) / 2;
             if (groupsNeeded(middle) <= k) right = middle;

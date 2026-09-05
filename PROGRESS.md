@@ -78,11 +78,11 @@
 
 | Day | Date | Done (LC#) | Time | P0 done | Note / review |
 |-----|------|-----------|------|---------|----------------|
-| D22 | | | | /4 | binary search |
-| D23 | | | | /4 | binary search on answer |
-| D24 | | | | /4 | greedy |
-| D25 | | | | /4 | heap / topK |
-| D26 | | | | /4 | comprehensive |
+| D22 | | | | /3 | binary search |
+| D23 | | | | /3 | binary search on answer |
+| D24 | | | | /3 | greedy |
+| D25 | | | | /3 | heap / topK |
+| D26 | | | | /2 | comprehensive |
 | D27 | | | | — | mock exam 1 (90 min) |
 | D28 | | | | — | mock exam 2 + final review |
 

@@ -121,18 +121,31 @@ using namespace std;
 class Solution {
 public:
     int longestConsecutive(vector<int>& nums) {
+        // 原数组下标与题目无关；集合只保留“哪些数值存在”，并顺便消除重复值。
+        // 这样 predecessor/successor 是否存在都可用平均 O(1) 哈希查询回答。
         unordered_set<int> values(nums.begin(), nums.end());
         int best = 0;
+
         for (int x : values) {
+            // 只有 x-1 不存在时，x 才是某条连续链唯一的最小值/链头。
+            // 若 x-1 已存在，从 x 再向右扫描只会重复链头早晚会完成的同一段工作，必须跳过。
+            // INT_MIN 防护避免在更宽输入下计算 x-1 时发生有符号溢出。
             if (x != INT_MIN && values.count(x - 1)) continue;
+
+            // 只有 canonical start 才拥有向右遍历整条链的资格。
             int length = 1;
             int current = x;
             while (current != INT_MAX && values.count(current + 1)) {
                 ++current;
                 ++length;
             }
+
+            // 一条链只在它唯一的链头处完整计算一次。
             best = max(best, length);
         }
+
+        // 虽然代码有 for + while，两层并不会形成 O(n^2)：
+        // 链内部节点因存在前驱不会启动扫描，每个集合元素只归属于唯一链头的一次扩展。
         return best;
     }
 };

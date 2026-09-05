@@ -111,11 +111,18 @@ class Solution {
 public:
     string longestPalindrome(string s) {
         int bestStart = 0, bestLength = 0;
+
+        // expand(left,right) 接收一个几何中心：
+        // left==right 表示字符中心（奇数长度），right==left+1 表示字符间隙中心（偶数长度）。
         auto expand = [&](int left, int right) {
+            // 只要左右仍在边界内且字符相同，就把当前回文同时向两侧扩一格。
             while (left >= 0 && right < static_cast<int>(s.size()) && s[left] == s[right]) {
                 --left;
                 ++right;
             }
+
+            // 循环退出时，left/right 已经各自越过真实回文一格：
+            // 真正的最大回文是闭区间 [left+1, right-1]，长度因此为 right-left-1。
             const int length = right - left - 1;
             if (length > bestLength) {
                 bestLength = length;
@@ -124,9 +131,12 @@ public:
         };
 
         for (int center = 0; center < static_cast<int>(s.size()); ++center) {
-            expand(center, center);       // 奇数长度
-            expand(center, center + 1);   // 偶数长度
+            // 每个非空回文都有唯一的几何中心；枚举这两种中心即可覆盖全部奇偶回文。
+            expand(center, center);       // 奇数长度：中心落在 s[center]
+            expand(center, center + 1);   // 偶数长度：中心落在 center 与 center+1 的缝隙
         }
+
+        // bestStart/bestLength 始终描述当前发现的最长真实回文区间。
         return s.substr(bestStart, bestLength);
     }
 };

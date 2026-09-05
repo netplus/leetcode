@@ -91,4 +91,47 @@ public:
         return answer;
     }
 };''',
+
+    39: r'''// ---------- Solution ----------
+class Solution {
+    vector<vector<int>> answer;
+    vector<int> path;
+
+    // start 让 path 中使用的候选下标保持不减，给“组合”规定唯一的非降序构造顺序；
+    // remaining 表示当前路径距离 target 还差多少。
+    void search(const vector<int>& candidates, int start, int remaining) {
+        // remaining 恰好归零时，当前 path 才是一组完整答案；所有候选为正数，所以之后无需继续扩展。
+        if (remaining == 0) {
+            answer.push_back(path);
+            return;
+        }
+
+        for (int i = start; i < static_cast<int>(candidates.size()); ++i) {
+            // candidates 已升序；若当前值都超过 remaining，右侧候选只会更大，
+            // 且所有数为正，不可能靠继续选择把 remaining 拉回 0，因此可直接停止本层。
+            if (candidates[i] > remaining) break;
+
+            path.push_back(candidates[i]);
+
+            // 与 LC-78 的 i+1 不同：本题允许同一候选无限复用，所以递归仍传 i；
+            // 但不会传更小下标，从而不会生成 [2,3,2] 这类同一组合的另一排列。
+            search(candidates, i, remaining - candidates[i]);
+
+            // 当前候选对应的整棵子树探索完后撤销，恢复父状态再尝试下一个候选。
+            path.pop_back();
+        }
+    }
+
+public:
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        // 排序有两个作用：建立组合的统一非降序表示，并使“过大就 break”的剪枝有单调性依据。
+        // 这会原地改变调用方传入的 candidates 顺序，是当前实现可观察的副作用。
+        sort(candidates.begin(), candidates.end());
+
+        answer.clear();
+        path.clear();
+        search(candidates, 0, target);
+        return answer;
+    }
+};''',
 }

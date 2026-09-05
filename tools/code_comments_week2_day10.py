@@ -139,4 +139,19 @@ public:
         return levels;
     }
 };''',
+
+    104: r'''// ---------- Solution ----------
+class Solution {
+public:
+    int maxDepth(TreeNode* root) {
+        // 函数契约：maxDepth(node) 返回“以 node 为根的子树最大深度”，按路径上的节点数计。
+        // 空子树不贡献任何节点，因此深度为 0；这个边界也让叶子节点自然得到 1。
+        if (!root) return 0;
+
+        // 从当前节点到最远叶子的路径只能选择左、右子树中的一条继续向下；
+        // 两个递归调用分别完整计算左右子树深度，父节点取更深的一边，再把自己这一层 +1。
+        // 这里不能写成 left+right+1：左右相加是在拼一条经过当前节点的双臂路径，那是 LC-543 直径的模型。
+        return 1 + max(maxDepth(root->left), maxDepth(root->right));
+    }
+};''',
 }

@@ -94,4 +94,54 @@ public:
         return dummy.next;
     }
 };''',
+
+    234: r'''// ---------- Solution ----------
+class Solution {
+    static ListNode* reverse(ListNode* head) {
+        // 这是 LC-206 的同一反转原语：previous 是已反转前缀头，head 是未处理后缀头。
+        ListNode* previous = nullptr;
+        while (head) {
+            // 改写 head->next 前先保住原后继，否则会丢失剩余后缀。
+            ListNode* next = head->next;
+            head->next = previous;
+            previous = head;
+            head = next;
+        }
+        return previous;
+    }
+
+public:
+    bool isPalindrome(ListNode* head) {
+        if (!head || !head->next) return true;
+
+        // fast 每轮 2 步、slow 每轮 1 步；循环结束时 slow 指向后半段起点。
+        // 偶数长度时它是右半段第一个节点；奇数长度时它正好落在中间节点。
+        ListNode* slow = head;
+        ListNode* fast = head;
+        while (fast && fast->next) {
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+
+        // 反转 slow 开始的后半段，把“从尾往前比较”转换成沿 next 同向比较。
+        ListNode* reversed = reverse(slow);
+        ListNode* right = reversed;
+        ListNode* left = head;
+        bool equal = true;
+
+        // 只遍历反转后的右半段；它的长度不会超过从 head 开始可供比较的左侧部分。
+        while (right) {
+            // 即使已经发现不相等，也只记录结果而不立即 return：
+            // 后面还必须统一执行 reverse(reversed) 恢复原链表结构。
+            if (left->val != right->val) equal = false;
+            left = left->next;
+            right = right->next;
+        }
+
+        // 再次调用同一反转原语，把后半段 next 方向恢复；
+        // 原前半段一直保留着指向 slow 的连接，因此无需额外重新接链。
+        reverse(reversed);
+        return equal;
+    }
+};''',
 }

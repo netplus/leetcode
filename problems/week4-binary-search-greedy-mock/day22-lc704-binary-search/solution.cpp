@@ -20,10 +20,9 @@
 //   Explanation: 2 does not exist in nums so return -1
 //
 // 约束与要求：
-//   - 1 <= nums.length <= 10^4
-//   - -10^4 < nums[i], target < 10^4
-//   - nums 中的所有整数互不相同
-//   - nums 按严格升序排列
+//   - 你可以假设 nums 中的所有元素是不重复的
+//   - n 将在 [1, 10000] 之间
+//   - nums 的每个元素都将在 [-9999, 9999] 之间
 //
 // 复杂度目标：O(log n) 时间，O(1) 空间。
 //

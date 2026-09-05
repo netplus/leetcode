@@ -87,13 +87,22 @@ using namespace std;
 class Solution {
 public:
     int findContentChildren(vector<int>& g, vector<int>& s) {
+        // 排序后，child 指向最小未满足胃口，cookie 指向最小未处理饼干；
+        // 这样每一步都能判断当前最小资源是否还有未来价值。
         sort(g.begin(), g.end());
         sort(s.begin(), s.end());
         int child = 0, cookie = 0;
+
         while (child < static_cast<int>(g.size()) && cookie < static_cast<int>(s.size())) {
+            // 当前最小饼干若够用，立刻匹配给当前最小胃口是安全的：
+            // 把更大的饼干留给更难满足的孩子，不会减少任何最优方案的匹配数。
             if (s[cookie] >= g[child]) ++child;
+
+            // 无论是否匹配，这块饼干都已经处理完：若太小，它连最小剩余胃口都满足不了，
+            // 更不可能服务后面更大的胃口；若已匹配，则每块饼干也只能使用一次。
             ++cookie;
         }
+        // child 每增加一次就固定了一名已满足孩子，因此它本身就是最大匹配数。
         return child;
     }
 };

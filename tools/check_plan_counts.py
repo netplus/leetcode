@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate PLAN/PROGRESS counts against canonical problem metadata."""
+"""Validate PLAN/PROGRESS counts against effective canonical metadata."""
 
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -11,6 +11,7 @@ ROOT = HERE.parent
 sys.path.insert(0, str(HERE))
 
 import gen_data  # noqa: E402
+from statement_metadata import get_statement_metadata  # noqa: E402
 
 
 MOCK_UNITS = {1: 0, 2: 0, 3: 0, 4: 2}
@@ -30,7 +31,7 @@ def main() -> None:
     for problem in problems:
         week = problem["week"]
         day = problem["day"]
-        priority = problem["prio"]
+        priority = get_statement_metadata(problem)["priority"]
         if priority not in {"P0", "P1"}:
             raise SystemExit(f"LC-{problem['num']}: unexpected priority {priority!r}")
         week_priority[week][priority] += 1

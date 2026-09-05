@@ -63,4 +63,35 @@ public:
         return slow;
     }
 };''',
+
+    19: r'''// ---------- Solution ----------
+class Solution {
+public:
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        // dummy 让“删除原 head”也拥有普通前驱；最终统一返回 dummy.next。
+        ListNode dummy(0, head);
+        ListNode* fast = &dummy;
+        ListNode* slow = &dummy;
+
+        // 目标不是让 slow 停在待删节点，而是停在它的前驱，才能改写 slow->next。
+        // 因此 fast 要比 slow 领先 n+1 条边；从 dummy 出发正好用 i=0..n 共 n+1 次前进建立这个间距。
+        for (int i = 0; i <= n; ++i) fast = fast->next;
+
+        // 之后两者同速，固定的 n+1 条边间距保持不变。
+        // 当 fast 到达 nullptr 这个“尾后边界”时，slow->next 恰好就是倒数第 n 个节点。
+        while (fast) {
+            fast = fast->next;
+            slow = slow->next;
+        }
+
+        ListNode* removed = slow->next;
+
+        // 先让前驱绕过 removed，链表结构立即恢复连续；
+        // 再释放已经脱离结果链的 removed 节点。
+        slow->next = removed->next;
+        delete removed;
+
+        return dummy.next;
+    }
+};''',
 }

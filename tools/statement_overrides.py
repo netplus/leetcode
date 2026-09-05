@@ -37,7 +37,9 @@ STATEMENT_OVERRIDES = {
     # aligned to their doocs Chinese pages rather than to local harness wording.
     252: {
         "description": [
-            "给定一个会议时间安排的数组 intervals，每个会议时间都会包括开始和结束的时间 intervals[i] = [start_i, end_i]，请你判断一个人是否能够参加这里面的全部会议。",
+            "给定一个会议时间安排的数组 intervals，其中 intervals[i] = [start_i, end_i]。",
+            "一个人可以参加所有会议，只要没有两个会议的时间段重叠。在时间 t 结束的会议和在时间 t 开始的会议不重叠。",
+            "如果一个人能够参加这里面的全部会议，返回 true，否则返回 false。",
         ],
         "constraints": [
             "0 <= intervals.length <= 10^4",

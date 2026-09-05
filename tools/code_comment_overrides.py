@@ -43,6 +43,35 @@ public:
     }
 };''',
 
+    53: r'''// ---------- Solution ----------
+class Solution {
+public:
+    int maxSubArray(vector<int>& nums) {
+        // current：必须以“当前扫描位置”结尾的最大子数组和。
+        // best：截至当前，所有可能终点中出现过的最大子数组和。
+        // 两者都从 nums[0] 开始，而不能从 0 开始：题目要求子数组非空；
+        // 若数组全为负数，0 代表的是一个并不存在的空子数组，会得到错误答案。
+        int current = nums[0];
+        int best = nums[0];
+
+        for (int i = 1; i < static_cast<int>(nums.size()); ++i) {
+            // 所有以 i 结尾的合法区间只有两类来源：
+            // 1) 从 nums[i] 重新开始；
+            // 2) 把 nums[i] 接到某个以 i-1 结尾的区间后面。
+            //
+            // 第二类中只需要保留上一位置最大的 current：所有候选以后都会追加
+            // 完全相同的未来后缀，当前和更小的候选永远不可能反超更大的候选，
+            // 因而可以永久淘汰。这就是这里能把 O(n) 个结尾候选压成 1 个状态的原因。
+            current = max(nums[i], current + nums[i]);
+
+            // current 只回答“必须在 i 结束时最好是多少”；它下一步可能下降。
+            // best 保存历史全局答案，因此必须独立更新，不能直接用最新 current 代替。
+            best = max(best, current);
+        }
+        return best;
+    }
+};''',
+
     133: r'''// ---------- Solution ----------
 class Solution {
 public:

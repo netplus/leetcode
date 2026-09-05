@@ -438,16 +438,17 @@ This makes “查过去” and “记录现在” visibly different operations.
 
 ## Comments in solution.cpp
 
-The large header comment is part of the learning material and must be maintained with the code.
+The large header comment is part of the learning material and must be maintained with the code. The detailed repository standard is [docs/code-commenting.md](docs/code-commenting.md).
 
-Do not merely paraphrase each source line. Comments should explain:
+For every non-trivial implementation, key code comments should explain:
 
-- the state represented by a variable;
-- why an update is needed;
+- the state represented by a variable/container/pointer;
+- why an update or candidate elimination is valid;
 - why the update happens in this order;
-- which invariant makes the step correct.
+- which sentinel, interval convention, visited timing, pointer boundary, or invariant makes the step correct;
+- what concrete bug would happen when a correctness-sensitive order or `<` / `<=` boundary is changed.
 
-For non-trivial problems, prefer a small ASCII diagram in the header when it materially reduces abstraction.
+Do not merely paraphrase each source line. Ordinary I/O and mechanically obvious syntax do not need comments. The historical 106-problem comment migration is complete; future edits must preserve or improve that baseline rather than reintroduce bare core logic.
 
 ## Official statement fidelity
 
@@ -459,7 +460,7 @@ The learner-facing statement source is:
 2. `tools/statement_overrides.py`: persistent reviewed fixes where the Chinese cache is less explicit than the official English statement or contains extraction defects;
 3. `tools/statement_metadata.py`: the effective statement metadata consumed by `gen_all.py`.
 
-`tools/official/lc<N>.txt` is the English official snapshot used for cross-language semantic review. When Chinese and English official wording differ in precision, preserve the stricter meaning when it affects the legal input set, return contract, or an algorithmic precondition. For example, distinguish “小写英文字母” from an ambiguous unrestricted “小写字母” when the official English statement says `lowercase English letters`.
+`tools/official/lc<N>.txt` is the English official snapshot used for cross-language semantic review. When Chinese and English official wording differ in precision, preserve the stricter meaning when it affects the legal input set, return contract, or an algorithmic precondition.
 
 A learner-facing problem statement must explicitly preserve official facts that affect:
 
@@ -476,21 +477,22 @@ After statement changes, `python3 tools/check_statement_fidelity.py` must pass f
 
 ## Generated repository source of truth
 
-`problems/**/solution.cpp` is generated learning output, not the only source of truth. Do not make a pedagogy or implementation change only in a generated `solution.cpp`, because `python3 tools/gen_all.py` may overwrite it.
+`problems/**/solution.cpp` is generated learning output, not the only source of truth. Do not make a pedagogy, implementation, or key-comment change only in a generated `solution.cpp`, because `python3 tools/gen_all.py` may overwrite it.
 
-The generation layers are:
+The current canonical pipeline is:
 
-1. `tools/refined_week1.py` ... `tools/refined_week4.py`: baseline reviewed explanations and implementations for all problems;
-2. `tools/pedagogy_overrides.py` plus modular `tools/pedagogy_week*.py`: only problems that have received an individual high-touch learning rewrite;
-3. `tools/refined_data.py`: merges all baseline and pedagogy layers, then renders either the enhanced or legacy explanation;
-4. `tools/statement_metadata.py`: supplies the effective official learner-facing statement metadata;
-5. `tools/gen_all.py`: emits `problems/**/solution.cpp`.
+1. `tools/refined_week1.py` ... `tools/refined_week4.py`: baseline reviewed explanation/implementation records for all 106 formal problems;
+2. `tools/pedagogy_overrides.py` plus modular `tools/pedagogy_week*.py`: the completed high-touch visual/core/invariant pedagogy layer;
+3. `tools/pedagogy_prerequisites.py`: prerequisite concepts used only where the later derivation needs them;
+4. `tools/pedagogy_derivations.py` + `tools/pedagogy_derivations_backfill.py`: direct-algorithm -> bottleneck -> optimized-mechanism bridges where meaningful;
+5. `tools/code_comment_overrides.py` plus modular `tools/code_comments_week*.py`: per-problem reviewed implementation/comment layer;
+6. `tools/refined_data.py`: merges all canonical learning layers and rejects duplicate problem IDs;
+7. `tools/statement_metadata.py`: supplies the effective official learner-facing statement metadata and examples;
+8. `tools/gen_all.py`: renders `solution.cpp` / `test.in` and the Week 4 mock packages.
 
-Keep pedagogy override modules small enough to review comfortably. New high-touch entries may be split by week or learning batch; `refined_data.py` must explicitly merge them and reject duplicate problem IDs.
+The historical migration to the high-touch explanation and key-code-comment standard is complete for all 106 formal problems. That does **not** permit mechanical bulk rewrites: future changes still require a concrete per-problem reason and must preserve canonical/generated fidelity.
 
-For an individually optimized problem, update the canonical learning data first, then keep the generated `solution.cpp` synchronized. A future `gen_all.py` run must preserve the improved explanation and, where applicable, the improved primary implementation.
-
-Do **not** bulk-convert untouched problems merely to satisfy a format. The repository is intentionally migrated problem by problem: an untouched problem keeps its reviewed legacy explanation until it has actually been read and optimized.
+`python3 tools/check_generated_fidelity.py` is the non-mutating guard for the complete render: it compares checked-in `solution.cpp`, `test.in`, and both mock packages with their canonical in-memory output. `make verify-meta` must pass before considering a repository-wide maintenance pass complete.
 
 ## Solution selection
 
@@ -512,12 +514,11 @@ After modifying a problem:
 3. run/reason through all existing `cases/*.in` and expected outputs when execution is available;
 4. add edge cases when an explanation exposes a previously uncovered boundary;
 5. keep claimed time/space complexity consistent with the actual primary implementation;
-6. ensure `python3 tools/gen_all.py` would not erase the learning rewrite;
-7. ensure statement facts still match `statement_metadata.py` and the official review baseline.
+6. update the canonical layer first or together with generated output;
+7. ensure statement facts still match `statement_metadata.py` and the official review baseline;
+8. run `make verify-meta`; when execution is available, run `make verify` for compile + all judges.
 
 ## Repository-wide optimization workflow
-
-When asked to optimize existing cases/problems, work incrementally rather than rewriting everything mechanically.
 
 A repository-wide scan may identify and prioritize many candidates, but **pedagogy optimization itself must be strictly per-problem and serial**. Do not batch-rewrite multiple problems just because they share a pattern or can be changed by the same mechanical transformation.
 
@@ -535,11 +536,11 @@ For every problem, complete one independent review cycle before touching the nex
 
 Even when two neighboring problems reuse the same pattern, the second problem must still receive its own concrete analysis. Knowledge reuse should appear as an explicit migration/analogy, not as copied boilerplate.
 
-For each problem:
+For each future refinement:
 
 1. read the existing `solution.cpp` and tests;
 2. identify the key abstraction barrier that makes the current explanation hard to understand;
-3. rewrite using **朴素直觉 -> 性能/结构瓶颈 -> 优化机制 -> 图像直觉 -> 一句话核心 -> 公式/不变量 -> 执行步骤 -> 实现技巧 -> 正确性直觉 -> 易错点 -> 迁移** when the problem has a meaningful optimization step;
+3. use **朴素直觉 -> 性能/结构瓶颈 -> 优化机制 -> 图像直觉 -> 一句话核心 -> 公式/不变量 -> 执行步骤 -> 实现技巧 -> 正确性直觉 -> 易错点 -> 迁移** when the problem has a meaningful optimization step;
 4. for naturally direct problems with no meaningful optimization gap, do not fabricate a brute-force story merely to satisfy the sequence;
 5. change implementation only when doing so materially improves clarity/correctness or matches the intended primary solution;
 6. update the canonical generation layer before or together with the generated file;

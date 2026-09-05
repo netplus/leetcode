@@ -105,15 +105,33 @@ struct ListNode {
 class Solution {
 public:
     ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
+        // dummy 只提供稳定的结果链起点；tail 永远指向“已经合并完成部分”的最后一个节点。
+        // 因而首节点和后续节点可以使用完全相同的 tail->next 连接逻辑。
         ListNode dummy;
         ListNode* tail = &dummy;
+
         while (list1 && list2) {
+            // 两条剩余链各自有序，所以它们的表头分别是各自剩余部分的最小值；
+            // 下一结果节点只需在这两个表头之间二选一，不需要查看更后面的节点。
+            //
+            // chosen 的类型是 ListNode*&：它不是普通指针副本，而是对 list1 或 list2
+            // 这个“头指针变量”的引用。所以下面的 chosen=chosen->next 会直接推进被选中的来源指针。
             ListNode*& chosen = (list1->val <= list2->val) ? list1 : list2;
+
+            // 先把当前全局最小头节点接到结果尾部；节点本身被复用，没有复制 val 或 new 新节点。
             tail->next = chosen;
+
+            // 来源链跳过刚被消费的节点；因为 chosen 是引用，这一步等价于推进 list1 或 list2。
             chosen = chosen->next;
+
+            // tail 再移动到刚接入的节点，保持它始终指向结果链最后一个节点。
             tail = tail->next;
         }
+
+        // 一条链耗尽后，另一条剩余后缀已经整体有序，且其头就是所有未处理节点中的唯一候选；
+        // 无需再逐节点比较，可以把整段一次接到 tail 后。
         tail->next = list1 ? list1 : list2;
+
         return dummy.next;
     }
 };

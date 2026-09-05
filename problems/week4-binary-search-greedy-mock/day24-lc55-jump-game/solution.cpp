@@ -91,9 +91,14 @@ using namespace std;
 class Solution {
 public:
     bool canJump(vector<int>& nums) {
+        // farthest 压缩了所有已知路径：当前已经证明连续前缀 [0,farthest] 全部可达。
         long long farthest = 0;
         for (int i = 0; i < static_cast<int>(nums.size()); ++i) {
+            // 只有已经落在可达前缀中的位置才有资格贡献下一跳；
+            // 第一次出现 i>farthest 时形成永久缺口，后面的未达位置不可能反过来扩张前沿。
             if (i > farthest) return false;
+
+            // 把当前可达起点 i 的最远落点并入总前沿；中间所有更短落点都已经被连续前缀包含。
             farthest = max(farthest, static_cast<long long>(i) + nums[i]);
             if (farthest >= static_cast<int>(nums.size()) - 1) return true;
         }

@@ -133,21 +133,37 @@ public:
     vector<vector<int>> levelOrder(TreeNode* root) {
         vector<vector<int>> levels;
         if (!root) return levels;
+
+        // 每一轮 while 开始时，pending 中恰好按从左到右顺序保存“当前层”的全部节点。
+        // 本轮处理这些节点时，新发现的孩子只追加到队尾，成为下一层 frontier。
         queue<TreeNode*> pending;
         pending.push(root);
+
         while (!pending.empty()) {
+            // 必须在任何孩子入队之前冻结当前 queue 大小。
+            // width 只描述这一层；若把循环上界写成动态 pending.size()，
+            // size 会随着孩子入队增长，下一层节点会被错误地混进当前层。
             const int width = static_cast<int>(pending.size());
             vector<int> level;
             level.reserve(width);
+
             for (int i = 0; i < width; ++i) {
                 TreeNode* node = pending.front();
                 pending.pop();
                 level.push_back(node->val);
+
+                // 当前层按左到右出队；每个父节点又按 left、right 顺序入队孩子，
+                // 因而下一轮 pending 仍自然保持下一层的从左到右顺序。
                 if (node->left) pending.push(node->left);
                 if (node->right) pending.push(node->right);
             }
+
+            // 恰好消费 width 个旧节点后，本层已经完整结束；
+            // 此刻 pending 只剩下一层，因此现在才把这批 level 作为一个整体提交到结果。
+            // move 只是避免复制这个临时 vector，不参与 BFS 的正确性。
             levels.push_back(move(level));
         }
+
         return levels;
     }
 };

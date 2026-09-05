@@ -90,4 +90,40 @@ public:
         return answer;
     }
 };''',
+
+    84: r'''// ---------- Solution ----------
+class Solution {
+public:
+    int largestRectangleArea(vector<int>& heights) {
+        // increasing 存尚未确定右侧更矮边界的柱子下标；对应高度从栈底到栈顶单调不降。
+        stack<int> increasing;
+        long long best = 0;
+        const int n = static_cast<int>(heights.size());
+
+        // 多跑一轮 i==n，并把它视作高度 0 的虚拟右哨兵，
+        // 用来强制结算那些直到数组末尾都没遇到更矮柱的历史高度。
+        for (int i = 0; i <= n; ++i) {
+            const int currentHeight = (i == n) ? 0 : heights[i];
+
+            // 当前柱更矮时，被弹柱子的右侧第一个更矮位置刚刚确定为 i。
+            while (!increasing.empty() && heights[increasing.top()] > currentHeight) {
+                const int height = heights[increasing.top()];
+                increasing.pop();
+
+                // 弹掉当前柱后，新栈顶才暴露出它左侧第一个严格更矮的位置；
+                // 若栈空，说明左边一直没有更矮柱，用虚拟边界 -1。
+                const int leftBoundary = increasing.empty() ? -1 : increasing.top();
+
+                // 两侧更矮柱本身不能计入矩形，因此有效宽度是 (leftBoundary, i) 开区间内的柱数。
+                best = max(best, 1LL * height * (i - leftBoundary - 1));
+            }
+
+            // 当前下标加入未封口集合。i==n 的虚拟哨兵只在最后压栈，循环随即结束，
+            // 因此后续不会用它访问 heights[n]。
+            increasing.push(i);
+        }
+
+        return static_cast<int>(best);
+    }
+};''',
 }

@@ -81,4 +81,30 @@ public:
         return diameter;
     }
 };''',
+
+    98: r'''// ---------- Solution ----------
+class Solution {
+    // validate(node, lower, upper) 的契约：当前 node 必须落在所有祖先共同留下的严格开区间中，
+    // 且整棵子树也要继续满足由这个上下文递推出来的 BST 约束。
+    bool validate(TreeNode* node, long long lower, long long upper) {
+        // 空子树没有任何节点违反约束，因此天然合法。
+        if (!node) return true;
+
+        // BST 使用严格不等号；等于任一边界也非法，所以重复值会被拒绝。
+        // 这里检查的是祖先累计出的全局区间，而不是只和直接父节点比较。
+        if (node->val <= lower || node->val >= upper) return false;
+
+        // 左子树继承旧 lower，并把当前值收紧为新的严格 upper；
+        // 右子树继承旧 upper，并把当前值收紧为新的严格 lower。
+        return validate(node->left, lower, node->val)
+            && validate(node->right, node->val, upper);
+    }
+
+public:
+    bool isValidBST(TreeNode* root) {
+        // 节点值本身允许等于 INT_MIN/INT_MAX，不能用 int 极值当开区间哨兵；
+        // 用 long long 的更宽边界才能把所有合法 int 值完整包含进去。
+        return validate(root, LLONG_MIN, LLONG_MAX);
+    }
+};''',
 }

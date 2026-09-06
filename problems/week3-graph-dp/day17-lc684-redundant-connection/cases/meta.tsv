@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,cycle	官方主样例：前四条边形成 1-2-3-4 与 1-4 的环，验证首次发现同集合边时返回该边
+2	minimum,cycle	最小三角环：验证三个节点下的基本并查集闭环判断
+3	trap,ordering	冗余边出现在输入中途，后面仍有普通边：验证答案取真正形成环的边，而不是机械返回最后一条输入边
+4	branching,cycle	树先产生分支，再用 3-4 闭合局部环：验证集合连通性而非只看直接父子关系
+5	stress,long-cycle	五节点长链最后首尾相连：验证跨多层集合的 find 能识别远距离连通
+6	trap,deep-root	多个小集合先分别建立再逐步合并，最后 1-6 闭合整条链：验证必须比较 find(u) 与 find(v) 的根，不能只比较 parent[u] 与 parent[v]

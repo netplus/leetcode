@@ -24,35 +24,132 @@ jobs:
         with:
           python-version: '3.13'
 
-      - name: Collapse doubled Unicode diagram strokes in canonical pedagogy
+      - name: Rebuild diagram strings from pre-cleanup canonical source
         run: |
           python3 - <<'PY'
+          import ast
+          import subprocess
           from pathlib import Path
 
+          BASE = '810497ea3810275610e65e3d8a09aec21e9de5a5'
+          VISUAL_FILES = [
+              'tools/pedagogy_reasoning_manual.py',
+              'tools/pedagogy_week2_day9.py',
+              'tools/pedagogy_week2_day11.py',
+              'tools/pedagogy_week2_day13.py',
+              'tools/pedagogy_week2_day14.py',
+              'tools/pedagogy_week3_day18.py',
+          ]
+          PREREQ_FILE = 'tools/pedagogy_prerequisites.py'
+
+          def clean_value(value: str) -> str:
+              # At this point Python escapes such as source-level \n have already
+              # become real newlines. A remaining backslash is therefore a real
+              # diagram stroke and can be changed without touching layout escapes.
+              return value.replace('\\', '╲')
+
+          def triple_quote(value: str) -> str:
+              if '"""' in value:
+                  raise RuntimeError('unexpected triple quote in pedagogy string')
+              return '"""' + value + '"""'
+
+          def restore(path: str) -> str:
+              return subprocess.check_output(
+                  ['git', 'show', f'{BASE}:{path}'], text=True
+              )
+
+          def rewrite_visuals(path: str) -> int:
+              source = restore(path)
+              tree = ast.parse(source, filename=path)
+              replacements = []
+              changed = 0
+
+              for node in ast.walk(tree):
+                  if not isinstance(node, ast.Dict):
+                      continue
+                  for key, value in zip(node.keys, node.values):
+                      if not (isinstance(key, ast.Constant) and key.value == 'visual'):
+                          continue
+                      if not isinstance(value, ast.Constant) or not isinstance(value.value, str):
+                          raise RuntimeError(f'{path}: visual is not a literal string')
+                      old_value = value.value
+                      new_value = clean_value(old_value)
+                      changed += old_value.count('\\')
+                      segment = ast.get_source_segment(source, value)
+                      if segment is None:
+                          raise RuntimeError(f'{path}: cannot recover visual source segment')
+                      replacements.append((segment, triple_quote(new_value)))
+
+              if not replacements:
+                  raise RuntimeError(f'{path}: no visual blocks found')
+
+              for old, new in replacements:
+                  if old not in source:
+                      raise RuntimeError(f'{path}: visual source segment disappeared during rewrite')
+                  source = source.replace(old, new, 1)
+
+              Path(path).write_text(source, encoding='utf-8')
+              return changed
+
+          def rewrite_prerequisites(path: str, target_ids: set[int]) -> int:
+              source = restore(path)
+              tree = ast.parse(source, filename=path)
+              replacements = []
+              seen = set()
+              changed = 0
+
+              for node in ast.walk(tree):
+                  if not isinstance(node, ast.Assign):
+                      continue
+                  if not any(isinstance(t, ast.Name) and t.id == 'PREREQUISITE_OVERRIDES' for t in node.targets):
+                      continue
+                  if not isinstance(node.value, ast.Dict):
+                      raise RuntimeError('PREREQUISITE_OVERRIDES is not a dict')
+                  for key, value in zip(node.value.keys, node.value.values):
+                      if not isinstance(key, ast.Constant) or key.value not in target_ids:
+                          continue
+                      if not isinstance(value, ast.Constant) or not isinstance(value.value, str):
+                          raise RuntimeError(f'{path}: prerequisite lc{key.value} is not a literal string')
+                      old_value = value.value
+                      new_value = clean_value(old_value)
+                      changed += old_value.count('\\')
+                      segment = ast.get_source_segment(source, value)
+                      if segment is None:
+                          raise RuntimeError(f'{path}: cannot recover prerequisite lc{key.value}')
+                      replacements.append((segment, triple_quote(new_value)))
+                      seen.add(key.value)
+
+              if seen != target_ids:
+                  raise RuntimeError(f'{path}: prerequisite targets mismatch: seen={sorted(seen)}')
+
+              for old, new in replacements:
+                  if old not in source:
+                      raise RuntimeError(f'{path}: prerequisite source segment disappeared during rewrite')
+                  source = source.replace(old, new, 1)
+
+              Path(path).write_text(source, encoding='utf-8')
+              return changed
+
           total = 0
-          touched = []
-          for path in sorted(Path('tools').glob('pedagogy*.py')):
-              text = path.read_text(encoding='utf-8')
-              count = text.count('╲╲')
-              if not count:
-                  continue
-              path.write_text(text.replace('╲╲', '╲'), encoding='utf-8')
+          for path in VISUAL_FILES:
+              count = rewrite_visuals(path)
               total += count
-              touched.append((str(path), count))
+              print(f'{path}: converted {count} evaluated diagram backslashes')
+
+          prereq_count = rewrite_prerequisites(PREREQ_FILE, {98, 236})
+          total += prereq_count
+          print(f'{PREREQ_FILE}: converted {prereq_count} evaluated diagram backslashes')
 
           if total == 0:
-              raise RuntimeError('no doubled Unicode diagram strokes found in canonical pedagogy')
-
-          for path, count in touched:
-              print(f'{path}: collapsed {count} doubled strokes')
-          print(f'Collapsed doubled Unicode diagram strokes: {total}')
+              raise RuntimeError('no diagram backslashes converted from clean base')
+          print(f'Rebuilt warning-safe canonical diagrams from {BASE}: {total} strokes converted.')
           PY
 
       - name: Check Python sources for warnings
         run: |
           python3 -Wall -m compileall -q tools 2>&1 | tee /tmp/python-warnings.log
           if grep -E 'SyntaxWarning|DeprecationWarning|warning:' /tmp/python-warnings.log; then
-            echo 'Python warning remains after final diagram polish'
+            echo 'Python warning remains after diagram rebuild'
             exit 1
           fi
 
@@ -60,6 +157,28 @@ jobs:
         run: |
           python3 tools/gen_all.py
           python3 tools/gen_review_report.py
+
+      - name: Assert generated diagram text is structurally clean
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          bad_tokens = ('╲n', '╲r', '╲t', '╲╲')
+          offenders = []
+          checked = 0
+          for path in sorted(Path('problems').glob('**/solution.cpp')):
+              checked += 1
+              text = path.read_text(encoding='utf-8')
+              hits = [token for token in bad_tokens if token in text]
+              if hits:
+                  offenders.append((str(path), hits))
+
+          if checked != 106:
+              raise RuntimeError(f'expected 106 generated solution.cpp files, checked {checked}')
+          if offenders:
+              raise RuntimeError('corrupted diagram tokens remain: ' + repr(offenders))
+          print('Generated diagram text OK: 106/106 files have real line breaks and single Unicode strokes.')
+          PY
 
       - name: Run fidelity and metadata gates
         run: |
@@ -71,28 +190,9 @@ jobs:
           set -o pipefail
           make verify 2>&1 | tee /tmp/full-verify.log
           if grep -E 'warning:' /tmp/full-verify.log; then
-            echo 'Compiler warning remains after final diagram polish'
+            echo 'Compiler warning remains after diagram rebuild'
             exit 1
           fi
-
-      - name: Assert generated diagrams contain no doubled Unicode strokes
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-
-          offenders = []
-          checked = 0
-          for path in Path('problems').glob('**/solution.cpp'):
-              checked += 1
-              if '╲╲' in path.read_text(encoding='utf-8'):
-                  offenders.append(str(path))
-
-          if offenders:
-              raise RuntimeError('doubled Unicode tree stroke remains in: ' + ', '.join(offenders))
-          if checked != 106:
-              raise RuntimeError(f'expected 106 generated solution.cpp files, checked {checked}')
-          print('Generated diagrams OK: 106/106 solution.cpp files contain no doubled Unicode diagonal strokes.')
-          PY
 
       - name: Remove one-shot workflow and Python caches
         run: |
@@ -105,5 +205,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           git diff --cached --quiet && exit 0
-          git commit -m "docs: polish warning-free tree diagrams"
+          git commit -m "docs: rebuild warning-safe reasoning diagrams"
           git push origin HEAD:learning/reasoning-first-full-migration-v3

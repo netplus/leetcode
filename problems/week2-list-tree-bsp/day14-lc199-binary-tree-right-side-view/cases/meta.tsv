@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,bfs	官方非完整树：验证每层选择最右可见节点而不是固定取 right child
+2	boundary,empty-tree	空树：验证返回空视图
+3	minimum,boundary	单节点：右视图仅根节点
+4	trap	只有左子链：即使没有 right child，每层左节点仍从右侧可见
+5	boundary	完整二叉树：验证每层最后一个节点依次为 1,3,7
+6	trap	只有右子链：验证层序深度推进与稀疏序列化边界

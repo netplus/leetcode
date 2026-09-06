@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,cycle	官方链表尾部连回下标 1：验证快慢指针最终在环内相遇
+2	no-cycle	普通三节点链表：验证 fast 到达 null 时返回 false
+3	minimum,boundary	单节点无环：验证最小链表不会误判
+4	minimum,self-cycle	单节点指向自身：验证长度为 1 的环也能检测
+5	cycle,boundary	尾节点连回头节点：验证整个链表构成环
+6	self-cycle,trap	尾节点指向自身：验证环入口可在最后节点，不能只检查 head 附近

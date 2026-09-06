@@ -1,0 +1,8 @@
+# case	kinds	purpose
+1	official,stack	多种括号连续成对：验证每种右括号与最近未闭合左括号匹配
+2	minimum,boundary	最短合法括号对：验证基本 push/pop
+3	nested	{[]}：验证嵌套必须按 LIFO 顺序闭合
+4	mismatch,no-solution	(]：数量相等但类型不匹配，验证不能只计数
+5	unfinished,no-solution	单个左括号：遍历结束后栈非空应判 false
+6	trap,no-solution	(])：中途类型错配后即失败
+7	boundary,no-solution	首字符就是右括号 ]：验证栈为空时不能 pop 且直接失败

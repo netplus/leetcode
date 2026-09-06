@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,linked-list	偶数 1 2 3 4：验证拆半、反转后半、交替合并得到 1 4 2 3
+2	minimum,boundary	单节点：无需重排且不能断链
+3	boundary	两节点：顺序保持不变
+4	odd-length	三节点：验证中间节点只出现一次
+5	official,odd-length	五节点：验证奇数长度拆分后中点归前半且合并正确终止
+6	stress	六节点：验证偶数长度多轮交替连接不产生环或丢节点

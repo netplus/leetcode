@@ -1,0 +1,43 @@
+name: Case validation finalizer
+
+on:
+  push:
+    branches:
+      - learning/case-validation-enrichment
+
+permissions:
+  contents: read
+
+jobs:
+  inventory-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inventory case metadata gaps
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          root = Path('problems')
+          dirs = sorted({p.parent for p in root.rglob('solution.cpp')} | {p.parent for p in root.rglob('solution.c')})
+          dirs = [d for d in dirs if re.match(r'day\d+-lc\d+-', d.name)]
+          print(f'FORMAL_PROBLEMS={len(dirs)}')
+          missing=[]
+          for d in dirs:
+              cases=d/'cases'
+              ids=sorted(int(p.stem) for p in cases.glob('*.in') if p.stem.isdigit())
+              meta=cases/'meta.tsv'
+              if not meta.exists():
+                  missing.append((d,ids))
+          print(f'MISSING_META={len(missing)}')
+          for d,ids in missing:
+              print(f'MISSING|{d}|cases={ids}')
+              for i in ids:
+                  text=(d/'cases'/f'{i}.in').read_text(encoding='utf-8').rstrip('\n').replace('\n','\\n')
+                  print(f'CASE|{d}|{i}|{text}')
+          PY
+      - name: Current structural audit
+        run: python3 tools/check_case_coverage.py
+      - name: Current metadata verification
+        run: make verify-meta

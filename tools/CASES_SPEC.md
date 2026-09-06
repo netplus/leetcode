@@ -44,6 +44,33 @@ should still be clean. If the harness prints a newline for an empty string, the
 expected output must contain that newline. If the harness prints nothing, an
 empty `N.out` is valid.
 
+## `test.in` versus `cases/`
+
+`test.in` is a **single quick-run sample**, not the complete validation suite.
+It exists so `make lc<N>` / `make w<N>d<M>` can run one representative input
+without selecting a case number. Seeing only one short `test.in` therefore does
+**not** mean the problem has only one test case.
+
+The complete formal suite lives under `cases/`:
+
+```text
+cases/1.in  + cases/1.out
+cases/2.in  + cases/2.out
+...
+cases/meta.tsv
+```
+
+Repository convention intentionally keeps:
+
+```text
+test.in == cases/1.in
+```
+
+So `test.in` is best understood as an alias/copy of the first representative
+case for fast debugging. Coverage assessment, CI validation, and regression
+judging must inspect/run the whole `cases/*.in` suite rather than counting lines
+or scenarios in `test.in`.
+
 ## Validation dimensions
 
 Do not mechanically assign one case to each bullet. Choose cases that target the
@@ -147,7 +174,8 @@ make verify
 ## Conventions
 
 - One problem per `cases/` directory.
-- Keep `test.in`; it is used by `make lc<N>` / `make w<N>d<M>` quick-run.
+- Keep `test.in`; it is used only for the representative quick-run path, not as
+  evidence of full case coverage.
 - `cases/1.in` must be byte-for-byte identical to `test.in`.
 - Do not duplicate an existing input under another case number.
 - Keep case numbers contiguous from 1.

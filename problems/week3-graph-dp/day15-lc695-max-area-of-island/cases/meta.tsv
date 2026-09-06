@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,component	官方复杂网格：同时存在多个不同形状与面积的岛屿，验证每个连通块独立计数并取全局最大面积，而不是总陆地数
+2	minimum,boundary	1x1 单陆地：验证最小岛屿面积为 1
+3	minimum,no-solution	1x1 单海水：验证无岛屿时最大面积为 0
+4	no-solution,boundary	2x2 全海水：验证多格空场景不会产生虚假面积
+5	component,stress	2x2 全陆地构成面积 4 的单岛：验证从多个方向可重复到达时每个格子只计一次
+6	trap,component	左侧 L 形岛面积 3、右侧双格岛面积 2：验证扫描多个连通块时要重置局部面积并更新全局最大值，不能把不同岛屿面积累加

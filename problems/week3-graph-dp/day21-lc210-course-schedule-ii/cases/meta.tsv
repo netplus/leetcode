@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,topological-sort	简单依赖 0→1：验证入度为 0 的课程先输出
+2	cycle,no-solution	两个课程互相依赖：验证有环时返回空序列
+3	minimum,boundary	单课程无依赖：验证初始化队列与唯一合法顺序
+4	ordering	长度为 4 的依赖链：验证拓扑序必须严格尊重先修关系
+5	cycle,no-solution	三节点环：验证处理数少于课程数时判定无合法顺序
+6	self-cycle,trap	存在 0→0 自环且其他课程独立：验证不能因为能输出部分节点就误判成功

@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,heap	官方三链表：验证每次从 k 个当前表头中取全局最小并推进对应链表
+2	minimum,boundary	仅一个单节点链表：验证无需额外合并
+3	boundary,empty-input	k=0：验证没有链表时输出空链表
+4	variant	两个非空链表交错：验证基本归并顺序
+5	boundary	两个单节点链表：验证最小多路合并
+6	empty-list,trap	三条链表中含空链表：验证不会把空头节点压入堆或解引用空指针

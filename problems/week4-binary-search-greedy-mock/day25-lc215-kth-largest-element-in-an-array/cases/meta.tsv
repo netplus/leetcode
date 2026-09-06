@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,heap	官方样例：验证第 k 大而不是下标 k 或第 k 个不同值
+2	minimum,boundary	单元素 k=1：验证最小输入
+3	boundary	k=n：验证返回最小元素
+4	duplicates	重复的最大值 3：验证重复元素各自占排名位置
+5	duplicates	9/8 重复：验证第 2 大仍可等于最大值
+6	variant	多重复混合数组：验证堆/quickselect 在重复 pivot 下仍正确

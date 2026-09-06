@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,two-pointers	官方样例：验证非零元素稳定压缩到前部、0 补到尾部
+2	minimum,boundary	单个非零元素：验证无需移动
+3	boundary,zero	全 0：验证写指针与补零逻辑不会越界
+4	boundary	完全没有 0：验证保持原数组不变
+5	boundary	0 位于首位：验证第一个非零元素被移动到下标 0
+6	ordering,trap	1 0 2 0 3：验证非零元素相对顺序 1,2,3 必须保持稳定

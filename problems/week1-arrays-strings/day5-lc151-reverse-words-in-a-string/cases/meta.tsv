@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,whitespace	前后及单词间存在多空格：验证输出单词逆序且压缩为空格一份
+2	minimum,boundary	单词 hello：验证无需改变内容
+3	whitespace	单词两侧多空格：验证去除首尾空格
+4	whitespace,ordering	三个单词间多空格：验证只反转单词顺序，不反转单词内部字符
+5	boundary,whitespace	全为空格：验证解析不到单词时输出空结果
+6	whitespace	普通两词加首尾空格：验证常见清洗与逆序路径

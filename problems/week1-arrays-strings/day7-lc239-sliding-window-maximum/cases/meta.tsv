@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,monotonic-queue	官方样例：验证过期下标弹头、较小元素弹尾以及窗口最大值输出
+2	minimum,boundary	单元素 k=1：验证最小窗口
+3	boundary	k=n：只输出整个数组最大值
+4	ordering	严格递减：单调队列不会从尾部大量删除，最大值随窗口左移
+5	ordering	严格递增：每个新元素都会淘汰尾部较小值，最大值随右端更新
+6	duplicates	全相等：验证必须按下标判断过期，不能只存值导致窗口边界混乱

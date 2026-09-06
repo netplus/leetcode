@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,greedy	AAABBB、n=2：验证最高频任务构造冷却框架及并列最高频修正
+2	minimum,boundary	单任务：无论冷却时间多大都只需 1 个时间单位
+3	boundary	n=0：验证无冷却时答案直接等于任务总数
+4	trap	AAA、n=1：验证相同任务之间必须插入完整冷却槽
+5	duplicates	AABBCC、n=1：任务种类足够填满冷却槽，验证结果无需 idle
+6	stress	AAAA、n=2：单一高频任务强制产生多个 idle，验证框架公式边界

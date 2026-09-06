@@ -1,0 +1,8 @@
+# case	kinds	purpose
+1	official,palindrome	偶数长度 1 2 2 1：验证找中点、反转后半并逐节点比较
+2	no-solution	奇数长度 1 2 3：验证不对称链表返回 false
+3	minimum,boundary	单节点：天然回文
+4	boundary	两个相同节点：验证最小偶数回文
+5	boundary,no-solution	两个不同节点：验证最小非回文
+6	odd-length	奇数长度 1 2 3 2 1：验证中间节点不参与成对比较
+7	stress,no-solution	六个不同趋势节点：验证较长偶数链表不会因部分前缀匹配误判

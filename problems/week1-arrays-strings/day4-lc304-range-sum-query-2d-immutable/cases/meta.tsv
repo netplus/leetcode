@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,prefix-sum-2d	官方矩阵子区域：验证二维容斥公式四项组合
+2	minimum,boundary	1x1 单点区域：验证二维前缀额外行列的哨兵边界
+3	zero	全零矩阵整区域：验证结果为 0
+4	boundary	同时查询单点和完整 2x3：验证任意矩形包含端点语义
+5	negative	含负数的 3x3：验证二维前缀和与容斥支持负值
+6	boundary	单行矩阵：验证二维实现退化成一维区间和仍正确

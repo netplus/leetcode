@@ -33,6 +33,7 @@ verify-meta: verify-doocs
 	@python3 tools/check_plan_counts.py
 	@python3 tools/check_learning_metadata.py
 	@python3 tools/check_generated_fidelity.py
+	@python3 tools/check_case_coverage.py --strict
 
 verify: verify-meta all
 	@$(MAKE) --no-print-directory judge-all
@@ -75,8 +76,10 @@ help:
 	@echo "  make judge-d1        judge Day 1 (judge-d2..judge-d28 analogous)"
 	@echo "  make status          which problems are implemented vs still stub"
 	@echo "  make verify-doocs    exact statement audit against reviewed doocs baseline"
-	@echo "  make verify-meta     doocs + metadata + canonical/generated fidelity audit"
+	@echo "  make verify-meta     doocs + metadata + generated + strict case audit"
 	@echo "  make verify          verify-meta + compile + all judges"
+	@echo "  python3 tools/check_case_coverage.py --strict"
+	@echo "                      require >=6 cases + complete intent metadata for all 106 formal problems"
 	@echo "  make clean           clean"
 
 # ---------------------------------------------------------------------------

@@ -1,0 +1,8 @@
+# case	kinds	purpose
+1	official,dp	官方样例：验证每格取来自上方/左方的较小累计代价
+2	minimum,boundary	1x1：验证答案就是唯一格子的值
+3	boundary	单行：验证只能连续向右，首行必须做前缀累加
+4	boundary	单列：验证只能连续向下，首列必须做前缀累加
+5	boundary	全零网格：验证最小路径和允许为 0
+6	trap	2x2 非对称代价：验证不能局部只看下一格最小值而忽略累计代价
+7	variant	2x3 多条竞争路径：验证 DP 会在中间格重新比较来自两个方向的累计值

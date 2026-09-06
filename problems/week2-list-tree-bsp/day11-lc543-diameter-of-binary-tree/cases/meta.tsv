@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official	官方主样例：验证某节点左右子树高度之和可以形成经过该节点的候选直径
+2	minimum,boundary	单节点树：验证直径按边数计算，单节点答案为 0
+3	ordering,stress	单侧深链：验证没有左右分叉时直径退化为根到最深叶子的边数
+4	minimum,boundary	两节点树：验证最小非零直径为 1 条边
+5	stress	完整三层树：验证左右等高时根节点处形成 4 条边的最大直径
+6	trap,stress	全局最长路径完全位于根的左子树内部：专门击穿只计算 root 左高 + root 右高、错误假设直径一定经过整棵树根的实现

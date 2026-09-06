@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,component	官方主样例：城市 0/1 连通而城市 2 独立，验证按连通分量计数得到两个省份
+2	minimum,boundary	单城市自连接矩阵：验证最小输入仍构成一个省份
+3	boundary,disconnected	单位矩阵表示三个城市完全互不连通：验证每个未访问城市都应开启一个新省份
+4	boundary,connected	全 1 矩阵表示所有城市直接相连：验证多条冗余连接不会导致重复计数
+5	component,stress	四城市形成“单点 + 两点连通块 + 单点”三个省份：验证扫描遇到已属于旧分量的城市时不会再次开新分量
+6	minimum,connected	两个城市彼此连接：验证最小非平凡连通块只计一个省份

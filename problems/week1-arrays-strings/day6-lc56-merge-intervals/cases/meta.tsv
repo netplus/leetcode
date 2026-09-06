@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,interval	官方部分重叠：验证排序后合并 [1,3] 与 [2,6]
+2	minimum,boundary	单区间：验证直接保留
+3	overlap	三个链式重叠区间：验证合并右端点持续取 max
+4	no-overlap	三个完全分离区间：验证不应误合并
+5	containment,trap	[2,3] 被 [1,4] 包含且输入逆序：验证排序和 max(end) 逻辑
+6	boundary	[1,2] 与 [2,3] 端点相接：按题意应视为重叠并合并

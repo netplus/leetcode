@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,reverse-search	官方复杂高度图：验证从两片海岸反向沿“高度不下降”方向搜索，再取两组可达集合交集
+2	minimum,boundary	1x1 单格同时接触两片海洋：验证边界初始化去重且该格必然入答案
+3	boundary,single-row	1x3 递增单行：单行中的每个格子同时位于 Pacific 的上边界和 Atlantic 的下边界，验证不能按普通二维内部点逻辑遗漏整行
+4	boundary,single-row	1x3 递减单行：与 case3 方向相反但仍应全部双海可达，验证结论来自边界归属而非高度单调方向猜测
+5	boundary,equality	2x2 全等高：水可沿相等高度传播，验证反向搜索条件必须允许 neighbor >= current 的等号
+6	boundary,single-column	3x1 递减单列：每格同时位于 Pacific 左边界和 Atlantic 右边界，验证单列时两组多源起点正确合并

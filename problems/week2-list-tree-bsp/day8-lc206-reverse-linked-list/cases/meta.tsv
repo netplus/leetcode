@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official	官方样例：验证普通多节点链表的 next 指针全部反转且新 head 为原尾节点
+2	minimum,boundary	空链表：验证 head == nullptr 时直接返回空链
+3	minimum,boundary	单节点：验证唯一节点仍指向 nullptr，不产生自环
+4	boundary	双节点：验证最小非平凡 rewiring，原 head 必须成为尾节点并断开旧 next
+5	variant	全负数节点值：验证反转逻辑只依赖指针结构，与数值正负无关
+6	duplicates,trap	含重复值的链表：验证实现必须保留全部节点并只反转链接，不能按值去重、重排或误把相同值节点视为同一节点

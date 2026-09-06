@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,stress	官方完整三层树：验证每个节点都要交换左右子树，而不是只交换根节点的两个直接孩子
+2	minimum,boundary	空树：验证空根直接返回，不发生解引用
+3	minimum,boundary	单节点：验证没有孩子时树结构保持不变
+4	boundary	只有左孩子：反转后该孩子必须移动到右侧，验证单侧子树交换
+5	boundary	只有右孩子：反转后该孩子必须移动到左侧，验证与 case4 对称的单侧边界
+6	stress	根同时有左右孩子：验证最小双分支结构的左右交换及返回根指针语义

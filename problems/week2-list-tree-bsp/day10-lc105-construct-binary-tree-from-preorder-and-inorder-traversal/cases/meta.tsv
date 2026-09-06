@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official	官方样例：验证 preorder 根节点定位和 inorder 左右子树切分
+2	minimum,boundary	单节点：验证递归区间长度为 1 时直接构造叶子
+3	boundary,ordering	只有左孩子：验证 inorder 中根在末尾时右子树为空
+4	boundary,ordering	只有右孩子：验证 inorder 中根在开头时左子树为空
+5	ordering,stress	连续左链：验证 preorder 游标与 inorder 子区间在多层递归中保持一致
+6	trap,stress	根左右子树都非空且规模不同，右子树又缺左孩子：验证不能按固定长度切 preorder，必须由 inorder 中根位置推导左右规模

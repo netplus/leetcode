@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official	官方样例：验证按层输出以及同层节点保持从左到右顺序
+2	minimum,boundary	空树：验证根节点为空时直接返回空结果
+3	minimum,boundary	单节点树：验证一层且仅一个节点时的队列边界
+4	stress,ordering	完整三层满二叉树：验证每一轮必须固定当前层队列长度，不能把下一层节点混入本层
+5	boundary,ordering	仅沿右孩子延伸的链状树：验证缺失左孩子不会破坏层级推进
+6	trap,stress	左右子树都存在但深度不对称：验证 BFS 仍按真实层级分组，不能依赖完全二叉树下标或固定节点数

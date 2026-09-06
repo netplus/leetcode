@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,cycle	官方尾部连回下标 1：验证相遇后从 head 与 meeting 同速前进可找到入口
+2	no-cycle	无环链表：验证返回空入口
+3	minimum,boundary	单节点无环：验证 fast/fast->next 边界
+4	minimum,self-cycle	单节点自环：入口就是唯一节点
+5	cycle,boundary	尾节点连回 head：验证入口可位于下标 0
+6	self-cycle,trap	三节点且尾节点自环：验证入口可位于尾节点而非相遇点的固定位置

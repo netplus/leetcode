@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,two-pointers	官方五节点删除倒数第 2 个：验证固定 n 间距后 slow 指向待删节点前驱
+2	minimum,boundary	单节点删除倒数第 1 个：验证 dummy 节点支持删除头节点并得到空链表
+3	boundary	两节点删除尾节点：验证 n=1 时修改前驱 next
+4	boundary	两节点删除头节点：验证 n=length 的头删场景
+5	boundary	四节点删除倒数第 4 个：再次验证删除 head 不需特殊分支
+6	variant	六节点删除中部倒数第 3 个：验证双指针间距在一般位置保持正确

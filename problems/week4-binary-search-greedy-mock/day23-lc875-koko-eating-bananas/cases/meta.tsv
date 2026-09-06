@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,answer-binary-search	官方样例：验证速度越大所需小时越少的单调性
+2	minimum,boundary	单堆且 H=1：速度必须等于该堆大小
+3	boundary	H 等于堆数：每堆只能用一小时，答案等于最大堆
+4	trap	7 2 5、H=6：验证小时计算必须使用向上取整 pile/speed
+5	official	大堆混合样例：验证二分在较大搜索空间内找到最小可行速度
+6	boundary	H 远大于堆数：验证最低速度可降到 1

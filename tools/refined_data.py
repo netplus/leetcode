@@ -37,6 +37,8 @@ from pedagogy_week4_day26 import PEDAGOGY_WEEK4_DAY26
 from pedagogy_derivations import DERIVATION_OVERRIDES
 from pedagogy_derivations_backfill import DERIVATION_BACKFILL_OVERRIDES
 from pedagogy_prerequisites import PREREQUISITE_OVERRIDES
+from pedagogy_reasoning_first import REASONING_FIRST_OVERRIDES
+from pedagogy_reasoning_manual import MANUAL_REASONING_OVERRIDES
 from code_comment_overrides import CODE_COMMENT_OVERRIDES
 from code_comments_week1_day2 import CODE_COMMENTS_WEEK1_DAY2
 from code_comments_week1_rest import CODE_COMMENTS_WEEK1_REST
@@ -144,6 +146,23 @@ for num, derivation in DERIVATIONS.items():
         raise RuntimeError(f"lc{num}: empty optimization derivation")
     REFINEMENTS[num] = {**REFINEMENTS[num], "derivation": derivation}
 
+# Full-plan reasoning-first bridge. LC-739 / LC-84 already define these fields
+# in their dedicated pedagogy module; this override supplies the remaining formal
+# problems without replacing reviewed visual/core/formula/proof/code material.
+for num, patch in REASONING_FIRST_OVERRIDES.items():
+    if num not in REFINEMENTS:
+        raise RuntimeError(f"reasoning-first override references unknown lc{num}")
+    REFINEMENTS[num] = {**REFINEMENTS[num], **patch}
+
+# High-touch semantic corrections for problems where the generated bridge
+# would otherwise describe the optimized algorithm as the "general solution".
+# These fields intentionally override only the reasoning bridge; reviewed
+# core/formula/steps/proof/code remain owned by the existing pedagogy layers.
+for num, patch in MANUAL_REASONING_OVERRIDES.items():
+    if num not in REFINEMENTS:
+        raise RuntimeError(f"manual reasoning override references unknown lc{num}")
+    REFINEMENTS[num] = {**REFINEMENTS[num], **patch}
+
 # Key implementation comments are maintained as a separate high-touch layer.
 # Historical reviews are split into small learning-day modules, but entries are
 # still added only after an independent per-problem review.
@@ -215,7 +234,7 @@ def _render_reasoning_first_analysis(item: dict) -> str:
     """Render problem reasoning before naming the specialized algorithm."""
     lines = [
         "// ----------------------------------------------------------------------------",
-        f"// 解法精讲｜{item['pattern']}",
+        "// 解法精讲｜从题目直觉到可复用算法",
         "//",
     ]
 
@@ -228,7 +247,9 @@ def _render_reasoning_first_analysis(item: dict) -> str:
     if item.get("prerequisite"):
         section = _append_numbered_text_block(lines, section, "必要背景知识", item["prerequisite"])
 
-    section = _append_numbered_text_block(lines, section, "专项算法背景", item["algorithm_background"])
+    section = _append_numbered_text_block(
+        lines, section, f"专项算法｜{item['pattern']}", item["algorithm_background"]
+    )
     section = _append_numbered_text_block(lines, section, "核心算法", item["core"])
     section = _append_numbered_text_block(lines, section, "公式 / 不变量", item["formula"])
 
@@ -345,6 +366,18 @@ def validate_coverage(problems: list[dict]) -> None:
         absent = sorted(required - set(item))
         if absent:
             raise RuntimeError(f"lc{num}: refinement fields missing: {absent}")
+
+        reasoning_required = {
+            "visual", "general_solution", "limitations", "generalization",
+            "algorithm_background", "core", "formula",
+        }
+        reasoning_absent = sorted(reasoning_required - set(item))
+        if reasoning_absent:
+            raise RuntimeError(
+                f"lc{num}: reasoning-first fields missing after full migration: "
+                f"{reasoning_absent}"
+            )
+
         if len(item["key_points"]) != 3 or any(not point.strip() for point in item["key_points"]):
             raise RuntimeError(f"lc{num}: expected exactly three non-empty key points")
         if "class Solution" not in item["code"]:

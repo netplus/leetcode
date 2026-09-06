@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,index-placement	1 2 0：验证 1..n 已就位后返回 n 以内首缺失值 3
+2	official,negative	3 4 -1 1：验证忽略非正数并把有效值放到 value-1 位置
+3	no-small-positive	7 8 9 11 12：验证缺失 1 时快速返回 1
+4	minimum,boundary	单元素 1：验证答案为 2
+5	boundary	1..5 全齐：验证返回 n+1
+6	negative,zero	全为非正数：验证这些值都不参与索引放置且答案为 1

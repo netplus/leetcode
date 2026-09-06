@@ -1,0 +1,9 @@
+# case	kinds	purpose
+1	official	官方样例：验证一般起伏温度下多个历史日期被未来更高温度结算
+2	minimum,boundary	单日输入：验证没有未来日期时答案为 0
+3	ordering	严格递增：每一天都由紧邻下一天结算，验证距离始终为 1
+4	no-solution,ordering	严格递减：所有日期都找不到更高温度，验证未决状态最终保持 0
+5	duplicates,boundary	所有温度相等：验证“更高”必须是严格大于，相等不能结算
+6	minimum,boundary	两天且第二天更高：验证最短的有效结算距离
+7	duplicates,trap	前两天温度相等但第三天更高：专门击穿把 >= 当作更高、在相等温度处提前 pop 的实现
+8	stress,trap	前三天递减、最后一天最高：一个当前元素必须通过 while 连续结算多个历史日期，专门区分 while 与 if

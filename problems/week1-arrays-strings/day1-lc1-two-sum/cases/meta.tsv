@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,hash	官方样例：验证边扫描边查 complement=target-x 的主路径
+2	minimum,boundary	两个元素恰好成对：验证最小合法输入和下标返回
+3	negative,zero	含负数与 0、target=0：验证哈希键支持负数且不依赖正数假设
+4	duplicates,trap	3+3=6：验证同值配对需要两个不同下标，不能把当前元素先插入后与自己匹配
+5	ordering	补数 3 很早出现、97 很晚出现：验证历史索引能跨较长距离命中
+6	negative	负目标 -5 由两个负数组成：验证 complement 计算和哈希查询符号正确

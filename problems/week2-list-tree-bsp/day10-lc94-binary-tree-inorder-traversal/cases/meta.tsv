@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official	官方样例：验证 inorder 必须先完成左子树，再访问根，最后进入右子树
+2	minimum,boundary	空树：验证空根直接返回空序列
+3	minimum,boundary	单节点：验证叶子节点恰好访问一次
+4	stress,ordering	完整三层树：验证每个局部子树都遵循 left-root-right
+5	ordering	连续右链：验证没有左子树时根应先于其右侧后继依次输出
+6	trap,stress	左右子树都存在且左侧内部还有右孩子：验证迭代实现必须反复下探最左节点，并在回退后正确进入该节点的右子树

@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official	官方样例：验证 postorder 必须在左右子树都处理完后再访问根
+2	minimum,boundary	空树：验证空根返回空序列
+3	minimum,boundary	单节点：验证叶子只输出一次且立即成为当前子树结果
+4	stress,ordering	完整三层树：验证 left-right-root 的相对顺序在每个子树都成立
+5	ordering	连续左链：验证最深叶子必须最先输出、根最后输出
+6	trap,stress	左右子树都存在且结构不对称：验证迭代实现不能只做简单 root-right-left 而忘记最终反转/访问状态，最终顺序应严格为 left-right-root

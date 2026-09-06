@@ -1,0 +1,9 @@
+# case	kinds	purpose
+1	official	主样例：验证多个重叠 booking 叠加后通过一次前缀和还原每个航班座位数
+2	minimum,boundary	单航班、单 booking 且区间覆盖到 n：验证最小输入和 last == n 边界
+3	no-solution,boundary	没有任何 booking：验证差分数组全 0 时还原结果仍全 0
+4	duplicates,boundary	两条完全相同的全区间 booking：验证差分端点增量可以重复累加
+5	duplicates,minimum	单航班上连续三次加座：验证同一 first/last 的多次更新不会覆盖前一次增量
+6	boundary	两段首尾不相交区间：验证区间结束后的影响必须停止且中间未覆盖航班保持 0
+7	trap,boundary	内部区间 [2,4] 加上单点 [3,3]：专门击穿把停止位置错写成 last-1 的 inclusive/exclusive off-by-one
+8	trap,boundary,stress	三条 booking 都结束在最后一班航班：验证 last == n 时不能写越界的 diff[last]，且不同起点的增量能持续到数组末尾

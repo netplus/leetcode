@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official	官方主样例：验证三个不同元素能生成完整 3! 个排列
+2	minimum,boundary	单元素只有一个排列：验证递归终止条件和结果收集
+3	boundary	两个元素生成两个排列：验证选择与撤销能在最小非平凡规模上往返一次
+4	values,boundary	包含负数、0、正数：验证算法只依赖元素身份而不依赖数值大小或符号
+5	stress	四元素生成 24 个排列：验证 used/path 状态在较深搜索树中能完整恢复
+6	trap,backtracking	输入顺序为 [2,1,3] 而非升序：验证状态与原数组位置正确绑定，不能依赖预排序或在分支返回后遗留 used 标记

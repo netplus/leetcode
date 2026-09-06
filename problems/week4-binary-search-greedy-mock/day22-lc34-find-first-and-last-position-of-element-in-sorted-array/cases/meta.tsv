@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,duplicates	官方重复目标 8：验证分别寻找左边界和右边界
+2	no-solution	目标位于已有值之间但不存在：验证边界二分最终返回 [-1,-1]
+3	minimum,boundary	单元素且命中：验证左右边界相同
+4	duplicates,boundary	所有元素都等于目标：验证结果覆盖完整数组
+5	no-solution,boundary	目标大于数组最大值：验证越界插入点不会被误判命中
+6	duplicates	目标 7 连续出现两次：验证左闭/右开或闭区间实现的 off-by-one

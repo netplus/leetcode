@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,string-scan	官方 flower/flow/flight：验证逐列比较在首次分歧处停止
+2	no-solution	首字符即不同：验证可返回空前缀
+3	minimum,boundary	仅一个字符串：最长公共前缀就是字符串本身
+4	duplicates	两个完全相同字符串：验证前缀可延伸到完整长度
+5	boundary	一个字符串是另一个的完整前缀：验证以最短字符串长度为上界
+6	boundary	长度 1 的最短串 x：验证扫描不会越过短串末尾

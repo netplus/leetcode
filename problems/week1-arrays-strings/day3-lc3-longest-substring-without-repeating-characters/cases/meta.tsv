@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,sliding-window	官方 abcabcbb：验证重复字符推动左边界并更新最大长度
+2	duplicates	全部同字符：验证窗口长度始终最多为 1
+3	official,trap	pwwkew：验证答案是子串 wke 而非不连续子序列
+4	minimum,boundary	单字符：验证最小非空字符串
+5	boundary,whitespace	单个空格字符：验证空格也是普通字符而不是空输入
+6	trap	abba：经典左边界回退陷阱，必须 left=max(left,last[a]+1)

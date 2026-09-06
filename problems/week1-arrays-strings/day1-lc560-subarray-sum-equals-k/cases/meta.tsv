@@ -1,0 +1,9 @@
+# case	kinds	purpose
+1	official	官方主样例：验证连续子数组计数的基本路径
+2	minimum,boundary	单元素恰好命中 k：验证初始前缀 count[0]=1 能统计从下标 0 开始的答案
+3	trap,duplicates	含负数且 k=0，同一前缀和重复出现：验证不能使用只适用于正数的普通滑窗，也不能丢失重复前缀
+4	no-solution,boundary	所有元素为正且 k=0：验证无解时返回 0
+5	stress	多个长度为 1 的答案连续出现：验证每个当前位置都要累计历史前缀而不是提前停止
+6	boundary,trap	同时存在从下标 0 开始的 [1,2] 与后续单元素 [3]：验证虚拟前缀 0 和一般历史前缀都能贡献答案
+7	duplicates,stress,trap	六个 0 使前缀和 0 高频重复，答案为 21：专门击穿把 count[prefix-k] 错写成 bool 存在性的实现
+8	duplicates,trap,stress	正负交替令前缀 0/3 反复出现并产生 6 个答案：验证负数场景下必须按历史前缀频次累计

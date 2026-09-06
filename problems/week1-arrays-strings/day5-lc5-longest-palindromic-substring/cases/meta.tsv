@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,palindrome	babad：验证奇数长度中心扩展以及存在多个同长度最优解
+2	even-length	abba：验证偶数回文中心在两个字符之间
+3	minimum,boundary	单字符：验证最短回文本身长度为 1
+4	duplicates	全部相同字符：验证扩展能覆盖整个字符串
+5	boundary	racecar：验证整串为奇数回文时可全部返回
+6	no-long-palindrome	abcd：验证没有长度>1 回文时仍返回某个单字符

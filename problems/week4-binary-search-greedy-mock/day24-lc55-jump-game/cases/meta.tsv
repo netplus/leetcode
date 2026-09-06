@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,greedy	官方可达样例：验证维护最远可达位置
+2	official,no-solution	中间 0 形成不可跨越断点：验证 i>farthest 时及时失败
+3	minimum,boundary	单元素 0：起点即终点，应判可达
+4	boundary	两元素 [1,0]：验证一步刚好到终点
+5	no-solution,trap	起点为 0 且 n>1：验证不能从未到达的位置继续更新 farthest
+6	stress	连续多个 1：验证多次逐步扩展恰好到达末尾

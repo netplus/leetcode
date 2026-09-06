@@ -1,0 +1,8 @@
+# case	kinds	purpose
+1	official,trap	官方反例：根的右孩子 4 小于根 5，验证最基本的右子树下界
+2	official	标准三节点 BST：验证合法树返回 true
+3	minimum,boundary	单节点树：验证没有子树约束时天然合法
+4	trap,stress	右子树内部节点 6 虽小于父节点 15，却也小于祖先根 10：专门击穿只比较直接父子关系的实现
+5	stress	与 case4 形状相同但内部节点改为 12，验证携带祖先上下界时不会误杀合法右子树节点
+6	minimum,boundary	负数单节点：验证实现不能把 0 当作隐含上下界
+7	duplicates,trap	左孩子与根相等：验证 BST 要求严格小于/大于，使用 <= 或 >= 放宽重复值会出错

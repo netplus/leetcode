@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,interval	官方重叠会议：验证并发峰值为所需会议室数
+2	minimum,boundary	单会议：验证至少需要 1 间
+3	boundary	前一会议结束时间等于后一开始时间：验证可复用同一会议室
+4	trap	两个真正重叠区间：验证不能只按会议数量或端点相等判断
+5	boundary,empty-input	无会议：验证结果为 0
+6	boundary	三段首尾相接：验证半开区间语义，可全程只用一间房

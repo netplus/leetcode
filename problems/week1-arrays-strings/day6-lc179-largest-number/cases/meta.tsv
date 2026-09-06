@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,custom-sort	10 与 2：验证比较 a+b 与 b+a，而不是数值降序
+2	minimum,boundary	单个 0：验证输出规范为 "0"
+3	zero,duplicates	多个 0：验证不能输出 "000"，应整体规范成单个 0
+4	trap	3 与 30：验证 330 > 303，不能按字典序/数值大小直接排序
+5	trap	34323 与 3432：验证共同长前缀下拼接比较器的传递语义
+6	boundary	大整数文本与 9/91：验证拼接比较避免整数转换溢出

@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official	官方样例：验证左右子树深度不同时取较大值再加 1
+2	minimum,boundary	空树：验证深度为 0 的递归基线
+3	minimum,boundary	单节点：验证叶子节点深度为 1
+4	ordering,stress	单侧深链：验证递归能沿一条分支持续累计深度
+5	stress	完整三层树：验证左右深度相等时返回统一层数
+6	trap,stress	左右都非空且左侧更深：专门击穿把左右深度相加、取错分支或只遍历一侧的实现

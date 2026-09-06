@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,two-pointers	官方有序数组：验证 sum<target 左移、sum>target 右移
+2	minimum,boundary	两个元素恰好命中：验证 1-based 下标和最小区间
+3	negative	含负数且 target=0：验证有序二指针不依赖非负元素
+4	duplicates	末尾两个 3 组成 target=6：验证允许相同值但必须不同位置
+5	duplicates,trap	两个 50 组成 100：验证不能按“值唯一”去重导致漏掉正确答案
+6	negative,boundary	两个元素组成负目标：验证端点直接命中

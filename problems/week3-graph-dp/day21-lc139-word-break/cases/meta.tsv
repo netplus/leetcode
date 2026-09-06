@@ -1,0 +1,8 @@
+# case	kinds	purpose
+1	official,dp	官方 leetcode=leet+code：验证按可达前缀向后扩展
+2	minimum,boundary	单字符且在字典中：验证最小成功分词
+3	minimum,no-solution	单字符不在字典：验证不可达前缀不会传播
+4	official	applepenapple：验证字典单词可以重复使用
+5	official,no-solution	catsandog：存在多个局部可分前缀但整体不可分，抓贪心分词
+6	trap,overlap	aaaaaaa 配 aaa/aaaa：验证需要尝试重叠长度组合而非固定最长/最短优先
+7	variant	abc 配单字符字典：验证连续多次状态转移最终到达末尾

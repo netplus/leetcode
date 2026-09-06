@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,recurrence	官方 n=3：验证到达第 3 阶的方案来自第 2 阶走 1 步与第 1 阶走 2 步两类互斥来源之和
+2	minimum,boundary	n=1 只有一种走法：验证最小状态初始化，避免错误套递推访问 dp[-1]
+3	boundary	n=2 有两种走法：验证第二个基例必须是 2，而不是直接从统一循环错误推导
+4	recurrence	中等 n=4：验证 dp[i]=dp[i-1]+dp[i-2] 连续推进
+5	recurrence	中等 n=5：继续验证滚动变量更新顺序不会覆盖仍需使用的前一状态
+6	stress	较大的 n=10：验证多轮递推后结果仍正确，能暴露初始化或滚动更新中的累计误差

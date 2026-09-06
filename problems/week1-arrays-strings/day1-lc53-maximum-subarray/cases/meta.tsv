@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,dp	官方样例：验证在负贡献前缀后重新开始并累计 4,-1,2,1
+2	minimum,boundary	单个正数：验证状态初始化直接取 nums[0]
+3	boundary,negative	全负数组：答案必须是最大的单个负数，不能错误返回 0
+4	boundary	全正数组：验证最优子数组可以覆盖整个数组
+5	zero,trap	-1,0,-1：验证 0 本身可作为最优非空子数组
+6	stress	正数与 -1 交替：验证小负贡献仍值得保留，不能遇负数就强制清零

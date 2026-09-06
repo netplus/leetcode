@@ -1,0 +1,8 @@
+# case	kinds	purpose
+1	official,answer-binary-search	官方样例：验证以最大子数组和为答案做单调可行性二分
+2	minimum,boundary	单元素单段：答案等于元素本身
+3	boundary	k=1：只能整段，答案等于数组总和
+4	boundary	k=n：每个元素单独一段，答案等于最大元素
+5	variant	递增数组分两段：验证贪心计段函数与最小可行上限
+6	boundary	k=n 且含大元素 10：再次锁定二分下界必须是 max(nums)
+7	trap	存在孤立大值 100：验证答案至少为最大元素，不能通过平均值估算二分下界

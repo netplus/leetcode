@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official	官方样例：只反转中间 [2,4]，验证反转段前驱、反转段尾节点与后继三处链接都能重新接好
+2	minimum,boundary	单节点且 left==right：验证最小输入不发生任何指针修改
+3	boundary	left=1,right=n 整链反转：验证虚拟头节点或头指针更新能正确处理原 head 被移到尾部
+4	boundary	反转从 head 开始但不覆盖尾部：验证新 head 与未反转后缀能正确连接
+5	boundary	反转区间到链表尾部结束：验证反转后的原区间头必须成为最终 tail 并指向 nullptr
+6	trap,boundary	多节点链表中 left==right：验证长度为 1 的内部区间是严格 no-op，防止循环次数或 right-left 计算错误多移动一个节点

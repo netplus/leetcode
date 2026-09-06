@@ -121,14 +121,14 @@ def build_reasoning_source() -> str:
             ),
         }
 
-    preamble = (
-        '"""Full-plan reasoning-first bridge fields.\\n\\n'
-        'Generated once from the previously reviewed per-problem pedagogy. These fields\\n'
-        'separate the natural solution, its limitation, the reusable rule, and the point\\n'
-        'where the named algorithm is finally introduced.\\n'
-        '"""\\n\\n'
-        'REASONING_FIRST_OVERRIDES = '
-    )
+    preamble = '''"""Full-plan reasoning-first bridge fields.
+
+Generated once from the previously reviewed per-problem pedagogy. These fields
+separate the natural solution, its limitation, the reusable rule, and the point
+where the named algorithm is finally introduced.
+"""
+
+REASONING_FIRST_OVERRIDES = '''
     return preamble + pprint.pformat(overrides, width=100, sort_dicts=True) + "\n"
 
 

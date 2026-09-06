@@ -8,7 +8,7 @@ able to expose a concrete class of wrong implementation.
 
 Repository target:
 
-- **6 cases minimum** for a fully migrated problem;
+- **6 cases minimum** for a fully migrated formal LeetCode problem;
 - **7–8 cases** for high-value problems whose common mistakes need additional
   dedicated coverage;
 - never add near-duplicate inputs merely to reach a number.
@@ -19,12 +19,16 @@ The repository is still migrating from the historical 4-case floor. Run:
 python3 tools/check_case_coverage.py
 ```
 
-for the structural audit plus migration-debt report. Once every problem reaches
-the new standard, `--strict` becomes the intended hard gate:
+for the structural audit plus migration-debt report. Once every formal problem
+reaches the new standard, `--strict` becomes the intended hard gate:
 
 ```bash
 python3 tools/check_case_coverage.py --strict
 ```
+
+The case-coverage gate applies to the 106 formal `dayN-lcM-*` problem units.
+Week 4 mock packages are separate learning artifacts and are validated by their
+own workflow rather than being counted as formal LC suites.
 
 ## File format
 
@@ -87,24 +91,22 @@ Format, one line per case:
 Rules:
 
 - column 1: positive case number;
-- column 2: one or more comma-separated kinds;
+- column 2: one or more comma-separated retrieval labels;
 - column 3: concise explanation of **what bug or boundary this case validates**;
 - metadata must cover every `N.in` / `N.out` pair exactly once.
 
-Allowed kinds:
+Kinds are deliberately extensible. Use lowercase words or kebab-case labels such
+as:
 
-- `official`
-- `minimum`
-- `boundary`
-- `trap`
-- `no-solution`
-- `duplicates`
-- `ordering`
-- `overflow`
-- `stress`
-- `variant`
+- general labels: `official`, `minimum`, `boundary`, `trap`, `no-solution`,
+  `duplicates`, `ordering`, `overflow`, `stress`, `variant`;
+- mechanism labels when they improve retrieval: `backtracking`, `cycle`,
+  `shared-identity`, `greedy`, `deep-root`, `reuse`, etc.
 
-The kind is only a retrieval label. The third column is the important part.
+Do not invent a new kind merely to paraphrase the purpose column. The kind is a
+short retrieval label; **the third column is the authoritative explanation**.
+The audit validates kind syntax rather than enforcing a closed vocabulary, so a
+new algorithm family does not require editing the checker first.
 
 ## Do not use a hidden reference solution
 

@@ -1,0 +1,8 @@
+# case	kinds	purpose
+1	official,multi-source	官方主样例：腐烂按分钟逐层扩散，验证同一分钟新腐烂的橘子只能影响下一层，最终分钟数等于 BFS 传播层数
+2	minimum,boundary	1x1 已腐烂且没有鲜橘：验证无需进入传播过程，答案为 0
+3	minimum,no-solution	1x1 只有鲜橘且没有任何腐烂源：验证 fresh>0 但初始队列为空时返回 -1
+4	minimum,boundary	1x1 空格：没有鲜橘也没有腐烂橘，验证空状态答案为 0
+5	boundary,direct	单行 [2,1]：一步传播即可完成，验证最小正分钟数为 1
+6	trap,no-solution	腐烂橘与鲜橘只在对角线上相邻，中间被 0 隔断：验证传播仅允许四方向，不能把对角视为相邻
+7	boundary,multi-source	2x2 全部已经腐烂：多个初始源但 fresh=0，验证不能因为队列非空就错误增加一分钟

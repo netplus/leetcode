@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official	官方样例：验证 preorder 必须先访问根，再访问右子树中的左孩子
+2	minimum,boundary	空树：验证迭代/递归入口对空根直接返回
+3	minimum,boundary	单节点：验证根节点只访问一次
+4	stress,ordering	完整三层树：验证每个子树都遵循 root-left-right 顺序
+5	ordering	连续左链：验证递归或显式栈能沿左分支持续下探且不漏节点
+6	trap,stress	左右子树都存在且结构不对称：验证显式栈实现必须先压右再压左，保证实际访问顺序仍是 root-left-right

@@ -24,18 +24,28 @@ jobs:
         with:
           python-version: '3.13'
 
-      - name: Collapse doubled Unicode tree strokes
+      - name: Collapse doubled Unicode diagram strokes in canonical pedagogy
         run: |
           python3 - <<'PY'
           from pathlib import Path
 
-          path = Path('tools/pedagogy_prerequisites.py')
-          text = path.read_text(encoding='utf-8')
-          count = text.count('╲╲')
-          if count != 5:
-              raise RuntimeError(f'expected exactly 5 doubled prerequisite tree strokes, got {count}')
-          path.write_text(text.replace('╲╲', '╲'), encoding='utf-8')
-          print('Collapsed 5 doubled prerequisite tree strokes to single Unicode diagonals.')
+          total = 0
+          touched = []
+          for path in sorted(Path('tools').glob('pedagogy*.py')):
+              text = path.read_text(encoding='utf-8')
+              count = text.count('╲╲')
+              if not count:
+                  continue
+              path.write_text(text.replace('╲╲', '╲'), encoding='utf-8')
+              total += count
+              touched.append((str(path), count))
+
+          if total == 0:
+              raise RuntimeError('no doubled Unicode diagram strokes found in canonical pedagogy')
+
+          for path, count in touched:
+              print(f'{path}: collapsed {count} doubled strokes')
+          print(f'Collapsed doubled Unicode diagram strokes: {total}')
           PY
 
       - name: Check Python sources for warnings
@@ -65,19 +75,23 @@ jobs:
             exit 1
           fi
 
-      - name: Assert generated tree diagrams use single strokes
+      - name: Assert generated diagrams contain no doubled Unicode strokes
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          targets = [
-              Path('problems/week2-list-tree-bsp/day11-lc98-validate-binary-search-tree/solution.cpp'),
-              Path('problems/week2-list-tree-bsp/day11-lc236-lowest-common-ancestor-of-a-binary-tree/solution.cpp'),
-          ]
-          for path in targets:
-              text = path.read_text(encoding='utf-8')
-              if '╲╲' in text:
-                  raise RuntimeError(f'{path}: doubled Unicode tree stroke remains')
-          print('Generated LC98/LC236 diagrams use single Unicode diagonal strokes.')
+
+          offenders = []
+          checked = 0
+          for path in Path('problems').glob('**/solution.cpp'):
+              checked += 1
+              if '╲╲' in path.read_text(encoding='utf-8'):
+                  offenders.append(str(path))
+
+          if offenders:
+              raise RuntimeError('doubled Unicode tree stroke remains in: ' + ', '.join(offenders))
+          if checked != 106:
+              raise RuntimeError(f'expected 106 generated solution.cpp files, checked {checked}')
+          print('Generated diagrams OK: 106/106 solution.cpp files contain no doubled Unicode diagonal strokes.')
           PY
 
       - name: Remove one-shot workflow and Python caches

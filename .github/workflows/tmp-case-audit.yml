@@ -22,8 +22,11 @@ jobs:
       - name: Audit strict case structure
         run: python3 tools/check_case_coverage.py --strict
 
-      - name: Run full repository verification
-        run: make verify
+      - name: Compile all formal solutions
+        run: make all
+
+      - name: Judge all expanded cases
+        run: make judge-all
 
       - name: Summarize expanded coverage
         run: python3 tools/tmp_case_audit.py

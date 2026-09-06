@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,prefix-sum	官方多查询：验证 inclusive 区间和 prefix[r+1]-prefix[l]
+2	minimum,boundary	单元素查询 [0,0]：验证前缀数组多出的 0 号哨兵
+3	negative	全负数组：验证前缀和支持负数
+4	zero	多数元素为 0：验证单点与全区间查询
+5	boundary	大正负值抵消：验证前缀差而非元素绝对值
+6	repeated-query	重复查询同一区间：验证预处理后每次 O(1) 且无状态污染

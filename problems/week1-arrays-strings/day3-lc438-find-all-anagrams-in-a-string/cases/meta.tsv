@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,sliding-window	官方样例：验证固定长度窗口频次与 pattern 完全相等时记录起点
+2	official,overlap	abab/ab：验证重叠窗口 0,1,2 都可成为异位词
+3	minimum,boundary	单字符完全匹配：验证最小窗口
+4	no-solution	单字符不匹配：验证空结果
+5	variant	abacbabc/abc：验证窗口滑动中字符进出频次的增减同步
+6	duplicates,overlap	aaaa/aa：验证重复字符 pattern 且多个重叠答案都要记录

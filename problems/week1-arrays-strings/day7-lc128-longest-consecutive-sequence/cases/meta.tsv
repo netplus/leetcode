@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,hash-set	官方无序输入：验证只从不存在 x-1 的序列起点向右扩展
+2	minimum,boundary	单元素：最长连续长度为 1
+3	boundary,empty-input	空数组：验证结果为 0
+4	duplicates	全重复 1：验证重复值不增加连续长度
+5	boundary	已经连续有序 1..5：验证整段长度
+6	negative	-2,-1,0,1,2 跨越 0：验证整数集合逻辑支持负数

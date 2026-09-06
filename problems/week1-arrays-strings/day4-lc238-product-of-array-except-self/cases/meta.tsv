@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,prefix-suffix	官方 1 2 3 4：验证每位答案=左侧乘积*右侧乘积
+2	minimum,boundary	两个元素：验证最小长度时彼此作为除自身乘积
+3	duplicates	全 1：验证前后缀初始化为乘法单位元 1
+4	zero,trap	恰有一个 0：只有 0 所在位置得到其他元素乘积，其余位置为 0
+5	zero	0 位于中间：验证零位置无关，前后缀逻辑仍正确
+6	negative	含两个负数：验证符号传播正确且不依赖除法

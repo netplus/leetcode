@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,interval	新 [4,8] 横跨多个已有区间：验证连续吸收所有重叠段
+2	boundary,empty-input	原区间为空：验证直接返回新区间
+3	boundary	新区间位于所有已有区间之前：验证无需合并且插入首部
+4	boundary	新区间位于所有已有区间之后：验证扫描结束后追加
+5	trap	新区间 [3,6] 同时连接 [4,5] 并位于两侧区间之间：验证合并边界扩展
+6	no-overlap	新区间恰好落在两个区间中间：验证不应误合并

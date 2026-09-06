@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,string-search	官方 sadbutsad/sad：验证返回第一次出现位置而非最后一次
+2	no-solution	needle 不存在：验证返回 -1
+3	minimum,boundary	单字符完全匹配：验证下标 0
+4	overlap,trap	aaa/aa：验证重叠匹配且返回最左起点
+5	variant	mississippi/issip：验证匹配可从中间开始并跨重复字符
+6	boundary,no-solution	needle 比 haystack 更长：验证无需越界比较并返回 -1

@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,sliding-window	官方样例：窗口达到 target 后持续收缩，得到长度 2
+2	minimum,boundary	单元素恰好达到 target：验证 >= 而非 > 的收缩条件
+3	no-solution	总和小于 target：验证无解返回 0
+4	boundary	整个数组和恰好 target：验证答案可以是 n
+5	trap	2 3 4、target=6：验证窗口要反复收缩找到更短的 [3,4]
+6	boundary	1..5 总和恰好 15：验证只在完整窗口才满足的情况

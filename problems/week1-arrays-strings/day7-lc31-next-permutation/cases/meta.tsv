@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,permutation	1 2 3：验证找到最右上升点、交换并反转后缀得到 1 3 2
+2	boundary	完全降序：不存在更大排列，应整体反转成最小排列
+3	minimum,boundary	单元素：排列保持不变
+4	duplicates	1 1 5：验证重复元素下寻找严格大于 pivot 的最右元素
+5	trap	2 3 1：验证交换后必须把后缀恢复为最小升序
+6	duplicates,boundary	所有元素相等：不存在上升点，结果保持不变

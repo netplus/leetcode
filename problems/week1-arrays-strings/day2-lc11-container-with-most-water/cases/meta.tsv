@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,two-pointers	官方样例：验证面积=min(height[l],height[r])*宽度，并移动较矮边
+2	minimum,boundary	仅两根高度相同柱：验证最小容器面积
+3	boundary	仅两根不同高度柱：验证高度取较小值而非较大值
+4	trap	非单调高度：验证不能只找最高两根柱，宽度同样决定面积
+5	duplicates	所有柱等高：验证最优解来自最远端宽度
+6	boundary	全为 1：进一步验证面积完全由最大宽度决定

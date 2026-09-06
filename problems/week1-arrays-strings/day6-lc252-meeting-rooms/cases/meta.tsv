@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,interval	0-30 与 5-10 重叠：验证发现冲突返回 false
+2	minimum,boundary	单会议：永远可参加
+3	boundary	前一结束=后一开始：验证端点相接不算重叠
+4	boundary,empty-input	无会议：验证返回 true
+5	trap	前两个会议重叠、后一个分离：验证只要存在任一冲突就失败
+6	ordering	输入未按开始时间排序但实际首尾相接：验证必须先排序再检查相邻区间

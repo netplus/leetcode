@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,two-pointers	官方样例：验证排序后二指针并去除重复三元组
+2	duplicates,boundary	三个 0：验证同值可以使用三个不同下标，但结果只输出一次 [0,0,0]
+3	duplicates	-1 和 2 均重复：验证 i、left、right 三层去重都正确
+4	duplicates,zero	多个 0 与 -1/1：验证同时存在 [-1,0,1] 和 [0,0,0] 时不漏解不重解
+5	no-solution	全正数组：排序后应快速得到空结果
+6	duplicates,stress	六个 0：验证大量重复输入仍只产生一个唯一三元组

@@ -1,0 +1,9 @@
+# case	kinds	purpose
+1	official,sliding-window	官方 ADOBECODEBANC/ABC：验证满足全部需求后持续收缩得到最短 BANC
+2	minimum,boundary	单字符完全匹配：验证最小非空窗口
+3	no-solution,duplicates	s 只有一个 a、t 需要两个 a：验证需求是频次而非布尔存在
+4	boundary	整个字符串恰好构成答案：验证左右端点完整保留
+5	duplicates	重复需求 aa：验证窗口中同字符计数达到 2 才算满足
+6	stress	复杂字符串 cae：验证窗口可多次进入/退出满足态并更新最短答案
+7	no-solution	源串完全不含 xyz：验证返回空字符串
+8	trap,duplicates	aab/ab：验证多余 a 不应阻止左边界收缩到最短 ab

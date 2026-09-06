@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,multi-source	官方主样例包含多个 0：验证把所有 0 同时作为距离 0 的 BFS 起点，每个 1 第一次被访问时即得到最近 0 距离
+2	minimum,boundary	1x1 为 0：验证源点自身距离保持 0
+3	minimum,boundary	单行 [1,0]：验证相邻 1 的距离为 1，并正确处理退化为一维的网格
+4	boundary,multi-source	2x2 全 0：所有格都是初始源，验证不会把源点再次松弛成正距离
+5	stress,single-source	唯一 0 位于左上角：距离应形成 Manhattan 距离梯度，验证 BFS 层数能传播到多层远端
+6	trap,single-source	唯一 0 位于中心：四周从同一源向各方向传播，验证不能使用只从左上到右下的一次扫描或单方向递推来近似最近距离

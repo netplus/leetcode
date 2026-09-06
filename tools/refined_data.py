@@ -115,8 +115,9 @@ for num, patch in PEDAGOGY_OVERRIDES.items():
     ]
     REFINEMENTS[num] = merged
 
-# Prerequisite concepts are a separate optional layer. They appear before any
-# optimization derivation so a later proof never relies on an undefined term.
+# Prerequisite concepts are a separate optional layer. In the reasoning-first
+# renderer they are inserted at the first point where technical vocabulary is
+# actually needed, rather than mechanically preceding the learner's intuition.
 for num, prerequisite in PREREQUISITE_OVERRIDES.items():
     if num not in REFINEMENTS:
         raise RuntimeError(f"prerequisite override references unknown lc{num}")
@@ -125,9 +126,10 @@ for num, prerequisite in PREREQUISITE_OVERRIDES.items():
     REFINEMENTS[num] = {**REFINEMENTS[num], "prerequisite": prerequisite}
 
 # Optimization derivations are intentionally separate from the main pedagogy
-# registry: the same LC number may already have a seven-layer rewrite. These
-# modules only add the optional bridge required by AGENTS.md from a real direct
-# algorithm to the optimized mechanism.
+# registry. Legacy visual explanations still render this bridge directly.
+# Problems migrated to the reasoning-first structure keep the data for backward
+# compatibility, but render their explicit general_solution / limitations /
+# generalization fields instead so the learner sees the reasoning in stages.
 DERIVATIONS = {}
 for module in (DERIVATION_OVERRIDES, DERIVATION_BACKFILL_OVERRIDES):
     overlap = set(DERIVATIONS) & set(module)
@@ -200,8 +202,58 @@ def _append_text_block(lines: list[str], title: str, text: str) -> None:
         lines.append(f"//   {line}" if line else "//")
 
 
+def _append_numbered_text_block(
+    lines: list[str], section: int, title: str, text: str
+) -> int:
+    """Append a numbered learner-facing block and return the next number."""
+    _append_text_block(lines, f"{section}. {title}", text)
+    lines.append("//")
+    return section + 1
+
+
+def _render_reasoning_first_analysis(item: dict) -> str:
+    """Render problem reasoning before naming the specialized algorithm."""
+    lines = [
+        "// ----------------------------------------------------------------------------",
+        f"// 解法精讲｜{item['pattern']}",
+        "//",
+    ]
+
+    section = 1
+    section = _append_numbered_text_block(lines, section, "题目直觉 / 图形模型", item["visual"])
+    section = _append_numbered_text_block(lines, section, "最自然的一般性解法", item["general_solution"])
+    section = _append_numbered_text_block(lines, section, "一般解法的问题与限制", item["limitations"])
+    section = _append_numbered_text_block(lines, section, "从具体问题抽象规律", item["generalization"])
+
+    if item.get("prerequisite"):
+        section = _append_numbered_text_block(lines, section, "必要背景知识", item["prerequisite"])
+
+    section = _append_numbered_text_block(lines, section, "专项算法背景", item["algorithm_background"])
+    section = _append_numbered_text_block(lines, section, "核心算法", item["core"])
+    section = _append_numbered_text_block(lines, section, "公式 / 不变量", item["formula"])
+
+    lines.append(f"// {section}. 执行步骤")
+    for i, step in enumerate(item["steps"], 1):
+        lines.append(f"//   {i}. {step}")
+    if item.get("memory"):
+        lines.append(f"//   记忆：{item['memory']}")
+    lines.append("//")
+    section += 1
+
+    section = _append_numbered_text_block(lines, section, "为什么不会漏 / 不会重", item["proof"])
+    section = _append_numbered_text_block(lines, section, "边界与易错点", item["pitfalls"])
+    _append_text_block(lines, f"{section}. 举一反三", item["transfer"])
+
+    if item.get("advanced"):
+        lines.append("//")
+        _append_text_block(lines, "进阶优化", item["advanced"])
+
+    lines.append("// ----------------------------------------------------------------------------")
+    return "\n".join(lines)
+
+
 def _render_visual_analysis(item: dict) -> str:
-    """Render prerequisite -> derivation -> visual -> formula -> steps."""
+    """Render the earlier visual-first pedagogy format for reviewed legacy entries."""
     lines = [
         "// ----------------------------------------------------------------------------",
         f"// 解法精讲｜{item['pattern']}",
@@ -244,7 +296,14 @@ def _render_visual_analysis(item: dict) -> str:
 
 
 def render_analysis(item: dict) -> str:
-    """Render one explanation, preserving legacy format until individually reviewed."""
+    """Render one explanation, preserving older formats until individually reviewed."""
+    reasoning_first_fields = (
+        "visual", "general_solution", "limitations", "generalization",
+        "algorithm_background", "core", "formula",
+    )
+    if all(item.get(field) for field in reasoning_first_fields):
+        return _render_reasoning_first_analysis(item)
+
     if all(item.get(field) for field in ("visual", "core", "formula")):
         return _render_visual_analysis(item)
 

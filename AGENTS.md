@@ -2,25 +2,87 @@
 
 ## Repository purpose
 
-This repository is a LeetCode learning repository. The primary goal is not merely to keep accepted code, but to build reusable algorithmic intuition and make later review fast and reliable.
+This repository is a LeetCode learning repository. The goal is not merely to keep accepted code, but to build **reconstructible algorithmic intuition**: after forgetting a template, the learner should still be able to derive the solution again from the problem.
 
-When modifying problem solutions, preserve correctness and testability, but optimize the explanation for learning first.
+Correctness, testability, statement fidelity, and generated-file consistency remain mandatory, but learning order has priority when choosing how to explain a correct solution.
 
-## Core explanation rule
+## Core explanation rule: problem reasoning before algorithm naming
 
-For every problem, organize the main explanation in this order:
+Do not start a problem explanation from a named algorithm, a code template, or a dense formula.
 
-1. **建立图像直觉**：先用一个具体场景、区间图、指针图、树/图结构或状态变化，让读者先“看见”算法在做什么。
-2. **再给公式/不变量**：在直觉建立后，再写数学关系、状态定义、窗口条件、递推式或不变量。
-3. **最后落到执行步骤**：把公式翻译为可以直接对应代码的更新顺序，并说明为什么顺序不能交换。
+For a non-trivial problem, use this reasoning direction by default:
 
-Do not start a new concept with a dense formula when a simple visual model can explain the same idea first.
+```text
+题目本身的直觉 / 几何或状态图像
+        ↓
+符合直觉的一般性逻辑
+        ↓
+最自然、正确的一般性实现
+        ↓
+这个实现的问题、限制、重复工作或复杂度瓶颈
+        ↓
+从具体问题中总结可复用的一般规律
+        ↓
+在第一次真正需要时补充背景知识 / 术语
+        ↓
+把一般规律映射到某个专项算法
+        ↓
+核心算法机制
+        ↓
+公式 / 不变量 / 边界语义
+        ↓
+与代码一致的执行步骤
+        ↓
+正确性、边界、易错点、迁移
+```
 
-## Show official examples before algorithm explanation
+The learner should understand **why an algorithm is needed before the algorithm name appears**.
 
-Every generated learning problem should include statement-level examples before constraints and before `解法精讲`.
+Bad order:
 
-Use this learner-facing order:
+```text
+这题使用单调栈。
+维护一个递增栈……
+```
+
+Preferred order:
+
+```text
+每根柱作为最低高度时，需要反复寻找左右第一个更矮位置
+-> 一般实现会重复扫描相同区域
+-> 从左到右时，尚未遇到右侧更矮柱的历史位置仍是“未决边界”
+-> 更矮元素到来时可以一次结算多个历史位置
+-> 这类“未决状态 + 未来事件批量结算”的结构可以用单调栈实现
+```
+
+Algorithm names are retrieval labels. The causal mechanism is the learning target.
+
+## Prefer geometry and diagrams whenever relationships are spatial
+
+If a problem contains intervals, boundaries, widths, areas, pointer movement, tree shape, graph frontier, matrix regions, stack states, or other spatial relationships, **prefer a diagram before abstract notation**.
+
+Use ASCII diagrams in `solution.cpp` comments and Markdown ASCII / Mermaid diagrams in docs where useful.
+
+A diagram must expose a relationship that later reasoning reuses. It should not be decorative.
+
+Examples:
+
+- histogram: show bars, blocking boundaries, and the actual usable interval;
+- prefix sum: show current prefix, historical prefix, and the interval between them;
+- sliding window: show left/right, the current legal window, and what changes when a boundary moves;
+- two pointers: show which candidate region one pointer movement permanently discards;
+- monotonic stack: show unresolved historical states and which current event resolves them;
+- binary search: show the monotonic search/answer space;
+- DP: show what one state represents before writing a transition;
+- tree/graph: show recursion responsibility, frontier, visited region, or parent/child dependency.
+
+Whenever a formula such as `right-left-1` can be derived from a visible interval, derive it from the picture instead of presenting it as a mnemonic.
+
+## Official examples come before the learning derivation
+
+Every generated problem should present statement-level examples before constraints and before `解法精讲`.
+
+Learner-facing order:
 
 ```text
 题目描述
@@ -29,400 +91,259 @@ Use this learner-facing order:
     ↓
 约束与要求
     ↓
-前置概念（需要时）
-    ↓
-优化推导（需要时）
-    ↓
-图像直觉 / 公式 / 执行步骤
+解法精讲
 ```
 
-Examples in this section explain **what the problem asks**, not **why the optimized algorithm works**. Preserve official Input / Output / Explanation content when available instead of inventing replacement examples.
+Official examples explain **what the problem asks**. Custom pedagogy examples later explain **why the solution works**. Do not mix these two roles.
 
-Prefer all official statement examples when they are reasonably sized. At minimum, examples should cover the ordinary contract and any official boundary behavior that materially helps the learner understand the task.
+Preserve official Input / Output / Explanation when available. Prefer all reasonably sized official examples, especially examples that expose boundary behavior.
 
-For example, LC-41 should make the return contract concrete before discussing in-place placement:
+Statement examples belong to the statement metadata layer, not pedagogy overrides.
+
+## General solution before optimization
+
+When the primary solution is meaningfully more sophisticated than the most natural correct solution, first state a real direct algorithm that a learner could reasonably write.
+
+The direct algorithm must be correct, not a straw man.
+
+Explain:
+
+1. what it does;
+2. why it matches the problem definition;
+3. its time/space cost;
+4. the exact work that becomes wasteful at scale.
+
+Typical waste classes include:
+
+- repeated lookup;
+- repeated range writes / repeated calculation;
+- overlapping state that could be carried forward;
+- dominated candidates that can never become useful again;
+- monotonicity that lets one comparison discard a whole class of candidates;
+- repeated subproblems.
+
+The learner should be able to answer:
+
+> **“这个优化究竟省掉了哪一部分原始工作？”**
+
+before seeing the optimized template.
+
+## Abstract the reusable rule before naming the algorithm
+
+After identifying the direct solution's limitation, summarize the general law in ordinary language.
+
+Examples:
 
 ```text
-Example 1:
-Input: nums = [1,2,0]
-Output: 3
-Explanation: 1 and 2 are present, so 3 is the smallest missing positive.
-
-Example 2:
-Input: nums = [3,4,-1,1]
-Output: 2
-Explanation: 1 is present but 2 is missing.
-
-Example 3:
-Input: nums = [7,8,9,11,12]
-Output: 1
-Explanation: 1 itself is missing.
+固定当前 x 后，需要的另一个值已经唯一确定为 target-x；
+慢点是每次都重新线性查找这个确定值。
+-> 把历史 value 建索引。
+-> 这之后才叫“哈希表 Two Sum”。
 ```
 
-Do not confuse these statement examples with the smaller custom example used later in `图像直觉`. A pedagogy example may deliberately be chosen to expose one invariant, pointer movement, state transition, or optimization bridge; it does not replace the official examples that define the problem contract.
+```text
+相邻窗口只改变一个进入元素和一个离开元素；
+旧窗口的大部分状态仍然有效。
+-> 维护可增量更新的窗口状态。
+-> 这之后才叫“滑动窗口”。
+```
 
-Examples belong to the **statement metadata layer**, not to per-problem pedagogy overrides. Prefer the cached Chinese official examples when available, fall back to `tools/official/lc<N>.txt`, and use a reviewed fallback only when an official snapshot is unavailable (for example, some premium problems).
+```text
+历史位置的右侧阻挡边界还没有出现；
+未来更矮元素到来时答案永久确定，并可能一次结算多个历史位置。
+-> 只保存未决历史状态。
+-> 这之后才叫“单调栈”。
+```
 
-## Define prerequisite concepts before using them
+Do not jump directly from “O(n^2) is slow” to an algorithm name.
 
-When a problem depends on a technical term, mathematical ordering, data-structure convention, or domain concept whose exact meaning is necessary for the later derivation, **define that concept before using it to explain the algorithm**.
+## Define prerequisite concepts at first use, not mechanically at the top
 
-Use this order by default:
+Technical vocabulary should appear **when the reasoning first needs it**.
+
+Do not front-load a problem with definitions the learner does not yet need. The early problem model should use ordinary language whenever possible.
+
+When a concept becomes necessary, define it before relying on it:
 
 ```text
 概念名称
     ↓
-一句精确定义：它到底比较 / 约束 / 表示什么
+一句精确定义
     ↓
-一个最小具体例子
+最小具体例子
     ↓
-必要时再给一个容易混淆的反例或边界例子
+必要时给一个反例 / 边界例子
     ↓
-确认这个概念如何影响当前题目的目标
-    ↓
-再进入算法直觉、优化推导和实现
+说明它怎样影响当前推导
 ```
 
-Do not assume that a learner already has an operational definition merely because a term is common in algorithm discussions.
+Typical concepts include:
 
-Typical concepts that may need this treatment include, but are not limited to:
-
-- lexicographical order / 字典序;
-- stable ordering / 稳定性;
-- closed, open, and half-open intervals / 闭区间、开区间、半开区间;
-- tree height versus depth, path length by nodes versus by edges;
-- prefix / suffix, subsequence / substring / subarray;
+- closed/open/half-open intervals;
+- strict vs non-strict ordering when duplicates matter;
+- prefix/suffix and subarray/subsequence;
+- tree depth vs height, node-count vs edge-count path length;
 - topological order;
-- connected component, cycle, frontier, state, invariant;
-- strict versus non-strict ordering when duplicates matter.
+- connected component / cycle / frontier / invariant;
+- stack LIFO, queue FIFO;
+- amortized analysis.
 
-### Example: lexicographical order before LC-31
+Algorithm-specific background should normally appear **after the direct reasoning and generalization, but before the core algorithm implementation**.
 
-Before explaining “next permutation”, first make “lexicographically larger” concrete.
+## Specialized algorithm guides are required for reusable non-trivial mechanisms
 
-A practical definition for equal-length integer sequences is:
+`docs/patterns.md` is a review / retrieval cheat-sheet. It is not the authoritative teaching source for an algorithm family.
 
-```text
-从左到右比较两个序列；
-找到第一个不同的位置；
-该位置数值更大的序列，字典序更大。
-```
-
-For example:
+Reusable non-trivial algorithms should have mechanism-level guides under:
 
 ```text
-[1,2,3] < [1,3,2]
-          ^
-第一个不同位置是第二位：2 < 3
-
-[1,3,2] < [2,1,3]
- ^
-第一个不同位置是第一位：1 < 2
+docs/algorithms/<algorithm>.md
 ```
 
-So one possible ordering begins as:
+The index and topic-document contract are defined in [docs/algorithms/README.md](docs/algorithms/README.md).
+
+A specialized guide should explain, in this order:
+
+1. the general class of problems without starting from the algorithm name;
+2. the natural correct general implementation;
+3. the limitation of that implementation;
+4. the reusable law extracted from the limitation;
+5. diagrams / geometry where applicable;
+6. background concepts at first use;
+7. the formal algorithm and data structure;
+8. variants and boundary/equality policies;
+9. correctness and complexity;
+10. a progression of representative problems.
+
+Do not create empty topic documents merely to fill a directory. Create or expand one when an algorithm family starts carrying shared explanation across multiple problems.
+
+Current example:
+
+- [单调栈](docs/algorithms/monotonic-stack.md)
+
+Future two-pointer, sliding-window, prefix/difference, binary-search, DP-state-design, traversal, union-find, and backtracking guides should follow the same structure when they are systematically reviewed.
+
+## Problem-level mapping after the algorithm guide exists
+
+A problem should still explain its own reasoning before pointing to the specialized guide.
+
+Use the two layers like this:
 
 ```text
-[1,2,3]
-[1,3,2]
-[2,1,3]
-[2,3,1]
-[3,1,2]
-[3,2,1]
+specific problem
+    -> intuition / geometry
+    -> natural solution
+    -> limitation
+    -> general rule
+    -> “this rule is the monotonic-stack / two-pointer / ... pattern”
+    -> refer to the topic guide for the general mechanism
+    -> explain how this problem instantiates it
+    -> formula / invariant / implementation
 ```
 
-Only after this definition and example should the explanation ask what the **next** lexicographically larger permutation is and derive pivot / successor / suffix reversal.
+Do not replace a problem explanation with “see algorithm guide”. The guide owns the general theory; the problem owns the mapping from its concrete semantics to that theory.
 
-The goal is that the learner can answer **“这个术语在这里具体是什么意思？”** before the algorithm uses that term as a premise.
+## Preferred reasoning-first `解法精讲` structure
 
-## Optimization derivation rule
+Problems migrated to the current standard should normally render these layers:
 
-For any problem whose primary solution is meaningfully more sophisticated than the most direct solution, **do not present the optimized algorithm as the starting point**. The explanation must show how the optimized mechanism grows out of the direct algorithm.
+### 1. 题目直觉 / 图形模型
 
-Use this derivation chain by default:
+Explain what the problem means in ordinary language. Use a small concrete example and a diagram whenever spatial relationships exist.
+
+### 2. 最自然的一般性解法
+
+Show the correct direct reasoning and, when useful, short pseudocode or a trace.
+
+### 3. 一般解法的问题与限制
+
+Name the exact repeated work, scaling problem, impossible memory cost, or structural limitation.
+
+### 4. 从具体问题抽象规律
+
+State the reusable observation **without using a specialized algorithm as the premise**.
+
+### 5. 必要背景知识（only when needed）
+
+Insert definitions only when the next step needs them.
+
+### 6. 专项算法背景
+
+Name the algorithm family only now. Link/reference the corresponding `docs/algorithms/` guide when one exists.
+
+### 7. 核心算法
+
+Map the general rule onto concrete states, containers, pointers, boundaries, or transitions.
+
+### 8. 公式 / 不变量
+
+Derive formulas from the previous picture/state model. Explain every symbol and equality/strictness choice.
+
+### 9. 执行步骤
+
+Write the update order in the same sequence as the implementation.
+
+### 10. 为什么不会漏 / 不会重
+
+Explain the causal invariant; formal proof is optional unless needed.
+
+### 11. 边界与易错点
+
+Call out correctness-sensitive initialization, update order, overflow, interval conventions, duplicate ownership, sentinels, side effects, and algorithm preconditions.
+
+### 12. 举一反三
+
+Explain what remains invariant and what changes in the next related problem class.
+
+Not every simple problem needs all twelve headings. The principle is the ordering boundary: **problem reasoning first, specialized algorithm second**.
+
+## Pattern reuse has priority when it makes the problem simpler
+
+If a new problem can naturally be transformed into an already-understood problem, use that transformation as the primary explanation unless a stricter required complexity invalidates it.
+
+Example:
 
 ```text
-最自然 / 最朴素的做法
-        ↓
-它为什么正确
-        ↓
-它到底慢在哪里 / 重复做了什么 / 保存了哪些以后永远没用的候选
-        ↓
-找出可复用的信息、可延续的状态、可淘汰的候选或可利用的单调性
-        ↓
-把这些观察压缩成优化机制
-        ↓
-再命名为哈希、前缀和、差分、Kadane、滑动窗口、双指针、单调栈……
-        ↓
-最后落到变量、不变量、更新顺序和具体实现技巧
+“恰好 K 个奇数”
+-> odd=1, even=0
+-> “连续子数组和为 K”
+-> reuse LC-560 prefix-frequency reasoning
 ```
 
-The learner should be able to answer **“这个优化究竟省掉了哪一部分原始工作？”** before being asked to remember the final formula or template.
+A more clever or more space-efficient solution may be kept as `进阶解法`, but should not replace a substantially clearer primary solution merely because it has a smaller constant or less auxiliary memory.
 
-### Start from a real direct algorithm
+If necessary, present both:
 
-The starting point should be a correct algorithm a learner could naturally write, not a deliberately absurd straw-man implementation.
+1. 主解法（优先理解）
+2. 进阶优化（满足更严格空间 / 常数要求）
 
-When useful, show short pseudocode or a concrete execution trace. State its time/space cost and identify the exact repeated operation.
+## Implementation tricks come after the mechanism
+
+For every non-trivial implementation trick, explain:
+
+1. what state/boundary it represents;
+2. why it is needed;
+3. why the update order matters;
+4. what concrete bug appears if the order or boundary relation changes.
 
 Examples:
 
-- LC-1 Two Sum: two nested loops are repeatedly **searching for one already-determined complement**.
-- LC-1109 Corporate Flight Bookings: each booking repeatedly writes the **same increment to every point in a contiguous interval**.
-- LC-53 Maximum Subarray: interval enumeration keeps many candidates that, once compared at the same endpoint, are **permanently dominated by a better candidate**.
-
-### Classify what the optimization removes
-
-Before introducing the optimized data structure or recurrence, explicitly identify which kind of waste is being removed. Common categories include:
-
-1. **重复查找**：同一个可计算 key 被反复线性搜索。  
-   Typical optimization: build an index / hash map / lookup table.
-
-2. **重复写入或重复计算**：一段范围内执行大量相同操作。  
-   Typical optimization: record boundary events, prefix/difference information, lazy state, preprocessing.
-
-3. **状态可延续**：中间位置没有新事件时，前一位置的有效状态可以直接继承。  
-   Typical optimization: rolling state / accumulated state / sweep-line active state.
-
-4. **候选被支配**：两个候选面对相同未来时，其中一个永远不可能反超另一个。  
-   Typical optimization: dynamic-programming state compression, monotonic structures, greedy elimination.
-
-5. **存在单调性**：一次判断可以证明整批候选都不可能成为答案。  
-   Typical optimization: two pointers, sliding window, binary search, monotonic queue/stack.
-
-6. **重复子问题**：不同搜索路径会重新计算相同状态。  
-   Typical optimization: memoization / dynamic programming.
-
-Do not force every problem into these labels, but when one of them is the real reason the optimization works, say so explicitly.
-
-### Explain the bridge, not just the two endpoints
-
-The most important part of the explanation is the transition from the direct algorithm to the optimized one.
-
-Bad:
-
-```text
-暴力 O(n^2)，所以我们使用哈希表，复杂度 O(n)。
-```
-
-Preferred:
-
-```text
-固定当前 x 后，需要的另一个值已经唯一确定为 target-x。
-暴力算法慢在每次都重新线性寻找这个确定值。
-所以把已经看过的 value 建成 value -> index 的索引，
-把“重新扫描寻找”改成一次直接查询。
-```
-
-Likewise, do not write only:
-
-```text
-区间加法使用差分：diff[L] += x, diff[R+1] -= x。
-```
-
-First explain:
-
-```text
-朴素算法会在 [L,R] 每个位置重复执行 +=x。
-但这份 +x 在整个区间里状态完全相同，
-所以只记录“从 L 开始生效”和“R 后结束”，
-再用 running 把当前有效状态向后延续。
-```
-
-### Make state compression explicit
-
-When an optimization keeps only a small state instead of many candidates, explain **why discarded candidates can never become useful again**.
-
-For LC-53, for example:
-
-```text
-固定同一个终点时，若候选 A 的和已经大于候选 B，
-以后无论再追加什么连续后缀，A 和 B 都会加上完全相同的值。
-因此 B 永远不可能反超 A，可以永久丢弃。
-```
-
-Only after that observation introduce:
-
-```text
-current = 必须以当前位置结尾的最大子数组和
-current = max(nums[i], current + nums[i])
-```
-
-This “same future -> dominated state can be discarded” reasoning is more reusable than memorizing a particular DP recurrence.
-
-### Separate data, change/event, and accumulated state
-
-When an implementation uses accumulation to make a state persist, clearly distinguish the roles of the variables.
-
-For LC-1109-style difference/sweep implementations, use the mental model:
-
-```text
-diff[i]   = 在位置 i，当前状态要改变多少
-running   = 走到当前位置时，仍然有效的所有贡献之和
-answer[i] = 当前 running 对应的真实结果
-```
-
-Then explain the implementation behavior:
-
-```text
-+x = 加入一份持续状态
- 0 = 没有新事件，running 自动继承旧状态
--x = 移除之前加入的那份状态
-```
-
-The important implementation insight is that `running += diff[i]` does two jobs:
-
-1. applies new change events at `i`;
-2. when `diff[i] == 0`, naturally carries the previous active state forward without repeating the original range update.
-
-A negative difference entry is therefore usually a **state cancellation event**, not necessarily a business-level negative operation on that position.
-
-### Derive implementation tricks after the mechanism
-
-Implementation details should be presented only after the optimization mechanism is understood. For every non-trivial trick, state:
-
-1. **它代表什么状态或边界**；
-2. **为什么需要它**；
-3. **为什么必须按这个顺序更新**；
-4. **如果顺序/边界写错会发生什么**。
-
-Examples:
-
-- LC-1: `find()` is a pure historical query; insert the current value only **after** the query so one index cannot pair with itself.
-- LC-1109: `diff[n]` may be a sentinel boundary representing “after the final real position”, not an actual answer element.
-- LC-53: `current` is the best interval forced to end here; `best` is historical global optimum, so `best` must not be replaced by the latest `current`.
-- Prefix-frequency problems: initialize the empty prefix before scanning when intervals starting at index 0 must be countable.
-
-Do not summarize an implementation trick as a mnemonic until its causal explanation has appeared first.
-
-### Name the reusable optimization pattern last
-
-Whenever possible, let the learner first understand the mechanism in ordinary language and only then attach the standard algorithm name.
-
-Preferred progression:
-
-```text
-大量相同区间写入
--> 只记录开始/结束变化
--> running 承接中间状态
--> 这套结构叫“差分数组 + 前缀恢复”
-```
-
-or:
-
-```text
-同一终点只保留不会被其他候选支配的最优状态
--> 每一步只需“接上还是重开”
--> 这就是 Kadane / 一维状态压缩 DP
-```
-
-The algorithm name is useful for retrieval; the mechanism is what makes it reconstructible.
-
-## Preferred teaching structure
-
-The `解法精讲` section should normally contain the following layers.
-
-### 1. 图像直觉
-
-Use a small concrete example and an ASCII diagram where useful.
-
-The diagram must expose the key relationship rather than decorate the text. Examples:
-
-- prefix sum: show `current prefix`, `old prefix`, and the interval between them;
-- sliding window: show `left`, `right`, the legal window, and what changes when one side moves;
-- two pointers: show why moving one pointer can discard a whole class of impossible answers;
-- monotonic stack: show which unresolved elements remain on the stack and what an incoming element resolves;
-- binary search: show the monotonic answer/search space, not just array indices;
-- dynamic programming: show what one state represents before writing the transition;
-- tree/graph traversal: show the frontier / recursion responsibility / visited invariant.
-
-### 2. 一句话核心
-
-After the picture, summarize the algorithm in one plain-language sentence.
-
-The sentence should answer: **“每一步真正是在问什么 / 维护什么？”**
-
-Examples:
-
-- prefix sum: “我现在累计到 `prefix`，历史上有多少次累计到了 `prefix-k`？”
-- sliding window: “右端扩张获得新信息，条件失效时左端只向右移动直到恢复合法。”
-
-### 3. 公式或不变量
-
-Only after the intuition is clear, write the exact relation.
-
-Explain every symbol from the picture. Avoid introducing abstract indices solely for formalism.
-
-For example, prefer:
-
-```text
-当前累计 - 过去累计 = 中间连续区间的和
-prefix - oldPrefix = k
-oldPrefix = prefix - k
-```
-
-before a more formal `pre[i+1] - pre[j] = k` notation.
-
-### 4. 执行步骤
-
-Write the algorithm in the same order as the implementation.
-
-Prefer short memorable sequences such as:
-
-```text
-先算现在 -> 再查过去 -> 最后把现在加入历史
-```
-
-Then map each step to the corresponding code operation.
-
-### 5. 为什么不会漏 / 不会重
-
-Use intuitive causality first. Formal proof is optional unless the problem genuinely needs it.
-
-Explain the invariant that makes an entire class of candidates safe to include or discard.
-
-### 6. 边界与易错点
-
-Call out only mistakes that are likely in this problem, including:
-
-- initialization sentinels such as `count[0] = 1`;
-- update order;
-- duplicate-frequency counting versus existence testing;
-- integer overflow;
-- index / closed-open interval conventions;
-- side effects of C++ APIs;
-- assumptions required by sliding windows or greedy logic.
-
-### 7. 举一反三
-
-Relate the problem to an already learned reusable pattern and state what changes and what stays invariant.
-
-## Pattern reuse has priority
-
-When a new problem can be naturally transformed into a previously learned problem, make that transformation the primary explanation unless the repository explicitly targets a stricter complexity bound.
-
-Examples:
-
-- “恰好有 K 个奇数” -> odd=`1`, even=`0` -> “连续子数组和为 K” -> reuse LC-560 prefix-sum reasoning.
-- binary array counting problems -> consider prefix sums before introducing a more specialized window identity.
-
-A more space-efficient or mathematically clever solution may be retained as an **进阶解法**, but should not replace a substantially clearer primary solution merely because it uses less auxiliary space.
-
-If the stated complexity target conflicts with the clearer teaching solution, document both:
-
-1. **主解法（优先理解）**
-2. **进阶优化（满足更严格空间/常数要求）**
-
-and clearly state the trade-off.
+- LC-1: query history before inserting current so one index cannot pair with itself;
+- prefix-frequency: initialize the empty prefix when intervals starting at index 0 must count;
+- difference arrays: distinguish change events from accumulated active state;
+- monotonic stack: `< / <= / > / >=` is a duplicate-ownership rule, not a cosmetic comparison;
+- sentinels: explain which normal event the virtual boundary is forcing.
+
+Do not teach a trick as a mnemonic before its causal explanation.
 
 ## C++ semantic clarity
 
-Code should reflect the explanation and avoid hidden side effects when they obscure intent.
+Code should visibly match the reasoning and avoid hidden side effects when they obscure intent.
 
 For associative containers:
 
-- use `find()` / `contains()` for a pure existence/query operation when accidental insertion is undesirable;
-- use `operator[]` when insertion/default construction is part of the intended state update, e.g. `++frequency[prefix]`.
+- use `find()` / `contains()` for pure queries when accidental insertion is undesirable;
+- use `operator[]` when insertion/default construction is the intended update, e.g. `++frequency[prefix]`.
 
 Example:
 
@@ -434,75 +355,86 @@ if (it != frequency.end()) {
 ++frequency[prefix];
 ```
 
-This makes “查过去” and “记录现在” visibly different operations.
+This keeps “query old state” and “record current state” visibly separate.
 
-## Comments in solution.cpp
+## Comments in `solution.cpp`
 
-The large header comment is part of the learning material and must be maintained with the code. The detailed repository standard is [docs/code-commenting.md](docs/code-commenting.md).
+The large header comment is part of the learning artifact and must stay synchronized with canonical pedagogy. Detailed code-comment standards live in [docs/code-commenting.md](docs/code-commenting.md).
 
-For every non-trivial implementation, key code comments should explain:
+Key comments should explain:
 
-- the state represented by a variable/container/pointer;
-- why an update or candidate elimination is valid;
-- why the update happens in this order;
-- which sentinel, interval convention, visited timing, pointer boundary, or invariant makes the step correct;
-- what concrete bug would happen when a correctness-sensitive order or `<` / `<=` boundary is changed.
+- what a variable/container/pointer represents;
+- why an update or elimination is valid;
+- why update order matters;
+- sentinel / interval / visited / strictness semantics;
+- what goes wrong if a correctness-sensitive boundary changes.
 
-Do not merely paraphrase each source line. Ordinary I/O and mechanically obvious syntax do not need comments. The historical 106-problem comment migration is complete; future edits must preserve or improve that baseline rather than reintroduce bare core logic.
+Do not paraphrase obvious syntax. Ordinary I/O does not need pedagogical comments.
 
-## Official statement fidelity
+## Statement fidelity
 
-Problem statement facts and pedagogy are separate concerns. Do not invent, simplify away, or casually rewrite facts about the legal input domain or API contract merely to make an explanation shorter.
+Problem facts and pedagogy are separate layers. Never change legal inputs, return semantics, examples, or algorithmic preconditions just to simplify a lesson.
 
-The learner-facing statement source is:
+The learner-facing statement baseline and validation process are documented in [docs/doocs-baseline.md](docs/doocs-baseline.md).
 
-1. `tools/chinese_problem_info.json`: refreshable LeetCode CN statement/constraint cache;
-2. `tools/statement_overrides.py`: persistent reviewed fixes where the Chinese cache is less explicit than the official English statement or contains extraction defects;
-3. `tools/statement_metadata.py`: the effective statement metadata consumed by `gen_all.py`.
+Relevant canonical files include:
 
-`tools/official/lc<N>.txt` is the English official snapshot used for cross-language semantic review. When Chinese and English official wording differ in precision, preserve the stricter meaning when it affects the legal input set, return contract, or an algorithmic precondition.
+- `tools/statement_metadata.py`;
+- `tools/statement_overrides.py`;
+- `tools/statement_examples.py`;
+- `tools/chinese_problem_info.json`;
+- `tools/official/lc<N>.txt` for offline cross-checking.
 
-A learner-facing problem statement must explicitly preserve official facts that affect:
+Facts that must remain explicit when they affect correctness include:
 
 - length/value ranges and character sets;
-- sortedness, uniqueness, positivity/non-negativity, connectivity, reachability, or similar structural assumptions;
-- whether answers are unique or arbitrary ordering is allowed;
-- whether elements/nodes/words may be reused or input may be modified;
-- return-value semantics and special no-solution behavior;
-- any other guarantee required for the chosen algorithm to be valid.
+- sortedness, uniqueness, positivity/non-negativity;
+- connectivity/reachability;
+- reuse/modification permissions;
+- return-value and no-solution behavior;
+- any precondition required by the chosen algorithm.
 
-Do not edit only `problems/**/solution.cpp` to fix a statement. Put persistent corrections in the statement metadata layer and keep generated output synchronized. Refreshing `chinese_problem_info.json` must not erase a reviewed correction.
-
-After statement changes, `python3 tools/check_statement_fidelity.py` must pass for all 106 generated problems; it is part of `make verify-meta`. Use `tools/compare_official.py` for side-by-side review of the **effective learner-facing metadata** against the cached official English statement.
+Do not fix statement facts only in generated `solution.cpp`; update the metadata layer and keep generated output synchronized.
 
 ## Generated repository source of truth
 
-`problems/**/solution.cpp` is generated learning output, not the only source of truth. Do not make a pedagogy, implementation, or key-comment change only in a generated `solution.cpp`, because `python3 tools/gen_all.py` may overwrite it.
+`problems/**/solution.cpp` is generated learning output, not the only source of truth. A pedagogy, implementation, or key-comment change must not exist only in generated output because `python3 tools/gen_all.py` may overwrite it.
 
-The current canonical pipeline is:
+Current canonical pipeline:
 
-1. `tools/refined_week1.py` ... `tools/refined_week4.py`: baseline reviewed explanation/implementation records for all 106 formal problems;
-2. `tools/pedagogy_overrides.py` plus modular `tools/pedagogy_week*.py`: the completed high-touch visual/core/invariant pedagogy layer;
-3. `tools/pedagogy_prerequisites.py`: prerequisite concepts used only where the later derivation needs them;
-4. `tools/pedagogy_derivations.py` + `tools/pedagogy_derivations_backfill.py`: direct-algorithm -> bottleneck -> optimized-mechanism bridges where meaningful;
-5. `tools/code_comment_overrides.py` plus modular `tools/code_comments_week*.py`: per-problem reviewed implementation/comment layer;
-6. `tools/refined_data.py`: merges all canonical learning layers and rejects duplicate problem IDs;
-7. `tools/statement_metadata.py`: supplies the effective official learner-facing statement metadata and examples;
-8. `tools/gen_all.py`: renders `solution.cpp` / `test.in` and the Week 4 mock packages.
+1. `tools/refined_week1.py` ... `tools/refined_week4.py`: baseline reviewed explanation/implementation records;
+2. `tools/pedagogy_overrides.py` plus modular `tools/pedagogy_week*.py`: high-touch per-problem pedagogy;
+3. `tools/pedagogy_prerequisites.py`: optional prerequisite concepts;
+4. `tools/pedagogy_derivations.py` + `tools/pedagogy_derivations_backfill.py`: legacy/direct-optimization bridges where still used;
+5. `tools/code_comment_overrides.py` plus modular `tools/code_comments_week*.py`: reviewed implementation comments;
+6. `tools/refined_data.py`: merges canonical learning layers and renders the appropriate pedagogy structure;
+7. `tools/statement_metadata.py`: effective learner-facing statement metadata;
+8. `tools/gen_all.py`: renders `solution.cpp`, `test.in`, and Week 4 mock packages.
 
-The historical migration to the high-touch explanation and key-code-comment standard is complete for all 106 formal problems. That does **not** permit mechanical bulk rewrites: future changes still require a concrete per-problem reason and must preserve canonical/generated fidelity.
+The current reasoning-first renderer uses explicit fields such as:
 
-`python3 tools/check_generated_fidelity.py` is the non-mutating guard for the complete render: it compares checked-in `solution.cpp`, `test.in`, and both mock packages with their canonical in-memory output. `make verify-meta` must pass before considering a repository-wide maintenance pass complete.
+```text
+visual
+ general_solution
+ limitations
+ generalization
+ algorithm_background
+ core
+ formula
+ steps
+```
+
+Do not mechanically migrate all 106 problems in one blind rewrite. Each problem should move to the richer structure only after an individual review confirms that the new sections improve the reasoning.
+
+`python3 tools/check_generated_fidelity.py` is the non-mutating canonical/generated guard. `make verify-meta` must pass before considering a repository-wide maintenance pass complete.
 
 ## Solution selection
 
-Before rewriting a problem explanation:
+Before rewriting a problem:
 
-1. identify the simplest correct reusable pattern;
-2. check whether the current implementation matches that pattern;
-3. if current code is correct but pedagogically advanced, prefer either:
-   - changing the primary implementation to the clearer solution, or
-   - retaining it as an explicitly labeled advanced alternative;
+1. identify the simplest correct reusable reasoning path;
+2. check whether the current implementation matches it;
+3. if the code is correct but pedagogically too advanced, either make the clearer solution primary or retain the advanced one as explicitly labeled secondary material;
 4. do not change working code solely for stylistic novelty.
 
 ## Validation
@@ -510,50 +442,12 @@ Before rewriting a problem explanation:
 After modifying a problem:
 
 1. preserve the public LeetCode method signature;
-2. preserve or update the local test adapter consistently;
-3. run/reason through all existing `cases/*.in` and expected outputs when execution is available;
-4. add edge cases when an explanation exposes a previously uncovered boundary;
-5. keep claimed time/space complexity consistent with the actual primary implementation;
-6. update the canonical layer first or together with generated output;
-7. ensure statement facts still match `statement_metadata.py` and the official review baseline;
-8. run `make verify-meta`; when execution is available, run `make verify` for compile + all judges.
-
-## Repository-wide optimization workflow
-
-A repository-wide scan may identify and prioritize many candidates, but **pedagogy optimization itself must be strictly per-problem and serial**. Do not batch-rewrite multiple problems just because they share a pattern or can be changed by the same mechanical transformation.
-
-For every problem, complete one independent review cycle before touching the next problem:
-
-1. read that problem's current canonical explanation, generated `solution.cpp`, implementation, and tests;
-2. reconstruct the most direct / brute-force intuition a learner would naturally start from;
-3. identify exactly what repeated work, unnecessary state, dominated candidate, state persistence, or structural difficulty motivates the optimized algorithm;
-4. derive the optimized mechanism from that bottleneck instead of presenting the optimized template as a fact;
-5. explicitly state **what original work the optimization has removed** and why the removed work/candidates can never affect correctness;
-6. map the mechanism to concrete implementation order, naming, sentinels, indices, container semantics, accumulated state, or pointer-update tricks;
-7. summarize reusable implementation techniques only after they have been justified in this concrete problem;
-8. update and validate only this problem's canonical data and generated output;
-9. record the result, then move to the next problem.
-
-Even when two neighboring problems reuse the same pattern, the second problem must still receive its own concrete analysis. Knowledge reuse should appear as an explicit migration/analogy, not as copied boilerplate.
-
-For each future refinement:
-
-1. read the existing `solution.cpp` and tests;
-2. identify the key abstraction barrier that makes the current explanation hard to understand;
-3. use **朴素直觉 -> 性能/结构瓶颈 -> 优化机制 -> 图像直觉 -> 一句话核心 -> 公式/不变量 -> 执行步骤 -> 实现技巧 -> 正确性直觉 -> 易错点 -> 迁移** when the problem has a meaningful optimization step;
-4. for naturally direct problems with no meaningful optimization gap, do not fabricate a brute-force story merely to satisfy the sequence;
-5. change implementation only when doing so materially improves clarity/correctness or matches the intended primary solution;
-6. update the canonical generation layer before or together with the generated file;
-7. keep each change focused and traceable.
-
-## Writing style
-
-- Chinese is the primary explanatory language; keep standard algorithm/API identifiers in English.
-- Prefer concrete examples before abstraction.
-- Prefer short equations tied directly to the diagram.
-- Avoid compressed phrases such as “显然”, “同理”, or “直接可得” when they hide the key reasoning step.
-- Avoid presenting memorized templates without explaining the invariant that makes the template applicable.
-- Prefer saying exactly what work/state/candidates were eliminated over merely saying that the optimized algorithm is “more efficient”.
-- When a variable carries state across positions, explain both **how the state changes** and **why it persists when there is no new event**.
-- When candidates are discarded, explain why they face the same future or why monotonicity makes them permanently impossible.
-- The target is: after several days, the reader should be able to reconstruct the algorithm from the direct idea, the bottleneck, and the optimization mechanism rather than memorize the code.
+2. preserve/update the local test adapter consistently;
+3. reason through existing `cases/*.in` and expected outputs; run them when execution is available;
+4. add edge cases when the new reasoning exposes an uncovered boundary;
+5. keep claimed time/space complexity consistent with the actual implementation;
+6. update canonical pedagogy first or together with generated output;
+7. keep statement facts consistent with `statement_metadata.py` / reviewed doocs baseline;
+8. run `python3 tools/check_generated_fidelity.py`;
+9. run `make verify-meta`;
+10. when execution is available, run `make verify` for compile + all judges.

@@ -1,9 +1,25 @@
-# Algorithm Template Cheat-Sheet (memoize this page)
+# Algorithm Template Cheat-Sheet (review after deriving the idea)
 
-> Each snippet is the minimal, memorizable, ready-to-write version. C++.
-> When solving: first identify which template the problem fits, then figure out the variation.
+> This page is a **retrieval / review card**, not the starting point for learning a problem.
+> First understand the problem's natural logic, write the general solution, identify its limitation, and extract the reusable rule. Only then map that rule to a named algorithm or template.
+> Full mechanism-level explanations live under [`docs/algorithms/`](algorithms/README.md).
+
+Recommended direction:
+
+```text
+problem intuition / geometry
+    -> natural general solution
+    -> limitation / repeated work
+    -> reusable rule
+    -> algorithm family
+    -> this cheat-sheet template
+```
+
+Do not reverse this chain by seeing a keyword and immediately forcing a memorized template onto the problem.
 
 ## 0. One-Page Exam Card (re-derive on Day 28)
+
+Use these only as **retrieval hints after you already understand the mechanism**:
 
 - "Sorted / monotonic / optimize a value" → **Binary search**
 - "Contiguous subarray / window" → **Sliding window / prefix sum**
@@ -21,7 +37,7 @@
 ```cpp
 // 1D prefix sum
 vector<int> pre(n+1, 0);
-for (int i = 0; i < n; i++) pre[i+1] = pre[i] + a[i];
+for (int i=0;i<n;i++) pre[i+1] = pre[i] + a[i];
 // sum of [l, r] = pre[r+1] - pre[l]
 
 // Difference array (range-add, then prefix-sum to recover)
@@ -67,19 +83,54 @@ return l;                      // l == r is the answer
 ```
 > Binary search on answer: replace `P(mid)` with a verify function (greedy / simulation).
 
-## 5. Monotonic Stack (next greater element)
+## 5. Monotonic Stack
+
+Do **not** start by memorizing “increasing stack / decreasing stack”. First ask:
+
+```text
+What is the natural per-position search?
+Where does that search repeat work?
+What historical positions are still unresolved during a sweep?
+When can the current element permanently resolve stack.top()?
+What becomes known at pop time?
+```
+
+Typical progression:
+
+```text
+Next Greater / Smaller
+    -> pop resolves one-sided answer (LC-739)
+Boundary expansion
+    -> pop fixes right boundary; post-pop top supplies left blocker (LC-84)
+Contribution counting
+    -> boundary distances determine how many subarrays one value owns
+```
+
+Minimal next-greater skeleton:
 
 ```cpp
 vector<int> res(n, -1);
-stack<int> st;                  // indices, stack values decreasing
-for (int i=0;i<n;i++){
-    while (!st.empty() && a[st.top()] < a[i]){
-        res[st.top()] = i;
-        st.pop();
+stack<int> pending;             // indices whose answer is still unknown
+for (int i = 0; i < n; ++i) {
+    while (!pending.empty() && a[i] > a[pending.top()]) {
+        int j = pending.top();
+        pending.pop();
+        res[j] = i;             // current i is j's first resolving event
     }
-    st.push(i);
+    pending.push(i);
 }
 ```
+
+Boundary formulas must be derived from interval semantics, not memorized. If `left` and `right` are two unusable blocking positions, the valid closed interval is `[left+1, right-1]`, so:
+
+```text
+width = (right-1) - (left+1) + 1
+      = right-left-1
+```
+
+Also state the equality policy explicitly: `< / <= / > / >=` decides which equal element owns a boundary or contribution. This is correctness-critical for duplicate values.
+
+For the full general-problem derivation, geometric LC-84 model, equality handling, sentinels, amortized complexity, and repository teaching checklist, see [单调栈：从一般搜索到“未决状态一次结算”](algorithms/monotonic-stack.md).
 
 ## 6. Monotonic Queue (sliding window max)
 
@@ -316,4 +367,4 @@ pair<int,int> expand(string& s, int l, int r){
 | n ≤ 1e5      | O(n log n)             |
 | n ≤ 1e6      | O(n)                   |
 
-> In a timed exam, read n's range first, back out the required complexity, then pick the algorithm class — the single most useful pre-check.
+> In a timed exam, read n's range first, back out the required complexity, then pick the algorithm class — but only after confirming that the problem actually has the structural preconditions required by that algorithm.

@@ -1,0 +1,8 @@
+# case	kinds	purpose
+1	official,equality	等式 a==b、b==c 推出 a==c：验证等价关系具有传递性，所有等式应先合并到同一集合
+2	trap,contradiction	同一对变量同时要求相等与不等：验证完成等式合并后再检查不等式能直接发现冲突
+3	trap,transitive	没有直接 a==c，但经 b 传递可知 a 与 c 同集合，因此 a!=c 矛盾：验证不能只检查显式成对等式
+4	minimum,boundary	单条 a!=b 且无等式连接：验证不同集合之间的不等关系可满足
+5	minimum,boundary	自反等式 a==a：验证变量与自身天然同集合且不会制造异常合并
+6	component	形成 a/b 与 c/d 两个独立等价类，再要求 a!=c：验证不同连通分量之间可以满足不等式
+7	stress,transitive	四变量等式链 a==b==c==d 后要求 a!=d：验证多层 union/find 后仍能识别远端变量同根并判矛盾

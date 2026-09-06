@@ -1,0 +1,14 @@
+name: temporary-case-audit
+
+on:
+  push:
+    branches:
+      - learning/case-coverage-expansion-v2
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Report formal case coverage
+        run: python3 tools/tmp_case_audit.py

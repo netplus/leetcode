@@ -3,7 +3,7 @@
 PEDAGOGY_WEEK2_DAY9 = {
     141: {
         "pattern": "Floyd 快慢指针：用速度差发现周期",
-        "visual": """把有环链表想成“直道 + 环形跑道”：\n\nhead -> a -> b -> c -> d\n                 ^         \\\n                 |          e\n                 +---- g <- f\n\nslow 每轮走 1 步，fast 每轮走 2 步。\n在直道上，两者只是前后移动；一旦 slow 也进入环，就等价于两个人在圆形跑道上追逐。\n\n此时关键不再是“fast 的绝对位置”，而是 fast 相对 slow 每轮多走 1 格：\n\n相对距离：0, 1, 2, 3, ...  (mod 环长)\n\n所以只要存在环，相对距离迟早会再次变成 0，也就是两指针相遇。\n无环则完全不同：fast 只会一路冲到 nullptr。""",
+        "visual": """把有环链表想成“直道 + 环形跑道”：╲n╲nhead -> a -> b -> c -> d╲n                 ^         ╲╲╲n                 |          e╲n                 +---- g <- f╲n╲nslow 每轮走 1 步，fast 每轮走 2 步。╲n在直道上，两者只是前后移动；一旦 slow 也进入环，就等价于两个人在圆形跑道上追逐。╲n╲n此时关键不再是“fast 的绝对位置”，而是 fast 相对 slow 每轮多走 1 格：╲n╲n相对距离：0, 1, 2, 3, ...  (mod 环长)╲n╲n所以只要存在环，相对距离迟早会再次变成 0，也就是两指针相遇。╲n无环则完全不同：fast 只会一路冲到 nullptr。""",
         "core": "让 fast 比 slow 每轮多走一步；无环时 fast 会掉出链表，有环时这个相对位移会在有限环上必然追成 0。",
         "formula": """设环长为 L。slow 和 fast 都进入环后，每轮：\n\nrelative = (fast_position - slow_position) mod L\nrelative_next = (relative + 1) mod L\n\n因为 relative 只有 0..L-1 共 L 种状态，连续 +1 mod L 必然到达 0。\n\n循环不变量：\n- slow 每轮前进 1 个 next；\n- fast 每轮前进 2 个 next；\n- 只要 fast 和 fast->next 存在，这两个推进都是合法的。""",
         "steps": [
@@ -19,7 +19,7 @@ PEDAGOGY_WEEK2_DAY9 = {
     },
     142: {
         "pattern": "Floyd 两阶段：从环内相遇点反推出入口",
-        "visual": """先沿用 LC-141 找到环内相遇点 M：\n\nhead -- a步 --> ENTRY -- b步 --> M\n                 ^               |\n                 |               |\n                 +---- c步 <-----+\n\n环长 L = b + c。\n\n第一阶段看起来只告诉我们“有环”，但相遇发生的路程其实已经藏着入口信息。\n相遇后把 slow 放回 head，fast 留在 M，然后两者都改成每次走 1 步：\n\nslow: head  -------- a步 --------> ENTRY\nfast: M ---- c步 + 若干整圈 ------> ENTRY\n\n两段路程恰好等长，所以它们下一次相遇的位置就是 ENTRY。""",
+        "visual": """先沿用 LC-141 找到环内相遇点 M：╲n╲nhead -- a步 --> ENTRY -- b步 --> M╲n                 ^               |╲n                 |               |╲n                 +---- c步 <-----+╲n╲n环长 L = b + c。╲n╲n第一阶段看起来只告诉我们“有环”，但相遇发生的路程其实已经藏着入口信息。╲n相遇后把 slow 放回 head，fast 留在 M，然后两者都改成每次走 1 步：╲n╲nslow: head  -------- a步 --------> ENTRY╲nfast: M ---- c步 + 若干整圈 ------> ENTRY╲n╲n两段路程恰好等长，所以它们下一次相遇的位置就是 ENTRY。""",
         "core": "第一次相遇负责制造一个路程等式；把一个指针重置到 head 后，两指针同速前进，就把这个等式直接走成环入口。",
         "formula": """设：\na = head 到入口距离\nb = 入口到第一次相遇点 M 的距离\nc = M 沿环回到入口的距离\nL = b + c\n\n第一次相遇时 slow 走 a+b，fast 走 2(a+b)。\nfast 比 slow 多走了整数圈 kL：\n\n2(a+b) - (a+b) = kL\na + b = kL\na = kL - b\n  = (k-1)L + c\n\n所以：\nhead 到入口的 a 步 = M 到入口的 c 步 + 若干完整环。""",
         "steps": [
@@ -35,7 +35,7 @@ PEDAGOGY_WEEK2_DAY9 = {
     },
     19: {
         "pattern": "哑节点 + 固定间距双指针定位倒数位置",
-        "visual": """倒数第 n 个难在：单链表不能从尾巴往前走。\n解决办法不是回头，而是让两个指针保持固定距离。\n\n例如删除倒数第 2 个：\n\ndummy -> 1 -> 2 -> 3 -> 4 -> 5 -> null\n  slow              fast\n\n先让 fast 从 dummy 走 n+1=3 条边：\n\ndummy -> 1 -> 2 -> 3 -> 4 -> 5 -> null\n  slow              fast\n        <--- 3 edges --->\n\n之后两者同步走。fast 一旦到 null，slow 就恰好停在目标节点 4 的前驱 3：\n\n                  slow -> [4] -> 5 -> null\n                           ^\n                         删除\n\n我们真正要找的不是“倒数第 n 个”，而是它的前驱，因为删除动作需要改 predecessor->next。""",
+        "visual": """倒数第 n 个难在：单链表不能从尾巴往前走。╲n解决办法不是回头，而是让两个指针保持固定距离。╲n╲n例如删除倒数第 2 个：╲n╲ndummy -> 1 -> 2 -> 3 -> 4 -> 5 -> null╲n  slow              fast╲n╲n先让 fast 从 dummy 走 n+1=3 条边：╲n╲ndummy -> 1 -> 2 -> 3 -> 4 -> 5 -> null╲n  slow              fast╲n        <--- 3 edges --->╲n╲n之后两者同步走。fast 一旦到 null，slow 就恰好停在目标节点 4 的前驱 3：╲n╲n                  slow -> [4] -> 5 -> null╲n                           ^╲n                         删除╲n╲n我们真正要找的不是“倒数第 n 个”，而是它的前驱，因为删除动作需要改 predecessor->next。""",
         "core": "让 fast 始终比 slow 多走 n+1 条边；fast 越过尾部时，slow 就被这段固定距离精确定位到待删节点前驱。",
         "formula": """使用 dummy 后，把 null 也看成链表尾部之后的一个边界位置。\n\n初始化：fast 比 slow 领先 n+1 条边。\n同步阶段不变量：\ndistance(slow, fast) = n+1 条边。\n\n当 fast == nullptr 时：\nslow->next 恰好是倒数第 n 个节点。\n\n为什么是 n+1 而不是 n？\n因为 slow 要停在目标的“前一个节点”，而不是目标本身。""",
         "steps": [
@@ -51,7 +51,7 @@ PEDAGOGY_WEEK2_DAY9 = {
     },
     234: {
         "pattern": "快慢指针找中点 + 复用 LC-206 反转 + 同向比较",
-        "visual": """数组判断回文可以左右夹逼，但单链表不能从尾部向前走：\n\n1 -> 2 -> 3 -> 2 -> 1\n^                   ^\nleft             想要 right，但拿不到前驱\n\n所以把“从尾往前”改造成“把后半段翻过来后从前往后”：\n\n原链：   1 -> 2 -> 3 -> 2 -> 1\n                    slow\n\n反转 slow 开始的后半段后：\nleft:    1 -> 2 -> 3 ...\nright:   1 -> 2 -> 3\n\n现在两个指针都只需沿 next 向右，就在比较原链的镜像位置。\n这里其实没有新指针技巧：找中点来自 fast/slow，反转完全复用 Day 8 的 LC-206。""",
+        "visual": """数组判断回文可以左右夹逼，但单链表不能从尾部向前走：╲n╲n1 -> 2 -> 3 -> 2 -> 1╲n^                   ^╲nleft             想要 right，但拿不到前驱╲n╲n所以把“从尾往前”改造成“把后半段翻过来后从前往后”：╲n╲n原链：   1 -> 2 -> 3 -> 2 -> 1╲n                    slow╲n╲n反转 slow 开始的后半段后：╲nleft:    1 -> 2 -> 3 ...╲nright:   1 -> 2 -> 3╲n╲n现在两个指针都只需沿 next 向右，就在比较原链的镜像位置。╲n这里其实没有新指针技巧：找中点来自 fast/slow，反转完全复用 Day 8 的 LC-206。""",
         "core": "单链表不能从右往左比较，就把后半段原地反转，把“左右夹逼”转换成两条都向 next 前进的链表比较。",
         "formula": """第一阶段：fast 每次 2 步、slow 每次 1 步。\nfast 到尾时，slow 位于后半段起点（奇数长度时包含中间节点）。\n\n第二阶段调用 LC-206：\nreversed = reverse(slow)。\n\n比较不变量：\nleft 指向前半段当前镜像位置；\nright 指向反转后半段当前镜像位置；\nright 未结束前必须满足 left->val == right->val。\n\n只需比较 reversed 的长度，因为后半段长度 <= 前半段长度。""",
         "steps": [

@@ -162,8 +162,16 @@ public:
                     pending.push(neighbor);
                 }
 
-                // 无论 neighbor 是第一次还是第 N 次被遇到，这条原图边都必须被复制。
-                // 两端都通过 cloneOf 查找，保证共享邻居仍然指向同一个克隆对象。
+                // 复制原图边 original—neighbor。被接入的是 cloneOf[neighbor]，它是已存在的克隆对象：
+                // 执行到本行时 cloneOf.count(neighbor) 必为 1——上面 if 要么刚刚首次创建它，
+                // 要么 neighbor 早已在映射里而 if 跳过。因此 push 的绝不是原指针 neighbor 本身，
+                // 也不会在这里再 new。于是原图里被多条边共享的同一个 neighbor，在克隆图里始终
+                // 映射到同一个克隆对象（起点同理：循环外已登记，作为 neighbor 出现时 count 同样为 1）。
+                //
+                // 上面 if 守“对象身份”：一个原节点只 new 一次、只入队一次，重复到达时 if 会跳过；
+                // 本行守“边的复制”：original 的每条邻接项都要在克隆图里重建一次。
+                // if 可跳过，但本行不可跳——否则会漏掉 neighbor 已存在时才出现的那条反向边
+                // （例如处理 original=2 时复制 2—1，而 1—2 早在处理 original=1 时已复制）。
                 cloneOf[original]->neighbors.push_back(cloneOf[neighbor]);
             }
         }

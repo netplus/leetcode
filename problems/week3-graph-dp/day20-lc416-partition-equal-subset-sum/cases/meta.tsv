@@ -1,0 +1,8 @@
+# case	kinds	purpose
+1	official,knapsack	官方样例：总和为偶数且存在和为一半的子集
+2	minimum,no-solution	单元素 1：总和为奇数，应在进入背包前直接判 false
+3	boundary	两个相同元素：验证最小可成功二分案例
+4	official,no-solution	1 2 3 5：总和为奇数，验证奇偶性快速失败
+5	boundary	1 1：验证每个元素只能使用一次的 0/1 背包语义
+6	duplicates	四个 2：验证重复值仍按不同元素处理并可组成目标和
+7	trap	3 3 3 4 5：验证不能使用简单贪心配对，需要真正的子集可达性 DP

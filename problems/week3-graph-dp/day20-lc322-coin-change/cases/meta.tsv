@@ -1,0 +1,8 @@
+# case	kinds	purpose
+1	official,dp	官方 1/2/5 凑 11：验证完全背包式最少硬币转移
+2	boundary	amount=0：验证无需硬币时答案为 0
+3	no-solution	仅硬币 2 凑 3：验证不可达状态保持哨兵并最终返回 -1
+4	boundary	仅硬币 1：验证最简单的连续可达状态
+5	boundary	单一硬币可整除目标：验证重复使用同一种硬币
+6	boundary	多币种但 amount=0：验证初始化不依赖硬币集合
+7	stress,trap	大目标 6249 与不规则币值：抓贪心选最大币值以及错误状态上界实现

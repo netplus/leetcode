@@ -1,0 +1,8 @@
+# case	kinds	purpose
+1	official,dp	官方 3x7 网格：验证二维路径计数主转移 dp[r][c]=上方+左方
+2	minimum,boundary	1x1：起点即终点，验证路径数为 1
+3	boundary	单行网格：验证只有一路向右，首行初始化必须全为 1
+4	boundary	单列网格：验证只有一路向下，首列初始化必须全为 1
+5	boundary	2x2：验证最小同时包含向右和向下选择的网格
+6	variant	3x2：验证非方阵维度处理和转移方向
+7	stress	3x3：小规模多路径，验证重复状态累加而非 DFS 漏计

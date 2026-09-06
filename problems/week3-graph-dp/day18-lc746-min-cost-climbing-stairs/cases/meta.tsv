@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,dp	官方样例：验证从下标 0 或 1 起步并按两级转移求最小代价
+2	minimum,boundary	最小长度 2：验证可直接从第二级起步，避免强制支付第 0 级费用
+3	official,stress	长交替高低代价样例：验证 DP 会跨过高成本台阶而不是局部逐级贪心
+4	boundary	全部代价为 0：验证结果可为 0 且初始化不引入额外费用
+5	duplicates,boundary	两个相同代价：验证 n=2 时只需支付一次最低起步代价
+6	trap	严格递增代价：验证状态表示的是“到达台阶顶部前的最小费用”，避免终点下标 off-by-one

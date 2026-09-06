@@ -1,0 +1,8 @@
+# case	kinds	purpose
+1	official,backtracking	官方 ABCCED：验证四方向 DFS、路径内 visited 与成功回溯
+2	minimum,boundary	1x1 且字符匹配：验证最小成功路径
+3	minimum,no-solution	1x1 字符不匹配：验证起点剪枝
+4	boundary,no-solution	单词长度超过格子数：验证不能重复使用同一单元格
+5	trap,no-solution	2x2 搜 ABA：抓路径中重复使用已访问 A 的错误实现
+6	boundary	单行 ABC：验证只能水平移动也能完成匹配
+7	boundary	单列 ABC：验证只能垂直移动也能完成匹配

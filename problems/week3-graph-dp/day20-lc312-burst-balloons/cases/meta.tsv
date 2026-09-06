@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,interval-dp	官方样例：验证区间 DP 以“最后戳破的气球”划分左右独立子区间
+2	minimum,boundary	单个气球 5：验证两侧虚拟边界值 1 的处理
+3	boundary	两个气球 1 2：验证不同最后戳破顺序会产生不同收益
+4	ordering	两个气球 2 1：验证结果取决于数值位置而非仅元素集合
+5	minimum	单个气球 1：验证最小正值与虚拟边界乘积
+6	boundary	单个 0：验证零值气球不会造成初始化或乘法异常

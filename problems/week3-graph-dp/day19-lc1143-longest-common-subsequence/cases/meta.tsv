@@ -1,0 +1,8 @@
+# case	kinds	purpose
+1	official,dp	官方样例 abcde/ace：验证子序列可跳过字符而不要求连续
+2	minimum,boundary	单字符相同：验证匹配分支 dp[i-1][j-1]+1
+3	minimum,no-solution	单字符不同：验证不匹配分支取上/左最大值且结果为 0
+4	boundary	两串完全相同：验证 LCS 可以覆盖整个字符串
+5	no-solution	两串无公共字符：验证不会把位置或长度相同误判为匹配
+6	trap,ordering	abcd/bcda：验证相对顺序约束，不能仅统计公共字符集合
+7	variant	pmjhtex/pmt：验证稀疏匹配和多次跳过后的状态继承

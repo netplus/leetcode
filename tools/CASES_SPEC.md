@@ -1,74 +1,169 @@
 # Test-case authoring spec — read BEFORE writing any cases/
 
 ## Goal
-Every problem dir gets a `cases/` subdirectory with **4–8 cases** as `N.in` + `N.out`
-pairs (N = 1, 2, 3, ...). The judge (`tools/judge.sh <NUM>`) compiles the user's
-`solution.cpp` once and diffs each case's actual stdout against `N.out`.
+
+Every problem directory owns a `cases/` validation suite. A useful suite is not
+measured only by case count: every case should exist for a reason and should be
+able to expose a concrete class of wrong implementation.
+
+Repository target:
+
+- **6 cases minimum** for a fully migrated problem;
+- **7–8 cases** for high-value problems whose common mistakes need additional
+  dedicated coverage;
+- never add near-duplicate inputs merely to reach a number.
+
+The repository is still migrating from the historical 4-case floor. Run:
+
+```bash
+python3 tools/check_case_coverage.py
+```
+
+for the structural audit plus migration-debt report. Once every problem reaches
+the new standard, `--strict` becomes the intended hard gate:
+
+```bash
+python3 tools/check_case_coverage.py --strict
+```
 
 ## File format
-- `N.in` — the **complete stdin** that the problem's `main()` reads. Look at the
-  stub's "Local I/O format" comment AND its `main()` to see exactly what to feed.
-- `N.out` — the **exact expected stdout**, one value per line as `main()` prints.
-  - Trailing whitespace per line is ignored by the judge, but write clean output.
-  - If expected is empty (e.g. returns `""`), write a single `\n` (the harness
-    prints `"\n"`). If the harness prints nothing, leave `N.out` empty.
-- Number cases **1, 2, 3, ...** (sorts naturally by the judge).
 
-## Case selection (cover these dimensions; aim 5–6 per problem)
-1. **Official LeetCode Example(s)** — 1–3 cases. Their answers are authoritative.
-2. **Minimum input** — n=1, single element, length-1 string, 1×1 grid, etc.
-3. **Boundary at constraint extremes** — empty result, all-same values,
-   already-sorted / reverse-sorted / all-duplicates.
-4. **Tricky / easy-to-misjudge** — empty-result cases (return `""`, `[]`, `false`,
-   `-1`, `0`), ties (pick leftmost), duplicate values, negative numbers, overflow
-   triggers (large sums → forces `long long`).
-5. **Edge of "no solution"** — when the problem allows a no-answer case.
+Each executable case is a pair:
 
-> Do NOT write a reference solution. Compute expected outputs by hand or from the
-> official examples. If you can't determine an expected output with certainty,
-> skip that case rather than guess a wrong `.out`.
+- `N.in` — the **complete stdin** consumed by the problem's `main()`;
+- `N.out` — the **exact expected stdout** produced by the harness.
+
+Number cases `1, 2, 3, ...` with no gaps. Keep the suite at no more than 8 cases
+unless the repository policy is deliberately changed.
+
+Trailing whitespace per output line is ignored by the judge, but expected files
+should still be clean. If the harness prints a newline for an empty string, the
+expected output must contain that newline. If the harness prints nothing, an
+empty `N.out` is valid.
+
+## Validation dimensions
+
+Do not mechanically assign one case to each bullet. Choose cases that target the
+actual semantics and likely bugs of the problem.
+
+1. **Official example** — retain at least the primary LeetCode example so the
+   local harness stays anchored to the statement.
+2. **Minimum input** — smallest legal array/string/tree/grid/query set.
+3. **Semantic boundary** — first/last position, empty answer, exact equality,
+   all-same values, already sorted / reverse sorted, full-range update, etc.
+4. **Algorithm trap** — a case that breaks a tempting but wrong implementation:
+   e.g. boolean existence instead of frequency, wrong strictness, stale deque
+   entries, incorrect duplicate ownership, off-by-one range ending, or invalid
+   sliding-window assumptions.
+5. **Alternative result branch / no solution** — only when the problem permits
+   it.
+6. **Duplicates / ordering / overflow** — include when these properties matter
+   to correctness.
+7. **Stress-shaped small case** — a hand-checkable input that repeats the core
+   state transition several times. This is more useful than a huge opaque input.
+
+A good rule is:
+
+> Before adding a case, finish the sentence: “This case catches an implementation
+> that incorrectly ______.”
+
+If you cannot fill that blank, the case probably adds little validation power.
+
+## Case intent metadata
+
+A migrated suite adds `cases/meta.tsv`. This turns the case set into a learning
+asset and lets the audit verify that every executable case has an explicit
+purpose.
+
+Format, one line per case:
+
+```text
+# case<TAB>kinds<TAB>purpose
+1	official	官方样例：验证题目主路径和本地 I/O 契约
+2	minimum,boundary	最小合法输入：验证初始化和单元素边界
+3	trap,duplicates	重复状态会产生多个答案，防止把频次错误写成 bool
+```
+
+Rules:
+
+- column 1: positive case number;
+- column 2: one or more comma-separated kinds;
+- column 3: concise explanation of **what bug or boundary this case validates**;
+- metadata must cover every `N.in` / `N.out` pair exactly once.
+
+Allowed kinds:
+
+- `official`
+- `minimum`
+- `boundary`
+- `trap`
+- `no-solution`
+- `duplicates`
+- `ordering`
+- `overflow`
+- `stress`
+- `variant`
+
+The kind is only a retrieval label. The third column is the important part.
+
+## Do not use a hidden reference solution
+
+Expected outputs should come from an official example, a direct derivation, or a
+small hand-checkable calculation. If an expected output cannot be established
+with confidence, do not add the case.
+
+For complicated cases, it is fine to write a temporary brute-force checker while
+reviewing the case, but do not make the repository's expected-output generation
+depend on the production solution being tested.
 
 ## Verify your cases
-After writing a problem's cases, run the judge against the **empty stub**:
+
+Run the case-structure audit:
+
+```bash
+python3 tools/check_case_coverage.py
+```
+
+Run one problem's judge after changing its cases:
+
 ```bash
 bash tools/judge.sh <NUM>
 ```
-The empty stub returns the default (`{}`, `0`, `""`, `nullptr`, `false`). So:
-- Cases whose expected output equals the stub's default will spuriously "PASS".
-- All other cases should FAIL (wrong output) — that's correct, the stub isn't
-  implemented.
-If a case RUNTIME-ERRORs on the empty stub (e.g. empty-stub returns `{}` then
-`main()` does `ans[0]`), that's expected and fine — it just means the harness
-indexes the result. Note it but don't "fix" the case.
+
+Run repository metadata verification before submitting:
+
+```bash
+make verify-meta
+```
+
+And, when the implementation set is expected to compile and pass:
+
+```bash
+make verify
+```
 
 ## Conventions
-- One problem per `cases/` dir. Never put cases in the parent.
-- Keep `test.in` (the single Example-1 file) — it's still used by `make lc<N>` /
-  `make w<N>d<M>` quick-run. Make `cases/1.in` == `test.in` (same Example 1) so
-  they agree.
-- Filenames: `1.in`, `1.out`, `2.in`, `2.out`, ... zero-padded only if >9 cases.
 
-## Multi-answer problems (any output order) — add a `.judge` file
-Some LeetCode problems accept the answer in ANY order (permutations, subsets,
-combinations, anagram indices, coordinate lists, top-K sets). The default judge
-compares stdout byte-for-byte, so two correct-but-differently-ordered outputs
-would be a false FAIL. For these, drop a `.judge` file in the problem dir whose
-first token selects a normalization mode:
+- One problem per `cases/` directory.
+- Keep `test.in`; it is used by `make lc<N>` / `make w<N>d<M>` quick-run.
+- `cases/1.in` must be byte-for-byte identical to `test.in`.
+- Do not duplicate an existing input under another case number.
+- Keep case numbers contiguous from 1.
+- `cases/meta.tsv` is canonical documentation for case intent; do not bury the
+  purpose only in a PR description.
 
-- **`lineset`** — sort all output lines (dedup) before comparing. Use when each
-  line is one complete answer and order across lines doesn't matter.
-  Examples: LC-46 (permutations), LC-78 (subsets), LC-39 (combination sum),
-  LC-22 (parentheses), LC-15 (3sum triplets), LC-438 (anagram start indices),
-  LC-417 (water-flow coordinates).
-- **`lineset-si`** — like lineset, but also sort the tokens WITHIN each line first.
-  Use when a single line carries multiple values whose order doesn't matter
-  (e.g. a set printed space-separated). Example: LC-347 (top-K frequent, where
-  the K values may be printed in any order).
-- **`exact`** — (default) byte compare, trailing whitespace ignored. No `.judge`
-  file needed.
+## Multi-answer problems — `.judge`
 
-To apply: `echo lineset > problems/<dir>/.judge`. The judge reads this file at
-run time and reports the mode used: `LC-46: 5 passed, 0 failed [mode=lineset]`.
+Some LeetCode problems accept answers in arbitrary order. The default judge is an
+exact textual comparison, so these problems need a `.judge` file in the problem
+directory.
 
-When writing cases for a multi-answer problem, still write ONE canonical ordering
-in the `.out` (e.g. lexicographic). The normalizer makes any valid ordering match.
+- **`lineset`** — sort output lines before comparing. Use when each line is one
+  complete answer and line order is irrelevant. Examples: LC-46, LC-78, LC-39,
+  LC-22, LC-15, LC-438, LC-417.
+- **`lineset-si`** — also sort tokens inside each line. Use when each line itself
+  represents an unordered set, e.g. LC-347 top-K values.
+- **`exact`** — default; no `.judge` file is required.
+
+Still write one canonical ordering in every `.out`; normalization only prevents
+false failures caused by another valid ordering.

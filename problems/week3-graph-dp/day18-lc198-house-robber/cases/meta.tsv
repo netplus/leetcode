@@ -1,0 +1,8 @@
+# case	kinds	purpose
+1	official,dp	官方主样例：验证当前位置只能在“跳过当前房屋”和“偷当前房屋 + i-2 最优值”之间取最大
+2	minimum,boundary	单房屋：验证最小状态直接等于该房屋金额
+3	boundary	两房屋且前者更大：验证第二个基例取 max(nums[0], nums[1])，不能强制选择后一个
+4	boundary	两房屋且后者更大：与 case3 对称，验证基例不依赖固定位置
+5	boundary,zeros	全 0：验证允许选择“不偷任何额外价值”，滚动状态不会产生非零垃圾值
+6	official,stress	经典 [2,7,9,3,1]：最优解需要跨多个相邻冲突组合，验证局部挑最大单房屋并不等价于全局最优
+7	trap,non-adjacent	[100,1,1,100] 的最优值来自首尾两个远离房屋 200：验证线性版本首尾可以同时偷，不能误套 House Robber II 的环形约束

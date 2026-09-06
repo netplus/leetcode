@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official	官方主样例：验证既能重复选择候选，也能在不同候选之间形成不同组合
+2	minimum,boundary	单一候选值恰好等于 target：验证命中后正确收集当前路径
+3	no-solution,boundary	所有候选组合都无法得到 target：验证搜索穷尽后返回空集合
+4	trap,reuse	[2,3] 组成 7 需要重复使用 2：验证递归下一层仍可从当前候选开始，而不是强制跳到下一个候选
+5	stress,reuse	唯一候选 1 连续使用三次：验证可重复选择同一元素直到剩余值归零
+6	trap,backtracking,stress	[2,3,5] 组成 8 同时存在 4 层、3 层和 2 层三种解：验证回溯恢复路径后还能切换候选并枚举全部组合且不产生排列重复

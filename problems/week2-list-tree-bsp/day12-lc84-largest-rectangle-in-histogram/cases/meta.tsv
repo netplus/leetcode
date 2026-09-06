@@ -1,0 +1,9 @@
+# case	kinds	purpose
+1	official	官方样例：验证一般柱高起伏下左右边界与最大面积 10
+2	minimum,boundary	单柱：验证最小输入，宽度必须为 1
+3	ordering,trap	严格递增：遍历过程中几乎不 pop，依赖末尾哨兵统一结算所有未决柱
+4	duplicates,boundary	所有柱等高：验证相等高度的 ownership 处理不会丢掉整段宽度，最大面积来自全宽平台
+5	ordering	严格递减：每个新柱都会立即结算更高历史柱，验证左边界随 pop 正确更新
+6	boundary	0 将柱状图切断：验证高度 0 会强制结算左侧并阻止矩形跨越 0
+7	trap,boundary	谷形 [2,1,2] 的最优矩形由高度 1 跨完整三柱形成：验证不能只关注局部高柱，宽度公式必须排除左右阻挡边界
+8	stress,trap	中途高度 3 一次连续 pop 6 和 4，之后高度 3 还要继续保留到哨兵结算：验证 while 连续结算与 pop 后新左边界语义

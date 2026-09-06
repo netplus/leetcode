@@ -50,7 +50,12 @@ def main() -> None:
     for _, _, count, *_ in rows:
         hist[count] = hist.get(count, 0) + 1
     print("COUNT_HIST=" + ",".join(f"{k}:{v}" for k, v in sorted(hist.items())))
+    for count in sorted(hist):
+        ids = sorted(lc for lc, _, c, *_ in rows if c == count)
+        print(f"COUNT_{count}=" + ",".join(map(str, ids)))
     print()
+
+    # Full detail remains useful when a specific suite needs semantic review.
     for lc, problem_dir, count, kinds, entries, adapter in rows:
         print(f"=== LC{lc} | {problem_dir.relative_to(ROOT)} | cases={count} ===")
         print("KINDS=" + ",".join(kinds))

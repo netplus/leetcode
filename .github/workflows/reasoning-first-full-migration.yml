@@ -28,6 +28,7 @@ jobs:
         run: |
           python3 tools/apply_reasoning_first_migration.py
           python3 tools/gen_all.py
+          python3 tools/gen_review_report.py
 
       - name: Validate canonical/generated fidelity and all judges
         run: |

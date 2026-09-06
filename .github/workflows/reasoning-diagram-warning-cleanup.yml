@@ -24,12 +24,12 @@ jobs:
         with:
           python-version: '3.13'
 
-      - name: Normalize diagram backslashes in canonical visual blocks
+      - name: Normalize diagram backslashes in canonical pedagogy
         run: |
           python3 - <<'PY'
           from pathlib import Path
 
-          paths = [
+          visual_paths = [
               Path('tools/pedagogy_reasoning_manual.py'),
               Path('tools/pedagogy_week2_day9.py'),
               Path('tools/pedagogy_week2_day11.py'),
@@ -51,15 +51,12 @@ jobs:
                       in_visual = True
 
                   if in_visual and '\\' in line:
-                      new_line = line.replace('\\', '╲')
                       changed += line.count('\\')
-                      line = new_line
+                      line = line.replace('\\', '╲')
 
                   out.append(line)
 
                   if in_visual:
-                      # A visual block starts with one triple quote marker and ends
-                      # at the next marker, usually on the final content line.
                       marker_count = line.count('"""')
                       if starts:
                           if marker_count >= 2:
@@ -70,14 +67,53 @@ jobs:
               path.write_text(''.join(out), encoding='utf-8')
               return changed
 
+          def normalize_prerequisite_entries(path: Path, ids: set[int]) -> int:
+              text = path.read_text(encoding='utf-8')
+              lines = text.splitlines(keepends=True)
+              out = []
+              active = None
+              changed = 0
+
+              for line in lines:
+                  stripped = line.lstrip()
+                  if active is None:
+                      for num in ids:
+                          if stripped.startswith(f'{num}: """'):
+                              active = num
+                              break
+
+                  if active is not None and '\\' in line:
+                      # Only diagram slashes inside the LC98/LC236 prerequisite
+                      # blocks are normalized. Keep ordinary Python escapes such
+                      # as quoted strings elsewhere in this file untouched.
+                      diagram_line = ('/' in line or '\\' in line) and not ('\\"' in line)
+                      if diagram_line:
+                          changed += line.count('\\')
+                          line = line.replace('\\', '╲')
+
+                  out.append(line)
+
+                  if active is not None and '""",' in line:
+                      active = None
+
+              path.write_text(''.join(out), encoding='utf-8')
+              return changed
+
           total = 0
-          for path in paths:
+          for path in visual_paths:
               count = normalize_visual_blocks(path)
               total += count
-              print(f'{path}: normalized {count} diagram backslashes')
+              print(f'{path}: normalized {count} visual diagram backslashes')
+
+          prereq_path = Path('tools/pedagogy_prerequisites.py')
+          prereq_count = normalize_prerequisite_entries(prereq_path, {98, 236})
+          total += prereq_count
+          print(f'{prereq_path}: normalized {prereq_count} prerequisite diagram backslashes')
 
           if total == 0:
               raise RuntimeError('no diagram backslashes were normalized; expected warning sources not found')
+          if prereq_count != 5:
+              raise RuntimeError(f'expected exactly 5 LC98/LC236 prerequisite diagram backslashes, got {prereq_count}')
           print(f'normalized diagram backslashes: {total}')
           PY
 

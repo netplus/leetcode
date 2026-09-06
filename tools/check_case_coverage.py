@@ -1,21 +1,23 @@
 #!/usr/bin/env python3
-"""Audit per-problem validation cases.
+"""Audit deliberate validation suites for formal LeetCode problems.
 
 The repository is migrating from "a handful of sample inputs" to deliberate
-validation suites.  During migration the default mode keeps the historical
-4-case floor as a hard requirement, while reporting two debts:
+validation suites. During migration the default mode keeps the historical
+4-case floor as a hard requirement while reporting two debts:
 
-- problem suites with fewer than the recommended 6 cases;
-- suites that do not yet have ``cases/meta.tsv`` intent metadata.
+- formal LC suites with fewer than the recommended 6 cases;
+- formal LC suites that do not yet have ``cases/meta.tsv`` intent metadata.
 
-Use ``--strict`` once the repository-wide migration is complete.  Strict mode
-requires at least 6 cases and complete metadata for every problem.
+Use ``--strict`` once the repository-wide migration is complete. Strict mode
+requires at least 6 cases and complete metadata for every formal LC problem.
+Mock packages are validated by their own workflow and are intentionally outside
+this 106-problem case-coverage gate.
 """
 
 from __future__ import annotations
 
 import argparse
-import collections
+import re
 import sys
 from pathlib import Path
 
@@ -25,24 +27,19 @@ PROBLEMS = ROOT / "problems"
 HARD_MIN_CASES = 4
 RECOMMENDED_MIN_CASES = 6
 MAX_CASES = 8
-ALLOWED_KINDS = {
-    "official",
-    "minimum",
-    "boundary",
-    "trap",
-    "no-solution",
-    "duplicates",
-    "ordering",
-    "overflow",
-    "stress",
-    "variant",
-}
+FORMAL_PROBLEM_RE = re.compile(r"^day\d+-lc\d+-")
+KIND_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 
 
 def problem_dirs() -> list[Path]:
+    """Return only formal dayN-lcM-* problem directories.
+
+    Week 4 also contains mock packages. They are intentionally excluded here so
+    the strict gate corresponds to the repository's 106 formal LeetCode units.
+    """
     dirs = {path.parent for path in PROBLEMS.rglob("solution.cpp")}
     dirs.update(path.parent for path in PROBLEMS.rglob("solution.c"))
-    return sorted(dirs)
+    return sorted(path for path in dirs if FORMAL_PROBLEM_RE.match(path.name))
 
 
 def numeric_case_files(cases_dir: Path, suffix: str) -> dict[int, Path]:
@@ -50,12 +47,13 @@ def numeric_case_files(cases_dir: Path, suffix: str) -> dict[int, Path]:
     for path in cases_dir.glob(f"*.{suffix}"):
         if not path.stem.isdigit():
             continue
-        number = int(path.stem)
-        result[number] = path
+        result[int(path.stem)] = path
     return result
 
 
-def read_intent_metadata(meta_path: Path) -> tuple[dict[int, tuple[set[str], str]], list[str]]:
+def read_intent_metadata(
+    meta_path: Path,
+) -> tuple[dict[int, tuple[set[str], str]], list[str]]:
     metadata: dict[int, tuple[set[str], str]] = {}
     errors: list[str] = []
 
@@ -63,19 +61,18 @@ def read_intent_metadata(meta_path: Path) -> tuple[dict[int, tuple[set[str], str
         line = raw.strip()
         if not line or line.startswith("#"):
             continue
+
         parts = raw.split("\t", 2)
         if len(parts) != 3:
             errors.append(f"{meta_path}:{lineno}: expected CASE<TAB>KINDS<TAB>PURPOSE")
             continue
 
         case_text, kinds_text, purpose = (part.strip() for part in parts)
-        if not case_text.isdigit():
+        if not case_text.isdigit() or int(case_text) <= 0:
             errors.append(f"{meta_path}:{lineno}: case id must be a positive integer")
             continue
+
         case_id = int(case_text)
-        if case_id <= 0:
-            errors.append(f"{meta_path}:{lineno}: case id must be >= 1")
-            continue
         if case_id in metadata:
             errors.append(f"{meta_path}:{lineno}: duplicate metadata for case {case_id}")
             continue
@@ -84,13 +81,15 @@ def read_intent_metadata(meta_path: Path) -> tuple[dict[int, tuple[set[str], str
         if not kinds:
             errors.append(f"{meta_path}:{lineno}: at least one validation kind is required")
             continue
-        unknown = sorted(kinds - ALLOWED_KINDS)
-        if unknown:
+
+        invalid_kinds = sorted(kind for kind in kinds if not KIND_RE.fullmatch(kind))
+        if invalid_kinds:
             errors.append(
-                f"{meta_path}:{lineno}: unknown kind(s): {', '.join(unknown)}; "
-                f"allowed: {', '.join(sorted(ALLOWED_KINDS))}"
+                f"{meta_path}:{lineno}: invalid kind(s): {', '.join(invalid_kinds)}; "
+                "use lowercase letters/digits with optional internal hyphens"
             )
             continue
+
         if not purpose:
             errors.append(f"{meta_path}:{lineno}: purpose must explain what bug the case can catch")
             continue
@@ -113,7 +112,7 @@ def audit(strict: bool) -> int:
     dirs = problem_dirs()
 
     if not dirs:
-        print("ERROR: no solution.cpp/solution.c files found under problems/", file=sys.stderr)
+        print("ERROR: no formal dayN-lcM-* solution directories found", file=sys.stderr)
         return 1
 
     for problem_dir in dirs:
@@ -156,9 +155,8 @@ def audit(strict: bool) -> int:
                 )
 
         # Exact duplicate inputs add no validation power and usually indicate a
-        # copy/paste mistake.  Compare normalized line endings but preserve all
-        # other bytes so intentionally different whitespace-oriented string
-        # cases remain distinguishable.
+        # copy/paste mistake. Normalize CRLF only; otherwise preserve bytes so
+        # whitespace-sensitive string cases remain distinguishable.
         seen_inputs: dict[str, int] = {}
         for case_id in paired_ids:
             text = ins[case_id].read_text(encoding="utf-8").replace("\r\n", "\n")
@@ -197,9 +195,15 @@ def audit(strict: bool) -> int:
             errors.append(f"{rel(problem_dir)}: meta.tsv references absent case(s) {stale_meta}")
 
     print(
-        f"case-audit: {len(dirs)} problems, {total_cases} paired cases, "
+        f"case-audit: {len(dirs)} formal problems, {total_cases} paired cases, "
         f"{metadata_suites} suites with intent metadata"
     )
+    if len(dirs) != 106:
+        print(
+            f"WARNING: expected 106 formal LC directories, found {len(dirs)}; "
+            "check naming or PLAN.md synchronization"
+        )
+
     if short_suites:
         print(
             f"migration debt: {len(short_suites)} suite(s) have fewer than "
@@ -207,15 +211,14 @@ def audit(strict: bool) -> int:
         )
         for item in short_suites:
             print(f"  - {item}")
+
     if missing_metadata:
-        print(
-            f"migration debt: {len(missing_metadata)} suite(s) still lack cases/meta.tsv"
-        )
+        print(f"migration debt: {len(missing_metadata)} suite(s) still lack cases/meta.tsv")
         if len(missing_metadata) <= 20:
             for item in missing_metadata:
                 print(f"  - {item}")
         else:
-            print("  (use --strict after metadata migration is complete)")
+            print("  (run with --strict after metadata migration is complete)")
 
     if errors:
         print(f"case-audit: {len(errors)} error(s)", file=sys.stderr)
@@ -232,7 +235,7 @@ def main() -> int:
     parser.add_argument(
         "--strict",
         action="store_true",
-        help="require >=6 cases and complete cases/meta.tsv for every problem",
+        help="require >=6 cases and complete cases/meta.tsv for every formal LC problem",
     )
     args = parser.parse_args()
     return audit(strict=args.strict)

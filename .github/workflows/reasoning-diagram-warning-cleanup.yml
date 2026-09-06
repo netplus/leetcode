@@ -112,8 +112,10 @@ jobs:
 
           if total == 0:
               raise RuntimeError('no diagram backslashes were normalized; expected warning sources not found')
-          if prereq_count != 5:
-              raise RuntimeError(f'expected exactly 5 LC98/LC236 prerequisite diagram backslashes, got {prereq_count}')
+          # The five rendered tree strokes are each escaped as two backslash
+          # characters in Python source, so the canonical source count is ten.
+          if prereq_count != 10:
+              raise RuntimeError(f'expected exactly 10 escaped LC98/LC236 prerequisite diagram backslashes, got {prereq_count}')
           print(f'normalized diagram backslashes: {total}')
           PY
 

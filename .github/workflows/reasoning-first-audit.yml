@@ -1,0 +1,47 @@
+name: Reasoning-first semantic audit
+
+on:
+  push:
+    branches:
+      - learning/reasoning-first-full-migration-v3
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: learning/reasoning-first-full-migration-v3
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Report reasoning bridge provenance
+        run: |
+          python3 - <<'PY'
+          import sys
+          sys.path.insert(0, 'tools')
+          from refined_week1 import REFINEMENTS as W1
+          from refined_week2 import REFINEMENTS as W2
+          from refined_week3 import REFINEMENTS as W3
+          from refined_week4 import REFINEMENTS as W4
+          from pedagogy_derivations import DERIVATION_OVERRIDES
+          from pedagogy_derivations_backfill import DERIVATION_BACKFILL_OVERRIDES
+          from pedagogy_reasoning_first import REASONING_FIRST_OVERRIDES
+
+          all_ids = set(W1) | set(W2) | set(W3) | set(W4)
+          derived = set(DERIVATION_OVERRIDES) | set(DERIVATION_BACKFILL_OVERRIDES)
+          manual_reasoning = {84, 739}
+          fallback = sorted(all_ids - derived - manual_reasoning)
+          print('FORMAL_COUNT=', len(all_ids))
+          print('DERIVATION_COUNT=', len(derived))
+          print('MANUAL_REASONING=', sorted(manual_reasoning))
+          print('FALLBACK_COUNT=', len(fallback))
+          print('FALLBACK_IDS=', ','.join(map(str, fallback)))
+
+          generic = sorted(
+              n for n, item in REASONING_FIRST_OVERRIDES.items()
+              if item['limitations'].startswith('这道题的一般性逻辑本身已经接近目标复杂度')
+          )
+          print('GENERIC_FALLBACK_COUNT=', len(generic))
+          print('GENERIC_FALLBACK_IDS=', ','.join(map(str, generic)))
+          PY

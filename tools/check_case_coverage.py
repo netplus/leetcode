@@ -1,16 +1,13 @@
 #!/usr/bin/env python3
 """Audit deliberate validation suites for formal LeetCode problems.
 
-The repository is migrating from "a handful of sample inputs" to deliberate
-validation suites. During migration the default mode keeps the historical
-4-case floor as a hard requirement while reporting two debts:
+Repository policy requires every formal ``dayN-lcM-*`` problem to have at least
+6 paired cases and complete ``cases/meta.tsv`` intent metadata. The repository
+hard gate invokes this checker with ``--strict`` through ``make verify-meta``.
 
-- formal LC suites with fewer than the recommended 6 cases;
-- formal LC suites that do not yet have ``cases/meta.tsv`` intent metadata.
-
-Use ``--strict`` once the repository-wide migration is complete. Strict mode
-requires at least 6 cases and complete metadata for every formal LC problem.
-Mock packages are validated by their own workflow and are intentionally outside
+The non-strict mode remains available as a local authoring diagnostic: it keeps
+the historical 4-case floor while reporting suites that have not yet reached the
+repository invariant. Mock packages are validated separately and are outside
 this 106-problem case-coverage gate.
 """
 
@@ -206,19 +203,16 @@ def audit(strict: bool) -> int:
 
     if short_suites:
         print(
-            f"migration debt: {len(short_suites)} suite(s) have fewer than "
+            f"authoring debt: {len(short_suites)} suite(s) have fewer than "
             f"{RECOMMENDED_MIN_CASES} cases"
         )
         for item in short_suites:
             print(f"  - {item}")
 
     if missing_metadata:
-        print(f"migration debt: {len(missing_metadata)} suite(s) still lack cases/meta.tsv")
-        if len(missing_metadata) <= 20:
-            for item in missing_metadata:
-                print(f"  - {item}")
-        else:
-            print("  (run with --strict after metadata migration is complete)")
+        print(f"authoring debt: {len(missing_metadata)} suite(s) lack cases/meta.tsv")
+        for item in missing_metadata:
+            print(f"  - {item}")
 
     if errors:
         print(f"case-audit: {len(errors)} error(s)", file=sys.stderr)

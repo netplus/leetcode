@@ -2,29 +2,28 @@
 
 ## Goal
 
-Every problem directory owns a `cases/` validation suite. A useful suite is not
-measured only by case count: every case should exist for a reason and should be
-able to expose a concrete class of wrong implementation.
+Every formal LeetCode problem directory owns a deliberate `cases/` validation
+suite. A useful suite is not measured only by case count: every case should exist
+for a reason and should be able to expose a concrete class of wrong
+implementation.
 
-Repository target:
+Repository invariants:
 
-- **6 cases minimum** for a fully migrated formal LeetCode problem;
+- **6 cases minimum** for every formal `dayN-lcM-*` problem;
 - **7–8 cases** for high-value problems whose common mistakes need additional
   dedicated coverage;
+- every executable case has one matching row in `cases/meta.tsv`;
 - never add near-duplicate inputs merely to reach a number.
 
-The repository is still migrating from the historical 4-case floor. Run:
-
-```bash
-python3 tools/check_case_coverage.py
-```
-
-for the structural audit plus migration-debt report. Once every formal problem
-reaches the new standard, `--strict` becomes the intended hard gate:
+The hard case gate is:
 
 ```bash
 python3 tools/check_case_coverage.py --strict
 ```
+
+`make verify-meta` runs this strict gate automatically. The non-strict invocation
+is retained only as a local authoring diagnostic while a single suite is being
+edited.
 
 The case-coverage gate applies to the 106 formal `dayN-lcM-*` problem units.
 Week 4 mock packages are separate learning artifacts and are validated by their
@@ -75,9 +74,9 @@ If you cannot fill that blank, the case probably adds little validation power.
 
 ## Case intent metadata
 
-A migrated suite adds `cases/meta.tsv`. This turns the case set into a learning
-asset and lets the audit verify that every executable case has an explicit
-purpose.
+Every formal suite contains `cases/meta.tsv`. This turns the case set into a
+learning asset and lets the audit verify that every executable case has an
+explicit purpose.
 
 Format, one line per case:
 
@@ -120,10 +119,10 @@ depend on the production solution being tested.
 
 ## Verify your cases
 
-Run the case-structure audit:
+Run the strict case gate:
 
 ```bash
-python3 tools/check_case_coverage.py
+python3 tools/check_case_coverage.py --strict
 ```
 
 Run one problem's judge after changing its cases:
@@ -132,7 +131,8 @@ Run one problem's judge after changing its cases:
 bash tools/judge.sh <NUM>
 ```
 
-Run repository metadata verification before submitting:
+Run repository metadata verification before submitting; this includes the strict
+case gate:
 
 ```bash
 make verify-meta

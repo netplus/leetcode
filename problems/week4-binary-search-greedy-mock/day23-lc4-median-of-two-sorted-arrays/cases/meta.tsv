@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,even-length	两数组总长度为偶数：验证中间两个数取平均
+2	official,odd-length	总长度为奇数：验证分割后直接取左半最大值
+3	boundary,empty-array	第一个数组为空：验证分割允许落在边界并完全由第二数组给出中位数
+4	boundary,empty-array	第二个数组为空：验证实现会把较短数组放在二分侧或正确处理空数组
+5	variant	两个等长交错数组：验证分割条件 maxLeft<=minRight
+6	minimum	两个单元素数组且顺序交错：验证偶数总长度的最小非空组合

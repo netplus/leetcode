@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,greedy	官方样例：验证按身高降序、k 升序后按 k 插入
+2	minimum,boundary	单人：验证最小队列
+3	trap	身高不同但 k 都为 0：验证高个先处理后插入规则
+4	ordering	严格递增身高且 k=0：验证输入顺序不重要，输出由约束决定
+5	ordering	严格递增身高的另一组：验证排序方向不能写反
+6	duplicates	所有人同高且 k=0..4：验证同身高必须按 k 升序处理

@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,frequency	官方样例：验证按频次而不是数值大小选 top k
+2	minimum,boundary	单元素 k=1：验证最小频次表
+3	boundary	k=1 且频次层次清晰：验证只保留最高频元素
+4	duplicates	两个不同频次值且 k=2：验证两个都进入结果
+5	boundary	所有输入都是同一值：验证去重后候选数为 1
+6	ordering	频次 1<2<3：验证结果集合与输出顺序解耦，且选中 2/3 对应值

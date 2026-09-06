@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,greedy	孩子需求多于饼干：验证用最小可满足饼干服务当前最小需求孩子
+2	official,greedy	饼干多于孩子：验证不浪费更大饼干导致错失后续匹配
+3	boundary,no-solution	没有饼干：验证结果为 0
+4	minimum,boundary	单孩子单饼干恰好满足：验证 >= 边界
+5	boundary	需求与饼干完全一一对应：验证所有孩子都能满足
+6	no-solution	所有饼干都小于需求：验证不会错误累计部分满足

@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,two-heaps	连续插入 1,2,3,4 并多次查询：验证奇偶长度时两个堆的平衡与中位数切换
+2	minimum,boundary	插入单个 7 后查询：验证奇数长度直接取较大半堆顶
+3	duplicates	两个相同值：验证偶数长度平均值及重复元素处理
+4	boundary	四个递增值后查询：验证偶数长度取两中间值平均
+5	negative	含负数和正数：验证堆比较不依赖非负假设
+6	stress	连续四个奇数：验证多次重平衡后两堆大小差不超过 1

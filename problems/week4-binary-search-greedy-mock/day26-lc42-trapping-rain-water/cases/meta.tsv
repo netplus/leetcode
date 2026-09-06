@@ -1,0 +1,8 @@
+# case	kinds	purpose
+1	official,two-pointers	官方多凹槽样例：验证每个位置由左右最高边界的较小者决定水位
+2	minimum,boundary	单柱：无法形成左右边界，积水为 0
+3	official	4 2 0 3 2 5：验证多个不同深度凹槽累计
+4	boundary	3 0 3：最小经典封闭凹槽，验证单格积水
+5	boundary,no-solution	严格递减：没有右侧更高边界，积水为 0
+6	duplicates	所有柱等高：验证平坦地形不积水
+7	stress	多个高度相同的峰 3：验证相邻独立凹槽都被累计且边界峰可复用

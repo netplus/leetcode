@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,binary-search	官方旋转数组：验证最小值位于旋转断点，不能按普通有序数组首元素处理
+2	minimum,boundary	单元素：验证左右边界收缩到同一位置
+3	boundary	完全未旋转：验证 nums[mid] 与 nums[right] 比较后仍能保留最左端最小值
+4	variant	较长旋转数组且最小值为 0：验证断点位于中部后的搜索方向
+5	boundary	两个元素且发生旋转：抓 mid/right 更新 off-by-one
+6	boundary	严格递增未旋转数组：验证算法不会错误跳过下标 0

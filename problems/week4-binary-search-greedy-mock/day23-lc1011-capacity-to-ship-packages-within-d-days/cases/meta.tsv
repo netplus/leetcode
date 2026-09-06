@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,answer-binary-search	官方样例：验证容量可行性具有单调性并找到最小可行容量
+2	minimum,boundary	单包裹单天：答案必须等于最大单件重量
+3	boundary	所有包裹必须一天运完：答案等于总重量，验证二分上界
+4	boundary	天数等于包裹数：答案等于最大包裹重量，验证二分下界
+5	trap	3 2 2、D=2：验证装载顺序不可重排且按天顺序切分
+6	duplicates,stress	十个相同重量：验证恰好跨多天时的容量边界和 day 计数

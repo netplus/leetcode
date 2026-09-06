@@ -1,0 +1,7 @@
+# case	kinds	purpose
+1	official,bfs	官方主样例存在多条候选路径，验证按 BFS 层推进并返回最短转换序列长度，而不是任意一条可达路径长度
+2	boundary,direct	beginWord 与 endWord 只差一个字符且两者都在词表：验证一步转换对应序列长度 2，避免层数/节点数 off-by-one
+3	no-solution,boundary	endWord=cog 不在词表：按题意直接无解，验证搜索前的必要条件检查
+4	no-solution	词表与目标都无法形成有效链：验证队列耗尽后返回 0
+5	minimum,direct	单字符单词 a→c 可直接转换：验证邻居生成适用于最短长度 1 的字符串，不依赖多字符位置
+6	trap,boundary	beginWord=hot 不在 wordList，但 endWord=dot 在且可一步到达：验证 beginWord 不要求预先存在于词表，不能因起点缺失而错误返回 0

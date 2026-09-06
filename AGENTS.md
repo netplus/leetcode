@@ -408,11 +408,12 @@ Current canonical pipeline:
 2. `tools/pedagogy_overrides.py` plus modular `tools/pedagogy_week*.py`: high-touch per-problem pedagogy;
 3. `tools/pedagogy_prerequisites.py`: optional prerequisite concepts;
 4. `tools/pedagogy_derivations.py` + `tools/pedagogy_derivations_backfill.py`: preserved direct-optimization evidence;
-5. `tools/pedagogy_reasoning_first.py`: full-plan natural-solution / limitation / generalization / algorithm-background bridge;
-6. `tools/code_comment_overrides.py` plus modular `tools/code_comments_week*.py`: reviewed implementation comments;
-7. `tools/refined_data.py`: merges canonical layers, validates full reasoning-first coverage, and renders pedagogy;
-8. `tools/statement_metadata.py`: effective learner-facing statement metadata;
-9. `tools/gen_all.py`: renders `solution.cpp`, `test.in`, and Week 4 mock packages.
+5. `tools/pedagogy_reasoning_first.py`: full-plan generated reasoning bridge for entries already backed by reviewed derivation evidence;
+6. `tools/pedagogy_reasoning_manual.py`: high-touch semantic overrides where the generated bridge would skip the natural-solution stage;
+7. `tools/code_comment_overrides.py` plus modular `tools/code_comments_week*.py`: reviewed implementation comments;
+8. `tools/refined_data.py`: merges canonical layers, validates full reasoning-first coverage, and renders pedagogy;
+9. `tools/statement_metadata.py`: effective learner-facing statement metadata;
+10. `tools/gen_all.py`: renders `solution.cpp`, `test.in`, and Week 4 mock packages.
 
 The current reasoning-first renderer uses explicit fields such as:
 

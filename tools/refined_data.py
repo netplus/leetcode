@@ -38,6 +38,7 @@ from pedagogy_derivations import DERIVATION_OVERRIDES
 from pedagogy_derivations_backfill import DERIVATION_BACKFILL_OVERRIDES
 from pedagogy_prerequisites import PREREQUISITE_OVERRIDES
 from pedagogy_reasoning_first import REASONING_FIRST_OVERRIDES
+from pedagogy_reasoning_manual import MANUAL_REASONING_OVERRIDES
 from code_comment_overrides import CODE_COMMENT_OVERRIDES
 from code_comments_week1_day2 import CODE_COMMENTS_WEEK1_DAY2
 from code_comments_week1_rest import CODE_COMMENTS_WEEK1_REST
@@ -151,6 +152,15 @@ for num, derivation in DERIVATIONS.items():
 for num, patch in REASONING_FIRST_OVERRIDES.items():
     if num not in REFINEMENTS:
         raise RuntimeError(f"reasoning-first override references unknown lc{num}")
+    REFINEMENTS[num] = {**REFINEMENTS[num], **patch}
+
+# High-touch semantic corrections for problems where the generated bridge
+# would otherwise describe the optimized algorithm as the "general solution".
+# These fields intentionally override only the reasoning bridge; reviewed
+# core/formula/steps/proof/code remain owned by the existing pedagogy layers.
+for num, patch in MANUAL_REASONING_OVERRIDES.items():
+    if num not in REFINEMENTS:
+        raise RuntimeError(f"manual reasoning override references unknown lc{num}")
     REFINEMENTS[num] = {**REFINEMENTS[num], **patch}
 
 # Key implementation comments are maintained as a separate high-touch layer.

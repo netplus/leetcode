@@ -1,0 +1,95 @@
+name: Reasoning diagram final polish
+
+on:
+  push:
+    branches:
+      - learning/reasoning-first-full-migration-v3
+
+permissions:
+  contents: write
+
+jobs:
+  polish-and-verify:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: learning/reasoning-first-full-migration-v3
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Collapse doubled Unicode tree strokes
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('tools/pedagogy_prerequisites.py')
+          text = path.read_text(encoding='utf-8')
+          count = text.count('╲╲')
+          if count != 5:
+              raise RuntimeError(f'expected exactly 5 doubled prerequisite tree strokes, got {count}')
+          path.write_text(text.replace('╲╲', '╲'), encoding='utf-8')
+          print('Collapsed 5 doubled prerequisite tree strokes to single Unicode diagonals.')
+          PY
+
+      - name: Check Python sources for warnings
+        run: |
+          python3 -Wall -m compileall -q tools 2>&1 | tee /tmp/python-warnings.log
+          if grep -E 'SyntaxWarning|DeprecationWarning|warning:' /tmp/python-warnings.log; then
+            echo 'Python warning remains after final diagram polish'
+            exit 1
+          fi
+
+      - name: Regenerate learning artifacts
+        run: |
+          python3 tools/gen_all.py
+          python3 tools/gen_review_report.py
+
+      - name: Run fidelity and metadata gates
+        run: |
+          python3 tools/check_generated_fidelity.py
+          make verify-meta
+
+      - name: Run full compile and judges with zero compiler warnings
+        run: |
+          set -o pipefail
+          make verify 2>&1 | tee /tmp/full-verify.log
+          if grep -E 'warning:' /tmp/full-verify.log; then
+            echo 'Compiler warning remains after final diagram polish'
+            exit 1
+          fi
+
+      - name: Assert generated tree diagrams use single strokes
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          targets = [
+              Path('problems/week2-list-tree-bsp/day11-lc98-validate-binary-search-tree/solution.cpp'),
+              Path('problems/week2-list-tree-bsp/day11-lc236-lowest-common-ancestor-of-a-binary-tree/solution.cpp'),
+          ]
+          for path in targets:
+              text = path.read_text(encoding='utf-8')
+              if '╲╲' in text:
+                  raise RuntimeError(f'{path}: doubled Unicode tree stroke remains')
+          print('Generated LC98/LC236 diagrams use single Unicode diagonal strokes.')
+          PY
+
+      - name: Remove one-shot workflow and Python caches
+        run: |
+          rm -f .github/workflows/reasoning-diagram-final-polish.yml
+          find tools -type d -name __pycache__ -prune -exec rm -rf {} +
+
+      - name: Commit polished warning-free diagrams
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && exit 0
+          git commit -m "docs: polish warning-free tree diagrams"
+          git push origin HEAD:learning/reasoning-first-full-migration-v3

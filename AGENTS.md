@@ -217,11 +217,13 @@ A specialized guide should explain, in this order:
 
 Do not create empty topic documents merely to fill a directory. Create or expand one when an algorithm family starts carrying shared explanation across multiple problems.
 
-Current example:
+Current algorithm-guide index:
 
-- [单调栈](docs/algorithms/monotonic-stack.md)
+- [专项算法文档总览](docs/algorithms/README.md)
 
-Future two-pointer, sliding-window, prefix/difference, binary-search, DP-state-design, traversal, union-find, and backtracking guides should follow the same structure when they are systematically reviewed.
+The major reusable algorithm families used by the 106-problem plan now have
+mechanism-level guides under `docs/algorithms/`. Future work should deepen those
+guides rather than reintroducing algorithm theory separately in each problem.
 
 ## Problem-level mapping after the algorithm guide exists
 
@@ -405,26 +407,29 @@ Current canonical pipeline:
 1. `tools/refined_week1.py` ... `tools/refined_week4.py`: baseline reviewed explanation/implementation records;
 2. `tools/pedagogy_overrides.py` plus modular `tools/pedagogy_week*.py`: high-touch per-problem pedagogy;
 3. `tools/pedagogy_prerequisites.py`: optional prerequisite concepts;
-4. `tools/pedagogy_derivations.py` + `tools/pedagogy_derivations_backfill.py`: legacy/direct-optimization bridges where still used;
-5. `tools/code_comment_overrides.py` plus modular `tools/code_comments_week*.py`: reviewed implementation comments;
-6. `tools/refined_data.py`: merges canonical learning layers and renders the appropriate pedagogy structure;
-7. `tools/statement_metadata.py`: effective learner-facing statement metadata;
-8. `tools/gen_all.py`: renders `solution.cpp`, `test.in`, and Week 4 mock packages.
+4. `tools/pedagogy_derivations.py` + `tools/pedagogy_derivations_backfill.py`: preserved direct-optimization evidence;
+5. `tools/pedagogy_reasoning_first.py`: full-plan natural-solution / limitation / generalization / algorithm-background bridge;
+6. `tools/code_comment_overrides.py` plus modular `tools/code_comments_week*.py`: reviewed implementation comments;
+7. `tools/refined_data.py`: merges canonical layers, validates full reasoning-first coverage, and renders pedagogy;
+8. `tools/statement_metadata.py`: effective learner-facing statement metadata;
+9. `tools/gen_all.py`: renders `solution.cpp`, `test.in`, and Week 4 mock packages.
 
 The current reasoning-first renderer uses explicit fields such as:
 
 ```text
 visual
- general_solution
- limitations
- generalization
- algorithm_background
- core
- formula
- steps
+general_solution
+limitations
+generalization
+algorithm_background
+core
+formula
+steps
 ```
 
-Do not mechanically migrate all 106 problems in one blind rewrite. Each problem should move to the richer structure only after an individual review confirms that the new sections improve the reasoning.
+All 106 formal problems are now required to render through this reasoning-first
+structure. `validate_coverage()` treats missing fields as canonical drift. Future
+edits should improve individual sections without falling back to the older format.
 
 `python3 tools/check_generated_fidelity.py` is the non-mutating canonical/generated guard. `make verify-meta` must pass before considering a repository-wide maintenance pass complete.
 

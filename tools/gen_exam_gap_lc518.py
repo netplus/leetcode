@@ -1,0 +1,273 @@
+#!/usr/bin/env python3
+"""Generate and verify the LC-518 exam-gap supplement.
+
+LC-518 is intentionally kept outside the original 106-problem formal corpus. It
+fills the specific Day-20 gap "unbounded knapsack + combination counting" exposed
+by exam feedback while reusing the supplement renderer introduced for LC-93.
+
+Run:
+    python3 tools/gen_exam_gap_lc518.py
+    python3 tools/gen_exam_gap_lc518.py --check
+"""
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+
+from gen_exam_gaps import render_makefile, render_solution
+
+ROOT = Path(__file__).resolve().parent.parent
+BASE = Path("problems/week3-graph-dp/day20-lc518-coin-change-ii")
+
+LC518 = {
+    "num": 518,
+    "week": 3,
+    "day": 20,
+    "name": "coin-change-ii",
+    "title": "零钱兑换 II",
+    "difficulty": "中等",
+    "priority": "P0",
+    "description": [
+        "给定不同面额的硬币数组 coins 和总金额 amount，计算可以凑成该金额的硬币组合数。",
+        "每种面额的硬币都可以使用无限次；如果无法凑成 amount，返回 0。",
+        "组合不考虑硬币出现顺序，例如 1+2+2 与 2+1+2 属于同一种组合。",
+    ],
+    "examples": [
+        {"input": "amount = 5, coins = [1,2,5]", "output": "4", "explanation": "5；2+2+1；2+1+1+1；1+1+1+1+1。"},
+        {"input": "amount = 3, coins = [2]", "output": "0"},
+        {"input": "amount = 10, coins = [10]", "output": "1"},
+    ],
+    "constraints": [
+        "1 <= coins.length <= 300",
+        "1 <= coins[i] <= 5000",
+        "coins 中的面额互不相同",
+        "0 <= amount <= 5000",
+        "最终答案保证可以放入 32 位有符号整数",
+    ],
+    "goal": "O(coins.length * amount) 时间，O(amount) 空间（完全背包组合计数）。",
+    "iofmt": [
+        "第 1 行：n amount。",
+        "第 2 行：n 个以空格分隔的硬币面额。",
+        "输出：凑成 amount 的不同硬币组合数。",
+    ],
+    "expected": "4",
+    "pattern": "完全背包组合计数：从枚举每种硬币数量到二维 DP，再压成一维",
+    "visual": """amount=5，coins=[1,2,5]。
+
+题目要的是“组合”，所以：
+1+2+2
+2+1+2
+2+2+1
+并不是 3 种，而只是“1 枚 1 元 + 2 枚 2 元”这一种。
+
+因此最自然的枚举单位不是“下一枚硬币选什么”，而是：
+对第 i 种面额，我使用 0 枚、1 枚、2 枚……多少枚？
+
+coin=1：选 k1 枚
+coin=2：选 k2 枚
+coin=5：选 k5 枚
+满足 1*k1 + 2*k2 + 5*k5 = 5 的每组 (k1,k2,k5)，恰好对应一种组合。""",
+    "general_solution": """直接且不会重复计数的方法是按硬币种类 DFS。
+
+search(i, remaining)：
+- 当前处理 coins[i]；
+- 枚举使用 k=0..remaining/coins[i] 枚；
+- 递归 search(i+1, remaining-k*coins[i])；
+- 所有硬币种类处理完且 remaining==0 时，得到一种组合。
+
+因为每种硬币的数量只在自己的那一层决定一次，所以同一个多重集合不会因为排列顺序不同而被重复生成。""",
+    "limitations": """直接 DFS 的重复工作出现在状态 (i, remaining)。
+
+例如 coins=[1,2,5]，当我们已经决定前 i 种硬币的用量后，后面能有多少种凑法只取决于：
+- 还允许使用哪些硬币种类 i..n-1；
+- 还剩多少钱 remaining。
+
+此前具体用了几枚 1 元、几枚 2 元并不重要。不同枚举路径会反复求同一个“前 i 种硬币 / 某个剩余金额”的子问题。
+
+即使把它记忆化，每个状态里仍可能再枚举当前硬币用 0、1、2...k 枚；我们还可以继续消掉这层数量枚举。""",
+    "generalization": """先把重复子问题显式写成二维状态：
+ways[i][a] = 只允许使用前 i 种硬币，凑出金额 a 的组合数。
+
+对第 i 种硬币 x，一个组合按 x 的使用数量可以分成：0 枚、1 枚、2 枚……
+
+ways[i][a]
+= ways[i-1][a]
++ ways[i-1][a-x]
++ ways[i-1][a-2x]
++ ...
+
+看似仍需枚举 k，但后面所有“至少使用 1 枚 x”的方案，拿掉一枚 x 后，正好就是：
+ways[i][a-x]
+
+于是整个求和被折成：
+ways[i][a] = ways[i-1][a] + ways[i][a-x]。
+
+这一步才真正把“无限枚硬币”压成 O(1) 状态转移。""",
+    "algorithm_background": """这就是完全背包的计数版本。
+
+二维转移里最关键的两个来源语义是：
+- ways[i-1][a]：当前硬币 x 一枚都不用；
+- ways[i][a-x]：先凑出 a-x，再多放一枚 x。注意这里仍然是第 i 行，所以允许 x 再次出现。
+
+和 LC-416/494 的 0/1 背包对照：它们“选当前元素”时只能从上一行读取；本题当前硬币可以无限复用，因此会读取当前行更小金额。""",
+    "core": """二维状态压成一维后，dp[a] 在开始处理 coin 之前表示“只用此前硬币种类凑 a 的组合数”。
+
+处理当前 coin=x 时，让 a 从 x 正序走到 amount：
+- 更新前的 dp[a] 仍是“不用 x”的 ways[i-1][a]；
+- dp[a-x] 因为金额更小，已经在本轮更新过，正是“允许使用 x”的 ways[i][a-x]。
+
+所以一行 `dp[a] += dp[a-x]` 精确实现二维式子，而不是一个需要死记的模板。""",
+    "formula": """二维：
+ways[i][a] = ways[i-1][a] + ways[i][a-x]
+
+初始化：
+ways[0][0] = 1
+其余为 0。
+
+一维压缩：
+dp[0] = 1
+for coin in coins:
+    for a = coin ... amount:       // 必须正序
+        dp[a] += dp[a-coin]
+
+循环不变量：
+处理完前 i 种硬币后，dp[a] 精确等于“只使用这 i 种面额、每种可无限次，凑出 a 的组合数”。
+
+为什么 dp[0]=1：
+金额 0 有一种基础组合——什么都不选。它是加入第一枚硬币时的计数起点，而不是说真的存在一枚 0 元硬币。""",
+    "steps": [
+        "建立 amount+1 个计数状态并令 dp[0]=1，其余为 0；空组合是后续产生非空组合的计数起点",
+        "按硬币种类逐个处理；外层 coin 的含义是逐步扩大‘允许使用的面额集合’",
+        "对当前 coin，让金额 current 从 coin 正序增加到 amount；正序保证 dp[current-coin] 已包含当前 coin，因此同一面额可以重复使用",
+        "执行 dp[current] += dp[current-coin]：旧 dp[current] 表示不用当前 coin，来源 dp[current-coin] 表示至少再使用一枚当前 coin",
+        "所有面额处理完后返回 dp[amount]；amount=0 会自然返回 1，无解金额保持为 0",
+    ],
+    "memory": "硬币在外固定组合顺序；金额正序允许当前硬币复用；dp[0]=1 给第一种组合一个起点。",
+    "proof": """对第 i 种硬币 x，任何使用前 i 种硬币凑出 a 的组合恰好分成两类：
+1. x 使用 0 枚，这些方案由 ways[i-1][a] 完整计数；
+2. x 至少使用 1 枚。删掉其中一枚 x 后，得到一个只使用前 i 种硬币凑出 a-x 的组合，与 ways[i][a-x] 中的方案一一对应。
+
+两类互斥且覆盖全部方案，因此转移既不漏也不重。
+
+一维正序只是复用了同一行的存储：更新 dp[a] 时，dp[a] 还是上一行的值，而 dp[a-x] 已经是当前行的值，所以与二维式完全等价。""",
+    "pitfalls": """最大的坑是把“金额循环”和“硬币循环”交换。
+
+coins=[1,2], amount=3：正确组合只有
+1+1+1
+1+2
+共 2 种。
+
+若金额在外、硬币在内：
+dp[3] 会先通过 dp[2]+1 计入 2+1，又通过 dp[1]+2 计入 1+2，于是把同一组合的不同排列重复统计，得到 3。
+
+所以“coin 外层”不是性能写法，而是在规定组合的唯一生成顺序；“amount 正序”也不是口诀，而是在表达当前 coin 可以重复使用。
+
+同样不要把 LC-416/494 的倒序照搬过来：倒序会让 dp[a-coin] 仍停留在上一轮，等价于每种硬币最多使用一次，题意就被改成 0/1 背包。""",
+    "transfer": """把 Day 20 四个格子放在一起最容易记：
+- LC-416：0/1 × 可达性；
+- LC-494：0/1 × 计数；
+- LC-322：完全背包 × 最优化；
+- LC-518：完全背包 × 组合计数。
+
+以后不要先背循环方向，而先问两个语义问题：
+1. 当前物品能用一次还是无限次？决定容量读上一层还是当前层，也就是倒序还是正序；
+2. 统计组合还是排列？组合要固定物品种类的处理顺序，通常物品在外层；排列则允许不同加入顺序形成不同答案。""",
+    "code": r'''// ---------- 题解实现 ----------
+class Solution {
+public:
+    int change(int amount, vector<int>& coins) {
+        // dp[current]：只使用“已经处理过的硬币种类”，凑出 current 的组合数。
+        vector<long long> dp(amount + 1, 0);
+
+        // 金额 0 有一种基础方案：什么都不选。后续每种硬币都是从这个 1 开始产生组合。
+        dp[0] = 1;
+
+        // coin 必须放在外层：逐种扩大允许使用的面额集合，给每个组合规定唯一的构造顺序。
+        for (int coin : coins) {
+            // 金额必须正序：处理 current 时，dp[current-coin] 已经在本轮纳入当前 coin，
+            // 所以它允许再加一枚同面额硬币——这正是“每种硬币无限使用”的语义。
+            for (int current = coin; current <= amount; ++current) {
+                // 旧 dp[current]：不用当前 coin；
+                // dp[current-coin]：至少使用一枚当前 coin，删掉最后这一枚后的组合数。
+                dp[current] += dp[current - coin];
+            }
+        }
+
+        // 题目保证最终答案落在 32 位有符号整数范围内。
+        return static_cast<int>(dp[amount]);
+    }
+};''',
+    "main": r'''int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n, amount;
+    if (!(cin >> n >> amount)) return 0;
+    vector<int> coins(n);
+    for (int i = 0; i < n; ++i) cin >> coins[i];
+
+    Solution sol;
+    cout << sol.change(amount, coins) << '\n';
+    return 0;
+}''',
+    "testin": "3 5\n1 2 5\n",
+    "judge": "exact\n",
+    "cases": [
+        ("3 5\n1 2 5\n", "4\n"),
+        ("1 3\n2\n", "0\n"),
+        ("1 10\n10\n", "1\n"),
+        ("3 0\n1 2 5\n", "1\n"),
+        ("2 3\n1 2\n", "2\n"),
+        ("3 12\n2 3 7\n", "4\n"),
+        ("2 1\n5 7\n", "0\n"),
+    ],
+}
+
+
+def files() -> dict[Path, str]:
+    result = {
+        BASE / "solution.cpp": render_solution(LC518),
+        BASE / "test.in": LC518["testin"],
+        BASE / "Makefile": render_makefile(LC518),
+        BASE / ".judge": LC518["judge"],
+    }
+    for i, (stdin, stdout) in enumerate(LC518["cases"], 1):
+        result[BASE / "cases" / f"{i}.in"] = stdin
+        result[BASE / "cases" / f"{i}.out"] = stdout
+    return result
+
+
+def write_all() -> None:
+    generated = files()
+    for relative, content in generated.items():
+        path = ROOT / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(content, encoding="utf-8")
+    print(f"Generated LC-518 exam-gap supplement: {len(generated)} files.")
+
+
+def check_all() -> None:
+    errors = []
+    for relative, expected in files().items():
+        path = ROOT / relative
+        if not path.exists():
+            errors.append(f"missing {relative}")
+        elif path.read_text(encoding="utf-8") != expected:
+            errors.append(f"drift: {relative}")
+    if errors:
+        raise SystemExit("LC-518 exam-gap fidelity failed:\n  - " + "\n  - ".join(errors))
+    print("LC-518 exam-gap fidelity OK.")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--check", action="store_true", help="verify without writing")
+    args = parser.parse_args()
+    if args.check:
+        check_all()
+    else:
+        write_all()
+
+
+if __name__ == "__main__":
+    main()
